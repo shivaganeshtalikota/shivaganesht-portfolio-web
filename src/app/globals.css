@@ -330,16 +330,44 @@ body::after {
   }
 }
 
-/* The footer name, after enough provocation. */
+/* The footer name, after enough provocation.
+
+   body is the full document height, so its default transform-origin sits
+   thousands of pixels down the page. Rotating around that flings whatever
+   you are looking at off-screen. --roll-origin is set from JS to the centre
+   of the *viewport* so the page turns around what you can actually see. */
+
 @keyframes barrel-roll {
-  from { transform: rotate(0turn); }
-  to   { transform: rotate(1turn); }
+  0%   { transform: rotate(0turn) scale(1); }
+  7%   { transform: rotate(-0.03turn) scale(0.97); }
+  55%  { transform: rotate(0.55turn) scale(0.72); }
+  100% { transform: rotate(1turn) scale(1); }
 }
-html.barrel-roll {
+
+html.barrel-roll,
+html.upside-down {
   overflow-x: clip;
 }
+
 html.barrel-roll body {
-  animation: barrel-roll 1.15s cubic-bezier(0.62, 0.02, 0.34, 1) 1;
+  transform-origin: var(--roll-origin, 50% 50%);
+  animation: barrel-roll 2.6s cubic-bezier(0.5, 0.02, 0.3, 1) 1;
+  will-change: transform;
+}
+
+/* Stage two: it simply stays there for a moment. */
+html.upside-down body {
+  transform-origin: var(--roll-origin, 50% 50%);
+  transform: rotate(0.5turn) scale(0.82);
+  transition: transform 1s cubic-bezier(0.34, 1.25, 0.64, 1);
+  will-change: transform;
+}
+
+/* Stage three, on an editorial serif portfolio. The worst thing I could do. */
+html.comic-sans,
+html.comic-sans * {
+  font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Segoe Print", cursive !important;
+  letter-spacing: 0 !important;
 }
 
 /* ── reduced motion ───────────────────────────────────────────── */
