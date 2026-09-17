@@ -3,68 +3,70 @@ import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
-import { Button, SectionHeading, TextLink } from "@/components/ui";
+import { Arrow, Button, SectionHead } from "@/components/ui";
 import { ABOUT_SHORT, AWARDS, EVENTS, PROJECTS, SITE } from "@/data/site";
 
 export default function HomePage() {
   const featured = PROJECTS.filter((p) => p.featured);
-  const speaking = EVENTS.slice(0, 6);
-  const topAwards = AWARDS.slice(0, 3);
+  const rail = EVENTS.slice(0, 6);
+  const top = AWARDS.slice(0, 3);
 
   return (
     <>
       <Hero />
 
-      {/* ── about ─────────────────────────────────────────────── */}
-      <section className="shell py-24 md:py-32">
-        <div className="grid gap-12 md:grid-cols-[0.85fr_1.15fr] md:gap-16">
-          <Reveal>
-            <div className="relative aspect-square max-w-[320px] overflow-hidden rounded-[var(--radius-xl)] md:max-w-none">
-              <Image
-                src="/portrait/microsoft.webp"
-                alt="Shiva Ganesh Talikota at the Microsoft Campus, Hyderabad"
-                width={900}
-                height={900}
-                sizes="(max-width: 768px) 320px, 420px"
-                className="h-full w-full object-cover"
-              />
-            </div>
-          </Reveal>
-          <div className="self-center">
-            <Reveal delay={0.08}>
-              <p className="text-[13px] font-medium text-[var(--accent)]">About</p>
+      {/* ── about ───────────────────────────────────────────── */}
+      <section className="shell py-24 md:py-36">
+        <div className="grid gap-12 md:grid-cols-12 md:gap-10">
+          <div className="md:col-span-4">
+            <Reveal>
+              <div className="relative aspect-[4/5] w-full max-w-[280px] overflow-hidden rounded-[var(--radius-md)] bg-[var(--bg-sunken)] md:max-w-none">
+                <Image
+                  src="/portrait/microsoft.webp"
+                  alt="Shiva Ganesh Talikota at the Microsoft Campus, Hyderabad"
+                  fill
+                  sizes="(max-width: 768px) 280px, 360px"
+                  className="object-cover object-[50%_22%]"
+                />
+              </div>
             </Reveal>
-            <Reveal delay={0.14}>
-              <h2 className="text-title-2 mt-2 text-balance">
-                Founder first. Engineer always.
+            <Reveal delay={0.08}>
+              <p className="label mt-3">Microsoft Campus · Hyderabad</p>
+            </Reveal>
+          </div>
+
+          <div className="md:col-span-8 md:pl-6 lg:pl-16">
+            <Reveal>
+              <span className="label">01 — About</span>
+            </Reveal>
+            <Reveal delay={0.06}>
+              <h2 className="t-2 mt-6 max-w-[20ch] text-balance">
+                Founder first. <em className="italic">Engineer</em> always.
               </h2>
             </Reveal>
-            <Reveal delay={0.2}>
-              <p className="text-body-lg mt-5 text-pretty text-[var(--label-secondary)]">
-                {ABOUT_SHORT}
-              </p>
+            <Reveal delay={0.12}>
+              <p className="t-lede safe-text mt-7 max-w-[56ch] text-pretty">{ABOUT_SHORT}</p>
             </Reveal>
-            <Reveal delay={0.26}>
-              <div className="mt-7">
-                <TextLink href="/about">Read the longer version</TextLink>
+            <Reveal delay={0.18}>
+              <div className="mt-8">
+                <Arrow href="/about">Read the longer version</Arrow>
               </div>
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* ── selected work ─────────────────────────────────────── */}
-      <section className="border-t border-[var(--separator)] bg-[var(--bg-secondary)] py-24 md:py-32">
+      {/* ── work ────────────────────────────────────────────── */}
+      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-24 md:py-36">
         <div className="shell">
-          <SectionHeading
-            eyebrow="Selected work"
-            title="Four things I built that are live right now."
-            lede="A company, an automation engine, a multi-agent compliance system, and a production site for a client. Not demos."
-            action={{ href: "/projects", label: "All projects" }}
+          <SectionHead
+            index="02 — Selected work"
+            title={<>Four things that are <em className="italic">live right now.</em></>}
+            action={{ href: "/projects", label: "All work" }}
           />
-          <Stagger className="grid gap-5 lg:grid-cols-2">
+          <Stagger className="grid items-stretch gap-5 lg:grid-cols-2">
             {featured.map((p, i) => (
-              <StaggerItem key={p.slug}>
+              <StaggerItem key={p.slug} className="h-full">
                 <ProjectCard project={p} index={i} />
               </StaggerItem>
             ))}
@@ -72,70 +74,61 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── speaking ──────────────────────────────────────────── */}
-      <section className="py-24 md:py-32">
+      {/* ── speaking ────────────────────────────────────────── */}
+      <section className="py-24 md:py-36">
         <div className="shell">
-          <SectionHeading
-            eyebrow="Speaking"
-            title="I've spoken at Microsoft, ISB and T-Hub."
-            lede="Ten documented events — as speaker, organiser and sponsorship director — with the photographs to go with them."
-            action={{ href: "/speaking", label: "See all events" }}
+          <SectionHead
+            index="03 — Speaking"
+            title={<>Microsoft, ISB, <em className="italic">T-Hub.</em></>}
+            lede="Ten documented events as speaker, organiser and sponsorship director — photographed as they happened."
+            action={{ href: "/speaking", label: "All events" }}
           />
         </div>
-        <Stagger className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-[22px] pb-4 md:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {speaking.map((ev) => (
-            <StaggerItem key={ev.slug} className="shrink-0 snap-start">
-              <Link
-                href={`/speaking#${ev.slug}`}
-                className="group block w-[268px] md:w-[320px]"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-lg)] bg-[var(--fill-tertiary)]">
+
+        <Stagger className="shell grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3">
+          {rail.map((ev) => (
+            <StaggerItem key={ev.slug}>
+              <Link href={`/speaking#${ev.slug}`} className="group block">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-sm)] bg-[var(--bg-sunken)]">
                   <Image
                     src={ev.photos[0].thumb}
                     alt={ev.title}
                     fill
-                    sizes="(max-width: 768px) 268px, 320px"
-                    className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+                    sizes="(max-width: 768px) 46vw, 30vw"
+                    className="object-cover transition-transform duration-[1.1s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
                   />
-                  <div
-                    aria-hidden
-                    className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 p-5">
-                    <p className="text-[11px] font-medium uppercase tracking-[0.06em] text-white/75">
-                      {ev.role} · {ev.year}
-                    </p>
-                    <p className="mt-1 text-pretty text-[16px] font-semibold leading-tight tracking-[-0.012em] text-white">
-                      {ev.title}
-                    </p>
-                  </div>
                 </div>
+                <div className="mt-3.5 flex items-baseline justify-between gap-3">
+                  <span className="label truncate">{ev.role}</span>
+                  <span className="mono-sm shrink-0 text-[var(--ink-3)]">{ev.year}</span>
+                </div>
+                <p className="safe-text mt-1.5 text-pretty text-[15px] leading-snug transition-colors duration-300 group-hover:text-[var(--accent)]">
+                  {ev.title}
+                </p>
               </Link>
             </StaggerItem>
           ))}
         </Stagger>
       </section>
 
-      {/* ── recognition ───────────────────────────────────────── */}
-      <section className="border-t border-[var(--separator)] bg-[var(--bg-secondary)] py-24 md:py-32">
+      {/* ── recognition ─────────────────────────────────────── */}
+      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-24 md:py-36">
         <div className="shell">
-          <SectionHeading
-            eyebrow="Recognition"
-            title="Some of it got written down."
+          <SectionHead
+            index="04 — Recognition"
+            title={<>Some of it got <em className="italic">written down.</em></>}
             action={{ href: "/awards", label: "All recognition" }}
           />
           <Stagger className="grid gap-5 md:grid-cols-3">
-            {topAwards.map((a) => (
-              <StaggerItem key={a.title}>
-                <div className="card h-full p-7">
-                  <p className="text-[12px] font-medium uppercase tracking-[0.06em] text-[var(--accent)]">
-                    {a.year}
-                  </p>
-                  <h3 className="mt-3 text-pretty text-[18px] font-semibold leading-snug tracking-[-0.014em]">
+            {top.map((a) => (
+              <StaggerItem key={a.title} className="h-full">
+                <div className="surface lift flex h-full flex-col p-7">
+                  <span className="mono-sm text-[var(--accent)]">{a.year}</span>
+                  <h3 className="safe-text mt-4 text-pretty text-[19px] font-semibold leading-snug tracking-[-0.015em]">
                     {a.title}
                   </h3>
-                  <p className="mt-1.5 text-[13.5px] text-[var(--label-tertiary)]">{a.org}</p>
-                  <p className="mt-4 text-pretty text-[14px] leading-relaxed text-[var(--label-secondary)]">
+                  <p className="safe-text mt-2 text-[13px] text-[var(--ink-3)]">{a.org}</p>
+                  <p className="safe-text mt-5 text-pretty text-[14px] leading-relaxed text-[var(--ink-2)]">
                     {a.body}
                   </p>
                 </div>
@@ -145,24 +138,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── CTA ───────────────────────────────────────────────── */}
-      <section className="shell py-28 text-center md:py-36">
+      {/* ── CTA ─────────────────────────────────────────────── */}
+      <section className="shell py-28 md:py-40">
         <Reveal>
-          <h2 className="text-title-1 mx-auto max-w-3xl text-balance">
-            Got a hard problem? I'd like to hear it.
+          <p className="label">05 — Contact</p>
+        </Reveal>
+        <Reveal delay={0.06}>
+          <h2 className="t-1 mt-7 max-w-[16ch] text-balance">
+            Got a hard problem? <em className="italic text-[var(--accent)]">Good.</em>
           </h2>
         </Reveal>
-        <Reveal delay={0.1}>
-          <p className="text-body-lg mx-auto mt-5 max-w-xl text-pretty text-[var(--label-secondary)]">
-            Open to engineering roles, collaborations and speaking invitations. I read every
-            message myself.
+        <Reveal delay={0.12}>
+          <p className="t-lede safe-text mt-6 max-w-[46ch] text-pretty">
+            Open to engineering roles, collaborations and speaking invitations. I read every message
+            myself.
           </p>
         </Reveal>
         <Reveal delay={0.18}>
-          <div className="mt-9 flex flex-wrap justify-center gap-3">
+          <div className="mt-10 flex flex-wrap gap-3">
             <Button href="/contact">Get in touch</Button>
-            <Button href={`mailto:${SITE.email}`} variant="secondary">
-              {SITE.email}
+            <Button href={SITE.topmate} variant="outline">
+              Book a session on Topmate
             </Button>
           </div>
         </Reveal>

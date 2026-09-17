@@ -9,37 +9,26 @@ import { NAV, SITE } from "@/data/site";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-function ThemeToggle({ className = "" }: { className?: string }) {
+function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-
-  const isDark = mounted && resolvedTheme === "dark";
+  const dark = mounted && resolvedTheme === "dark";
 
   return (
     <button
       type="button"
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={`grid h-9 w-9 place-items-center rounded-full text-[var(--label-secondary)] transition-colors duration-300 hover:bg-[var(--fill-tertiary)] hover:text-[var(--label)] ${className}`}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      onClick={() => setTheme(dark ? "light" : "dark")}
+      className="grid h-8 w-8 place-items-center rounded-full text-[var(--ink-2)] transition-colors hover:bg-[var(--fill)] hover:text-[var(--ink)]"
     >
-      <svg
-        width="17"
-        height="17"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        aria-hidden="true"
-        suppressHydrationWarning
-      >
-        {isDark ? (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden suppressHydrationWarning>
+        {dark ? (
           <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
         ) : (
           <>
-            <circle cx="12" cy="12" r="4.2" />
-            <path d="M12 2.4v2M12 19.6v2M2.4 12h2M19.6 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4" />
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2.6v2M12 19.4v2M2.6 12h2M19.4 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" />
           </>
         )}
       </svg>
@@ -71,55 +60,64 @@ export function Nav() {
   return (
     <>
       <header
-        className="fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500"
+        className="fixed inset-x-0 top-0 z-[60] transition-[background-color,border-color,backdrop-filter] duration-500"
         style={{
           background: scrolled || open ? "var(--glass)" : "transparent",
-          backdropFilter: scrolled || open ? "var(--glass-blur)" : "none",
-          WebkitBackdropFilter: scrolled || open ? "var(--glass-blur)" : "none",
-          borderBottom: `1px solid ${scrolled && !open ? "var(--separator)" : "transparent"}`,
+          backdropFilter: scrolled || open ? "saturate(160%) blur(16px)" : "none",
+          WebkitBackdropFilter: scrolled || open ? "saturate(160%) blur(16px)" : "none",
+          borderBottom: `1px solid ${scrolled && !open ? "var(--glass-rule)" : "transparent"}`,
         }}
       >
         <nav
-          className="mx-auto flex max-w-[1120px] items-center justify-between px-[22px] md:px-8"
+          className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-5 md:px-10"
           style={{ height: "var(--nav-h)" }}
           aria-label="Main"
         >
-          <Link
-            href="/"
-            className="text-[15px] font-semibold tracking-[-0.015em] text-[var(--label)] transition-opacity duration-300 hover:opacity-60"
-          >
-            {SITE.shortName}
+          <Link href="/" className="group flex min-w-0 items-baseline gap-2">
+            <span className="font-display truncate text-[17px] tracking-[-0.01em] md:text-[19px]">
+              {SITE.name}
+            </span>
+            <span className="label hidden shrink-0 pb-px lg:inline">{SITE.initials}</span>
           </Link>
 
-          <ul className="hidden items-center gap-0.5 md:flex">
+          <ul className="hidden items-center gap-1 lg:flex">
             {NAV.filter((n) => n.href !== "/").map((item) => {
               const active = pathname === item.href;
               return (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="relative block px-3.5 py-1.5 text-[13px] tracking-[-0.005em] transition-colors duration-300"
-                    style={{ color: active ? "var(--label)" : "var(--label-secondary)" }}
+                    className="relative block px-3 py-1.5 text-[13.5px] transition-colors duration-300"
+                    style={{ color: active ? "var(--ink)" : "var(--ink-2)" }}
                   >
                     {active && (
                       <motion.span
-                        layoutId="nav-pill"
-                        className="absolute inset-0 rounded-full bg-[var(--fill-tertiary)]"
+                        layoutId="nav-dot"
+                        className="absolute inset-x-3 -bottom-px h-px bg-[var(--accent)]"
                         transition={{ duration: 0.45, ease: EASE }}
                       />
                     )}
-                    <span className="relative">{item.label}</span>
+                    {item.label}
                   </Link>
                 </li>
               );
             })}
           </ul>
 
-          <div className="flex items-center gap-1">
+          <div className="flex shrink-0 items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event("open-palette"))}
+              aria-label="Open command palette"
+              className="hidden items-center gap-2 rounded-full border border-[var(--rule)] px-3 py-1.5 text-[12px] text-[var(--ink-3)] transition-colors hover:border-[var(--rule-strong)] hover:text-[var(--ink)] md:flex"
+            >
+              <span>Search</span>
+              <kbd className="font-mono text-[10px] tracking-tight">⌘K</kbd>
+            </button>
             <ThemeToggle />
             <Link
               href="/contact"
-              className="hidden rounded-full bg-[var(--accent)] px-4 py-1.5 text-[13px] font-medium text-white transition-all duration-300 hover:bg-[var(--accent-hover)] md:block"
+              className="hidden rounded-full bg-[var(--ink)] px-4 py-1.5 text-[13px] text-[var(--bg)] transition-opacity duration-300 hover:opacity-85 md:block"
             >
               Get in touch
             </Link>
@@ -128,17 +126,17 @@ export function Nav() {
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
-              className="grid h-9 w-9 place-items-center rounded-full text-[var(--label)] transition-colors hover:bg-[var(--fill-tertiary)] md:hidden"
+              className="grid h-9 w-9 place-items-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--fill)] lg:hidden"
             >
-              <span className="relative block h-[11px] w-[17px]">
+              <span className="relative block h-[10px] w-[16px]">
                 <motion.span
-                  className="absolute left-0 block h-[1.5px] w-full rounded-full bg-current"
-                  animate={open ? { top: 5, rotate: 45 } : { top: 0, rotate: 0 }}
+                  className="absolute left-0 block h-[1.5px] w-full bg-current"
+                  animate={open ? { top: 4.5, rotate: 45 } : { top: 0, rotate: 0 }}
                   transition={{ duration: 0.4, ease: EASE }}
                 />
                 <motion.span
-                  className="absolute left-0 block h-[1.5px] w-full rounded-full bg-current"
-                  animate={open ? { top: 5, rotate: -45 } : { top: 10, rotate: 0 }}
+                  className="absolute left-0 block h-[1.5px] w-full bg-current"
+                  animate={open ? { top: 4.5, rotate: -45 } : { top: 9, rotate: 0 }}
                   transition={{ duration: 0.4, ease: EASE }}
                 />
               </span>
@@ -150,44 +148,49 @@ export function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-40 md:hidden"
+            className="fixed inset-0 z-[55] lg:hidden"
             style={{
               top: "var(--nav-h)",
-              background: "var(--glass-strong)",
-              backdropFilter: "var(--glass-blur)",
-              WebkitBackdropFilter: "var(--glass-blur)",
+              background: "var(--bg)",
             }}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE }}
+            animate={{ opacity: 1, pointerEvents: "auto" }}
+            exit={{ opacity: 0, pointerEvents: "none" }}
+            transition={{ duration: 0.28, ease: EASE }}
           >
             <motion.ul
-              className="flex flex-col px-[22px] pt-3"
+              className="flex flex-col px-5 pt-4"
               initial="hidden"
               animate="show"
-              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.045 } } }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
             >
-              {NAV.map((item) => (
+              {NAV.map((item, i) => (
                 <motion.li
                   key={item.href}
                   variants={{
-                    hidden: { opacity: 0, y: 14 },
+                    hidden: { opacity: 0, y: 12 },
                     show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
                   }}
                 >
                   <Link
                     href={item.href}
-                    className="block border-b border-[var(--separator)] py-4 text-[26px] font-semibold tracking-[-0.022em]"
-                    style={{
-                      color: pathname === item.href ? "var(--accent)" : "var(--label)",
-                    }}
+                    className="flex items-baseline gap-4 border-b border-[var(--rule)] py-4"
+                    style={{ color: pathname === item.href ? "var(--accent)" : "var(--ink)" }}
                   >
-                    {item.label}
+                    <span className="label w-6 shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="font-display text-[30px] leading-none">{item.label}</span>
                   </Link>
                 </motion.li>
               ))}
             </motion.ul>
+            <div className="px-5 pt-8">
+              <a
+                href={`mailto:${SITE.email}`}
+                className="mono-sm break-all text-[var(--ink-2)] transition-colors hover:text-[var(--accent)]"
+              >
+                {SITE.email}
+              </a>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

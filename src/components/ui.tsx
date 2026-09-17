@@ -3,111 +3,100 @@ import type { ReactNode } from "react";
 import { Reveal } from "./Reveal";
 
 export function PageHeader({
+  index,
   eyebrow,
   title,
   lede,
 }: {
+  index: string;
   eyebrow: string;
-  title: string;
+  title: ReactNode;
   lede?: string;
 }) {
   return (
-    <header className="shell pt-32 pb-12 md:pt-40 md:pb-16">
+    <header className="shell pb-14 pt-32 md:pb-20 md:pt-44">
       <Reveal>
-        <p className="text-[13px] font-medium tracking-[0.01em] text-[var(--accent)]">{eyebrow}</p>
+        <div className="flex items-baseline gap-4 border-b border-[var(--rule)] pb-4">
+          <span className="label">{index}</span>
+          <span className="label">{eyebrow}</span>
+        </div>
       </Reveal>
-      <Reveal delay={0.08}>
-        <h1 className="text-title-1 mt-3 text-balance">{title}</h1>
+      <Reveal delay={0.06}>
+        <h1 className="t-1 safe-text mt-8 max-w-[18ch] text-balance">{title}</h1>
       </Reveal>
       {lede && (
-        <Reveal delay={0.16}>
-          <p className="text-body-lg mt-5 max-w-2xl text-pretty text-[var(--label-secondary)]">
-            {lede}
-          </p>
+        <Reveal delay={0.12}>
+          <p className="t-lede safe-text mt-6 max-w-[54ch] text-pretty">{lede}</p>
         </Reveal>
       )}
     </header>
   );
 }
 
-export function SectionHeading({
-  eyebrow,
+export function SectionHead({
+  index,
   title,
   lede,
   action,
 }: {
-  eyebrow?: string;
-  title: string;
+  index: string;
+  title: ReactNode;
   lede?: string;
   action?: { href: string; label: string };
 }) {
   return (
-    <div className="mb-10 flex flex-wrap items-end justify-between gap-4 md:mb-14">
-      <div className="max-w-2xl">
-        {eyebrow && (
-          <Reveal>
-            <p className="text-[13px] font-medium text-[var(--accent)]">{eyebrow}</p>
+    <div className="mb-12 border-b border-[var(--rule)] pb-6 md:mb-16">
+      <Reveal>
+        <span className="label">{index}</span>
+      </Reveal>
+      <div className="mt-5 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+        <div className="max-w-[26ch]">
+          <Reveal delay={0.05}>
+            <h2 className="t-2 safe-text text-balance">{title}</h2>
           </Reveal>
-        )}
-        <Reveal delay={0.06}>
-          <h2 className="text-title-2 mt-2 text-balance">{title}</h2>
-        </Reveal>
+        </div>
         {lede && (
-          <Reveal delay={0.12}>
-            <p className="mt-3 text-pretty text-[15px] leading-relaxed text-[var(--label-secondary)] md:text-[17px]">
+          <Reveal delay={0.1}>
+            <p className="safe-text max-w-[40ch] text-pretty text-[15px] leading-relaxed text-[var(--ink-2)]">
               {lede}
             </p>
           </Reveal>
         )}
+        {action && (
+          <Reveal delay={0.14}>
+            <Arrow href={action.href}>{action.label}</Arrow>
+          </Reveal>
+        )}
       </div>
-      {action && (
-        <Reveal delay={0.16}>
-          <TextLink href={action.href}>{action.label}</TextLink>
-        </Reveal>
-      )}
     </div>
   );
 }
 
-export function TextLink({
-  href,
-  children,
-  external,
-}: {
-  href: string;
-  children: ReactNode;
-  external?: boolean;
-}) {
+export function Arrow({ href, children }: { href: string; children: ReactNode }) {
   const cls =
-    "group inline-flex items-center gap-1 text-[15px] font-medium text-[var(--accent)] transition-opacity duration-300 hover:opacity-70";
+    "group inline-flex shrink-0 items-center gap-2 text-[14px] text-[var(--ink)] transition-colors duration-300 hover:text-[var(--accent)]";
   const inner = (
     <>
-      {children}
+      <span className="link-underline">{children}</span>
       <svg
-        width="15"
-        height="15"
+        width="14"
+        height="14"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.2"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        aria-hidden="true"
-        className="transition-transform duration-300 group-hover:translate-x-0.5"
+        aria-hidden
+        className="transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1"
       >
-        <path d="M9 6l6 6-6 6" />
+        <path d="M4 12h15M13 6l6 6-6 6" />
       </svg>
     </>
   );
-
-  if (external || href.startsWith("http") || href.startsWith("mailto:")) {
+  if (href.startsWith("http") || href.startsWith("mailto:") || href.endsWith(".pdf")) {
     return (
-      <a
-        href={href}
-        target={href.startsWith("mailto:") ? undefined : "_blank"}
-        rel="noreferrer"
-        className={cls}
-      >
+      <a href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel="noreferrer" className={cls}>
         {inner}
       </a>
     );
@@ -122,33 +111,24 @@ export function TextLink({
 export function Button({
   href,
   children,
-  variant = "primary",
-  external,
-  download,
+  variant = "solid",
 }: {
   href: string;
   children: ReactNode;
-  variant?: "primary" | "secondary";
-  external?: boolean;
-  download?: boolean;
+  variant?: "solid" | "outline";
 }) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-[15px] font-medium transition-all duration-300 active:scale-[0.97]";
+    "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-[14.5px] transition-all duration-300 active:scale-[0.98]";
   const styles =
-    variant === "primary"
-      ? "bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]"
-      : "border border-[var(--separator-opaque)] text-[var(--label)] hover:bg-[var(--fill-tertiary)]";
+    variant === "solid"
+      ? "bg-[var(--ink)] text-[var(--bg)] hover:opacity-85"
+      : "border border-[var(--rule-strong)] text-[var(--ink)] hover:bg-[var(--fill)]";
   const cls = `${base} ${styles}`;
+  const ext = href.startsWith("http") || href.startsWith("mailto:") || href.endsWith(".pdf");
 
-  const isExternal = external || href.startsWith("http") || href.startsWith("mailto:");
-  if (isExternal || download) {
+  if (ext) {
     return (
-      <a
-        href={href}
-        className={cls}
-        target={href.startsWith("mailto:") ? undefined : "_blank"}
-        rel="noreferrer"
-      >
+      <a href={href} className={cls} target={href.startsWith("mailto:") ? undefined : "_blank"} rel="noreferrer">
         {children}
       </a>
     );
@@ -160,9 +140,9 @@ export function Button({
   );
 }
 
-export function Chip({ children }: { children: ReactNode }) {
+export function Tag({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-full bg-[var(--fill-tertiary)] px-3 py-1 text-[12.5px] font-medium tracking-[-0.003em] text-[var(--label-secondary)]">
+    <span className="mono-sm inline-flex items-center rounded-full border border-[var(--rule)] px-2.5 py-1 text-[11px] text-[var(--ink-2)]">
       {children}
     </span>
   );

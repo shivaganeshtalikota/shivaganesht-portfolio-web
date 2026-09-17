@@ -13,86 +13,80 @@ export default function ContactPage() {
   return (
     <>
       <PageHeader
+        index="01"
         eyebrow="Contact"
-        title="Let's talk."
+        title={<>Let's <em className="italic">talk.</em></>}
         lede="Open to engineering roles, collaborations and speaking invitations. I read every message myself."
       />
 
       <section className="shell pb-24 md:pb-32">
-        <div className="grid gap-10 lg:grid-cols-[1.35fr_0.65fr] lg:gap-14">
-          <Reveal>
-            <ContactForm />
-          </Reveal>
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-7">
+            <Reveal>
+              <ContactForm />
+            </Reveal>
+          </div>
 
-          <Reveal delay={0.1}>
-            <div className="space-y-8 lg:sticky lg:top-28">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--label-tertiary)]">
-                  Direct
-                </p>
-                <a
-                  href={`mailto:${SITE.email}`}
-                  className="mt-3 block text-pretty text-[17px] font-medium text-[var(--accent)] transition-opacity duration-300 hover:opacity-70"
-                >
-                  {SITE.email}
-                </a>
-                <p className="mt-2 text-[13.5px] text-[var(--label-secondary)]">{SITE.location}</p>
-              </div>
+          <div className="lg:col-span-5 lg:pl-8">
+            <Reveal delay={0.08}>
+              <div className="space-y-10 lg:sticky lg:top-28">
+                <div>
+                  <p className="label">Direct</p>
+                  <a
+                    href={`mailto:${SITE.email}`}
+                    className="safe-text mt-3 block text-[19px] text-[var(--accent)] transition-opacity duration-300 hover:opacity-70"
+                  >
+                    {SITE.email}
+                  </a>
+                  <p className="mt-2 text-[14px] text-[var(--ink-2)]">{SITE.location}</p>
+                  {SITE.available && (
+                    <p className="mt-4 inline-flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
+                      <span className="label text-[var(--accent)]">{SITE.availableLabel}</span>
+                    </p>
+                  )}
+                </div>
 
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--label-tertiary)]">
-                  Elsewhere
-                </p>
-                <ul className="mt-3 divide-y divide-[var(--separator)] overflow-hidden rounded-[var(--radius-md)] border border-[var(--separator)]">
-                  {SOCIALS.filter((s) => s.label !== "Email").map((s) => (
-                    <li key={s.label}>
-                      <a
-                        href={s.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="group flex items-center justify-between px-4 py-3.5 transition-colors duration-300 hover:bg-[var(--fill-tertiary)]"
-                      >
-                        <span>
-                          <span className="block text-[14px] font-medium">{s.label}</span>
-                          <span className="block text-[12.5px] text-[var(--label-tertiary)]">
-                            {s.handle}
-                          </span>
-                        </span>
-                        <svg
-                          width="15"
-                          height="15"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          aria-hidden
-                          className="text-[var(--label-tertiary)] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                <div>
+                  <p className="label">Mentoring</p>
+                  <p className="safe-text mt-3 text-[14.5px] leading-relaxed text-[var(--ink-2)]">
+                    I take 1:1 sessions on Topmate — career, engineering, building in public. There's a
+                    free discovery call if you just want to talk.
+                  </p>
+                  <a
+                    href={SITE.topmate}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 inline-flex items-center gap-2 rounded-full border border-[var(--rule-strong)] px-5 py-2.5 text-[14px] transition-colors duration-300 hover:bg-[var(--fill)]"
+                  >
+                    Book on Topmate
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M7 17L17 7M9 7h8v8" />
+                    </svg>
+                  </a>
+                </div>
+
+                <div>
+                  <p className="label">Elsewhere</p>
+                  <ul className="mt-3">
+                    {SOCIALS.filter((s) => s.label !== "Email").map((s) => (
+                      <li key={s.label}>
+                        <a
+                          href={s.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group flex items-baseline justify-between gap-4 border-b border-[var(--rule)] py-3.5 transition-colors duration-300 hover:text-[var(--accent)]"
                         >
-                          <path d="M7 17L17 7M9 7h8v8" />
-                        </svg>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                          <span className="text-[14.5px]">{s.label}</span>
+                          <span className="mono-sm truncate text-[var(--ink-3)]">{s.handle}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--label-tertiary)]">
-                  Résumé
-                </p>
-                <a
-                  href={SITE.resume}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-3 inline-flex items-center gap-2 text-[14px] font-medium text-[var(--accent)] transition-opacity duration-300 hover:opacity-70"
-                >
-                  Download PDF
-                </a>
-              </div>
-            </div>
-          </Reveal>
+            </Reveal>
+          </div>
         </div>
       </section>
     </>

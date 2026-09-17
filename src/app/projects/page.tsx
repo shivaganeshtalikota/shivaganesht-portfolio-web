@@ -5,7 +5,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { PROJECTS } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "Projects",
+  title: "Work",
   description:
     "matriXO, automapp, pAIr and more — the systems Shiva Ganesh Talikota has designed, built and shipped.",
 };
@@ -17,15 +17,16 @@ export default function ProjectsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Projects"
-        title="Things I built, and what they actually do."
-        lede="Every project here is described by its architecture, not its buzzwords. Where there's source, it's linked."
+        index="01"
+        eyebrow="Selected work"
+        title={<>Described by <em className="italic">architecture,</em> not buzzwords.</>}
+        lede="Every project here is explained by how it actually works. Where there's source, it's linked."
       />
 
       <section className="shell">
-        <Stagger className="grid gap-5 lg:grid-cols-2">
+        <Stagger className="grid items-stretch gap-5 lg:grid-cols-2">
           {featured.map((p, i) => (
-            <StaggerItem key={p.slug}>
+            <StaggerItem key={p.slug} className="h-full">
               <ProjectCard project={p} index={i} />
             </StaggerItem>
           ))}
@@ -34,18 +35,21 @@ export default function ProjectsPage() {
 
       <section className="shell py-24 md:py-32">
         <Reveal>
-          <h2 className="text-title-2 text-balance">Earlier work</h2>
+          <div className="flex items-baseline gap-4 border-b border-[var(--rule)] pb-4">
+            <span className="label">02</span>
+            <span className="label">Earlier work</span>
+          </div>
         </Reveal>
-        <Reveal delay={0.08}>
-          <p className="mt-3 max-w-2xl text-pretty text-[15px] text-[var(--label-secondary)] md:text-[17px]">
+        <Reveal delay={0.06}>
+          <p className="safe-text mt-8 max-w-[56ch] text-[15.5px] leading-relaxed text-[var(--ink-2)]">
             Competition entries and research builds from earlier in the degree. Some of the source
             lived on a GitHub account that is no longer available.
           </p>
         </Reveal>
 
-        <Stagger className="mt-12 grid gap-5 lg:grid-cols-2">
+        <Stagger className="mt-14 grid items-stretch gap-5 lg:grid-cols-2">
           {earlier.map((p, i) => (
-            <StaggerItem key={p.slug}>
+            <StaggerItem key={p.slug} className="h-full">
               <ProjectCard project={p} index={featured.length + i} />
             </StaggerItem>
           ))}

@@ -2,15 +2,17 @@ import { Button } from "@/components/ui";
 
 export default function NotFound() {
   return (
-    <section className="shell flex min-h-[70vh] flex-col items-center justify-center py-32 text-center">
-      <p className="text-[13px] font-medium text-[var(--accent)]">404</p>
-      <h1 className="text-title-1 mt-3 text-balance">This page doesn&apos;t exist.</h1>
-      <p className="text-body-lg mt-4 max-w-md text-pretty text-[var(--label-secondary)]">
-        The link may be old, or the page may have moved.
+    <section className="shell flex min-h-[75vh] flex-col items-start justify-center py-32">
+      <span className="label">Error 404</span>
+      <h1 className="t-1 mt-6 max-w-[16ch] text-balance">
+        This page doesn&apos;t <em className="italic text-[var(--accent)]">exist.</em>
+      </h1>
+      <p className="t-lede mt-5 max-w-[42ch] text-pretty">
+        The link may be old, or the page may have moved. Press <kbd className="font-mono text-[var(--ink)]">⌘K</kbd> to search.
       </p>
-      <div className="mt-9 flex flex-wrap justify-center gap-3">
+      <div className="mt-10 flex flex-wrap gap-3">
         <Button href="/">Back home</Button>
-        <Button href="/projects" variant="secondary">
+        <Button href="/projects" variant="outline">
           See the work
         </Button>
       </div>

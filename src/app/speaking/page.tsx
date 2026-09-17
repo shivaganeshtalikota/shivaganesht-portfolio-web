@@ -1,45 +1,39 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui";
 import { EventGallery } from "@/components/EventGallery";
-import { Reveal } from "@/components/Reveal";
-import { EVENTS } from "@/data/site";
+import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
+import { EVENTS, TALKS } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "Speaking & Events",
+  title: "Speaking",
   description:
-    "Ten documented events — speaking at the Microsoft Campus, pitching at ISB, and organising at T-Hub, GDSC WoW and South India's CSR Summit.",
+    "Speaking at the Microsoft Campus and GitHub Copilot Dev Days, pitching at ISB, organising at T-Hub, DraperU and South India's CSR Summit.",
 };
 
 export default function SpeakingPage() {
   const photoCount = EVENTS.reduce((n, e) => n + e.photos.length, 0);
-  const speakingCount = EVENTS.filter((e) => /speaker/i.test(e.role)).length;
+  const total = EVENTS.length + TALKS.length;
 
   return (
     <>
       <PageHeader
+        index="01"
         eyebrow="Speaking & Events"
-        title="Ten rooms I stood in, and what happened in them."
-        lede="Talks, pitches, summits and the volunteering in between — photographed as they happened."
+        title={<>Rooms I stood in, and what <em className="italic">happened in them.</em></>}
+        lede="Talks, pitches, workshops and the volunteering in between — most of it photographed as it happened."
       />
 
-      <section className="shell pb-16 md:pb-24">
+      <section className="shell pb-12">
         <Reveal>
-          <dl className="grid grid-cols-3 gap-px overflow-hidden rounded-[var(--radius-lg)] border border-[var(--separator)] bg-[var(--separator)]">
+          <dl className="grid grid-cols-3 border-y border-[var(--rule)]">
             {[
-              { v: String(EVENTS.length), l: "Events documented" },
-              { v: String(speakingCount), l: "As speaker" },
+              { v: String(total), l: "Events" },
+              { v: "4×", l: "At Microsoft" },
               { v: String(photoCount), l: "Photographs" },
             ].map((s) => (
-              <div key={s.l} className="bg-[var(--bg)] px-4 py-6 text-center md:py-8">
-                <dt className="sr-only">{s.l}</dt>
-                <dd>
-                  <span className="block text-[26px] font-bold tracking-[-0.025em] tabular-nums md:text-[34px]">
-                    {s.v}
-                  </span>
-                  <span className="mt-1 block text-[12.5px] text-[var(--label-secondary)]">
-                    {s.l}
-                  </span>
-                </dd>
+              <div key={s.l} className="py-7 pr-4">
+                <dt className="label">{s.l}</dt>
+                <dd className="font-display mt-2 text-[32px] leading-none md:text-[42px]">{s.v}</dd>
               </div>
             ))}
           </dl>
@@ -48,8 +42,52 @@ export default function SpeakingPage() {
 
       <EventGallery events={EVENTS} />
 
-      <section className="shell pt-24">
-        <p className="text-[12.5px] text-[var(--label-tertiary)]">
+      {/* engagements without photography */}
+      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-24 md:py-32">
+        <div className="shell">
+          <Reveal>
+            <div className="flex items-baseline gap-4 border-b border-[var(--rule)] pb-4">
+              <span className="label">02</span>
+              <span className="label">Also on the record</span>
+            </div>
+          </Reveal>
+          <Reveal delay={0.06}>
+            <h2 className="t-2 mt-8 max-w-[24ch] text-balance">
+              Stages and rooms <em className="italic">without a camera.</em>
+            </h2>
+          </Reveal>
+
+          <Stagger className="mt-12">
+            {TALKS.map((t, i) => (
+              <StaggerItem key={t.title}>
+                <div className="grid gap-4 border-t border-[var(--rule)] py-8 md:grid-cols-12 md:gap-8">
+                  <div className="md:col-span-1">
+                    <span className="label">{String(i + 1).padStart(2, "0")}</span>
+                  </div>
+                  <div className="md:col-span-4">
+                    <h3 className="font-display safe-text text-[22px] leading-tight md:text-[25px]">
+                      {t.title}
+                    </h3>
+                    <p className="safe-text mt-2 text-[13.5px] text-[var(--ink-3)]">{t.venue}</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <p className="label text-[var(--accent)]">{t.role}</p>
+                    <p className="mono-sm mt-1.5 text-[var(--ink-3)]">{t.year}</p>
+                  </div>
+                  <div className="md:col-span-5">
+                    <p className="safe-text text-pretty text-[14.5px] leading-[1.7] text-[var(--ink-2)]">
+                      {t.note}
+                    </p>
+                  </div>
+                </div>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </div>
+      </section>
+
+      <section className="shell py-14">
+        <p className="mono-sm text-[var(--ink-3)]">
           All photographs are from the events described. Click any image to open it full size.
         </p>
       </section>
