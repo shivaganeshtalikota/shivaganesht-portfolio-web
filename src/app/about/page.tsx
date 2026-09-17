@@ -18,7 +18,7 @@ export default function AboutPage() {
         index="01"
         eyebrow="About"
         title={<>I founded a company before I <em className="italic">finished the degree.</em></>}
-        lede="The short version is on the homepage. Here's what actually happened."
+        lede="The short version is on the homepage. This is the longer one."
       />
 
       <section className="shell">
@@ -112,12 +112,12 @@ export default function AboutPage() {
           </Reveal>
           <Reveal delay={0.06}>
             <h2 className="t-2 mt-8 max-w-[22ch] text-balance">
-              Grouped by what I <em className="italic">reach for.</em>
+              What I <em className="italic">reach for.</em>
             </h2>
           </Reveal>
           <Reveal delay={0.12}>
             <p className="safe-text mt-4 max-w-[52ch] text-[15px] text-[var(--ink-2)]">
-              Not by how well I know it — everything here has shipped in something real.
+              Grouped by what I pick up first, not by how well I know it. All of it has shipped in something.
             </p>
           </Reveal>
 

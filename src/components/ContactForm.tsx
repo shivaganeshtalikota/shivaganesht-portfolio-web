@@ -103,7 +103,7 @@ export function ContactForm() {
           rows={6}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Tell me what you're working on."
+          placeholder="Tell me what you are working on."
           className={`mt-2.5 resize-y ${FIELD}`}
         />
       </div>
@@ -120,8 +120,8 @@ export function ContactForm() {
       </button>
 
       <p className="safe-text mt-5 text-[12.5px] leading-relaxed text-[var(--ink-3)]">
-        This composes the message in your own mail app — nothing is sent through this site and
-        nothing is stored here. Prefer to write directly?{" "}
+        This opens the message in your own mail app. Nothing goes through this site and nothing is
+        stored here. Rather just write to me directly?{" "}
         <a href={`mailto:${SITE.email}`} className="link-underline text-[var(--accent)]">
           {SITE.email}
         </a>

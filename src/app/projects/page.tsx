@@ -20,8 +20,8 @@ export default function ProjectsPage() {
       <PageHeader
         index="01"
         eyebrow="Selected work"
-        title={<>Described by <em className="italic">architecture,</em> not buzzwords.</>}
-        lede="Every project here is explained by how it actually works. Where there's source, it's linked."
+        title={<>What I built, and <em className="italic">how it works.</em></>}
+        lede="No adjectives, just what each one does and what it is made of. Where the source is public, it is linked."
       />
 
       <section className="shell">
@@ -43,8 +43,8 @@ export default function ProjectsPage() {
         </Reveal>
         <Reveal delay={0.06}>
           <p className="safe-text mt-8 max-w-[56ch] text-[15.5px] leading-relaxed text-[var(--ink-2)]">
-            Competition entries and research builds from earlier in the degree. Some of the source
-            lived on a GitHub account that is no longer available.
+            Competition entries and research builds from earlier in the degree. Some of this code
+            lived on a GitHub account I no longer have access to, so there is nothing to link.
           </p>
         </Reveal>
 

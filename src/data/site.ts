@@ -21,7 +21,7 @@ export const SITE = {
   availableLabel: "Open to engineering roles",
   title: "Shiva Ganesh Talikota — Founder & Product Engineer",
   description:
-    "Founder of matriXO. I build AI systems that ship — automapp, pAIr — and speak about them at Microsoft, ISB and T-Hub. Hyderabad, India.",
+    "I'm Shiva. I run matriXO, build AI systems like automapp and pAIr, and speak at places like Microsoft and ISB. Based in Hyderabad.",
   keywords: [
     "Shiva Ganesh Talikota",
     "matriXO",
@@ -49,25 +49,25 @@ export const SOCIALS = [
 export const HERO = {
   eyebrow: "Founder & Product Engineer",
   lines: ["I build AI", "systems that", "actually ship."],
-  sub: "Founder of matriXO, where we map what students actually learn against what roles actually ask for. I turn hard problems into products people use — then I go on stage and explain how.",
+  sub: "I run matriXO, where we map what students learn in college against what jobs actually ask for. Most weeks I'm building. Some weeks I'm on a stage explaining how.",
   stats: [
-    { value: "2,000+", label: "Users served", note: "matriXO, from zero" },
-    { value: "2,089", label: "Agentathon 2025", note: "Guinness-record hackathon" },
-    { value: "20+", label: "Stages", note: "Microsoft, ISB, T-Hub" },
-    { value: "4,800+", label: "Following", note: "LinkedIn" },
+    { value: "2,000+", label: "Users served", note: "on matriXO" },
+    { value: "2,089", label: "Agentathon 2025", note: "people in one room" },
+    { value: "20+", label: "Talks & events", note: "Microsoft, ISB, T-Hub" },
+    { value: "4,800+", label: "Followers", note: "on LinkedIn" },
   ],
 } as const;
 
 export const ABOUT_SHORT =
-  "I founded a company before I finished the degree. matriXO started in 2023 to fix something broken in how students find opportunities — it maps what they actually learn against what roles actually ask for. It now serves thousands of them. Along the way I've built multi-agent AI systems, shipped production sites for real clients, and spoken about all of it at the Microsoft Campus, ISB and T-Hub.";
+  "I started matriXO in 2023, during my second year of college. The problem seemed obvious once I noticed it: you finish a degree with no real sense of which parts of it employers care about. So we built something that lines those two things up. A few thousand students use it now. The rest of my time goes to AI systems, client work, and the occasional stage.";
 
 export const ABOUT_LONG = [
-  "I started writing code because I wanted to build things, not because I wanted to study them. That instinct turned into matriXO in 2023 — a platform I founded and still engineer, built on Next.js, TypeScript and Firebase, which grew from zero to more than two thousand users while I was still an undergraduate.",
-  "The engineering underneath is the part I care about most. With automapp I built a natural-language automation engine on a hard architectural rule: the model proposes, it never executes. With pAIr I led a five-person team building a seven-agent compliance pipeline over a 310-document corpus of Indian government policy — it took Runner-Up at the SAP Code Unnati Innovation Marathon 4.0.",
-  "Before matriXO I worked at TurboHire, where I drove strategic initiatives that lifted operational efficiency by 20%, and held a core role at Wission Talks. I've also led media and marketing for Student Tribe. Each of those taught me something the degree didn't.",
-  "The other half of the work is telling people about it. I've spoken four times at Microsoft — most recently at GitHub Copilot Dev Days Telangana, an event that crossed 1,100 registrations in under 24 hours — on Generative AI at the Microsoft Campus, to 350+ students on agentic AI at AVNIET, and to a hall of a hundred at JBIET on turning ideas into startups. Through matriXO I run DevAgentic 1.0, our own agentic-AI workshop series at DraperU India.",
-  "My favourite moment wasn't on a stage though. It was in the audience at T-Hub, getting to ask Bob Metcalfe — the man who co-invented Ethernet and wrote Metcalfe's Law — what he was excited to build next. He talked about industrial automation and continuous health monitoring, and about Ethernet reaching 400 Gbps. I think about that answer a lot.",
-  "I graduated in Computer Science with a specialisation in AI & ML from Kommuri Pratap Reddy Institute of Technology in May 2026. I'm in Hyderabad, and I'm always interested in a good problem.",
+  "I learned to code because I wanted to make things, and school was slow about letting me. That impatience turned into matriXO in 2023. It runs on Next.js, TypeScript and Firebase, it went from nobody to a couple of thousand users while I was still an undergraduate, and I have been the one engineering it the whole way.",
+  "The part I like most is underneath. automapp started from one stubborn rule I gave myself: the model can propose a plan, but it is never allowed to run anything. Everything else about that project follows from holding that line. pAIr was bigger and messier. Five of us, seven agents, and 310 documents of Indian government policy that somebody had to make searchable. It came second at the SAP Code Unnati Innovation Marathon 4.0.",
+  "Before matriXO I was at TurboHire, where the work I drove took about 20% out of how long things took to run. I was on the core team at Wission Talks, and I ran media and marketing for Student Tribe. None of that was engineering, and all of it taught me things the degree did not.",
+  "Then there is the talking. Four times at Microsoft now, most recently on GitHub Copilot at Copilot Dev Days Telangana, which crossed 1,100 registrations in a day. Agentic AI to 350 students at AVNIET. A hall of a hundred at JBIET on turning an idea into something real. Through matriXO I run DevAgentic, our own workshop series at DraperU India.",
+  "My favourite moment was not on a stage though. I was in the audience at T-Hub when Bob Metcalfe was speaking, and I got to ask him what he was excited to build on Ethernet next. He co-invented the thing. He talked about factories and health monitoring and 400 Gbps like it was all still ahead of him. I think about that more than I expected to.",
+  "I finished my degree in Computer Science with an AI and ML specialisation at Kommuri Pratap Reddy Institute of Technology in May 2026. I am in Hyderabad. If you have a problem worth chewing on, I would like to hear it.",
 ] as const;
 
 /* ── projects ──────────────────────────────────────────────────── */
@@ -95,9 +95,9 @@ export const PROJECTS: Project[] = [
     role: "Founder & Product Engineer",
     featured: true,
     body: [
-      "matriXO maps what students actually learn in college against what roles actually ask for, then closes the gap with targeted recommendations. I founded it in 2023 and have engineered it end to end since — product design, architecture, build and release.",
-      "It grew from zero to over 2,000 users while holding 99.9% uptime, running on Next.js 14, React and TypeScript in strict mode, with Firebase Authentication, Cloud Firestore and Cloud Storage behind it.",
-      "Running it means working across engineering, product, marketing and operations at once — which is where I learned that shipping is a communication problem as much as a technical one.",
+      "matriXO looks at what a student has actually covered in college, compares it against what job listings are asking for, and points them at whatever is missing. I started it in 2023 and I have built every part of it since: the product, the architecture, the code, the releases.",
+      "It went from nobody to over 2,000 users and has held 99.9% uptime. Next.js 14 and React on the front, TypeScript in strict mode throughout, Firebase Auth, Firestore and Cloud Storage behind it.",
+      "Running it means doing engineering, product, marketing and operations in the same week. That is where I learned that shipping is mostly a communication problem wearing a technical costume.",
     ],
     tech: ["Next.js 14", "React", "TypeScript", "Firebase Auth", "Firestore", "Cloud Storage", "Vercel"],
     highlights: [
@@ -117,8 +117,8 @@ export const PROJECTS: Project[] = [
     featured: true,
     body: [
       "You describe what you want in one plain sentence. An LLM planner compiles it into a validated workflow document, and a deterministic engine executes that document.",
-      "The whole architecture rests on one rule: the model proposes, it never executes. There is no code path from model output to code execution — the planner can only emit a workflow the Zod-validated DSL already permits.",
-      "That constraint is what makes the rest defensible. Inbound email is treated as hostile: message bodies never reach the planner, and the executable step list is frozen before any email is read, so a prompt-injected instruction has nothing to widen.",
+      "One rule holds the whole thing up: the model proposes, it never executes. There is no path from model output to running code. The planner can only emit a workflow the Zod-validated DSL already allows.",
+      "That constraint is what makes the rest of it defensible. Inbound email is treated as hostile. Message bodies never reach the planner, and the list of steps is frozen before any email is opened, so an instruction hidden in one has nothing left to widen.",
     ],
     tech: ["Next.js 16", "React 19", "TypeScript", "Drizzle ORM", "libSQL / Turso", "Zod", "AES-256-GCM"],
     highlights: [
@@ -137,9 +137,9 @@ export const PROJECTS: Project[] = [
     role: "Team Lead · AI Systems Architect",
     featured: true,
     body: [
-      "Indian micro, small and medium enterprises lose real money to compliance they can't navigate. pAIr is an AI compliance and government-scheme navigator built to close that gap.",
-      "I led a five-person team and architected a seven-stage multi-agent pipeline — ingestion, reasoning, planning, execution, verification, explanation and scoring — each agent its own Python module behind an orchestrator.",
-      "It runs retrieval over a committed corpus of 310 scraped government policy documents using FAISS and 768-dimension Gemini embeddings, and answers in more than fifteen Indian languages.",
+      "Small Indian businesses lose real money to compliance nobody has the time to decode. pAIr is the thing I wanted to exist for them: a navigator for government schemes and the rules attached to them.",
+      "I led a team of five and designed the pipeline: seven stages, from ingestion through reasoning, planning, execution, verification and explanation to scoring. Each agent is its own Python module sitting behind an orchestrator.",
+      "It searches 310 scraped policy documents with FAISS over 768-dimension Gemini embeddings, and answers in more than fifteen Indian languages, because the people who need it do not all read English.",
     ],
     tech: ["Python 3.11", "FastAPI", "Gemini 2.5 Flash", "FAISS", "Firebase", "React 18", "Vite"],
     highlights: [
@@ -162,8 +162,8 @@ export const PROJECTS: Project[] = [
     role: "Build & deploy",
     featured: true,
     body: [
-      "A public-profile website built in React and Vite and deployed to a custom domain — real client work with a real audience, not a side project.",
-      "I wrote the large majority of the codebase and owned the build, the domain and the deployment pipeline through to production.",
+      "A public-profile site in React and Vite, on its own domain. Real client work with a real audience watching, which is a different kind of pressure to a side project.",
+      "I wrote most of the codebase and owned the build, the domain and the deploy pipeline all the way to production.",
     ],
     tech: ["React", "Vite", "JavaScript", "Vercel"],
     highlights: ["Live in production on its own domain", "Authored 49 of 52 commits"],
@@ -181,7 +181,7 @@ export const PROJECTS: Project[] = [
     featured: false,
     archived: true,
     body: [
-      "A decentralised real-estate platform enabling fractional ownership of land assets through tokenisation. I implemented ERC-1155 smart contracts in Solidity on Avalanche for asset ownership and transfers. Built as a prototype; never audited for production.",
+      "A platform for owning a fraction of a piece of land instead of all of it, using tokens. I wrote the ERC-1155 contracts in Solidity on Avalanche to handle ownership and transfers. It was a prototype and was never audited, so treat it as an experiment.",
     ],
     tech: ["Solidity", "ERC-1155", "Avalanche", "Web3"],
     highlights: ["ERC-1155 multi-token standard for fractional shares"],
@@ -196,7 +196,7 @@ export const PROJECTS: Project[] = [
     featured: false,
     archived: true,
     body: [
-      "An AI platform built for the Google Solution Challenge 2025 that automates and personalises the generation of learning content, aimed at making educational resources more accessible and easier to scale.",
+      "Built for the Google Solution Challenge 2025. It generates learning material and tailors it to the person reading it, so that good teaching resources are less of a bottleneck.",
     ],
     tech: ["AI", "Content automation", "EdTech"],
     highlights: ["Participant — Google Solution Challenge 2025"],
@@ -211,7 +211,7 @@ export const PROJECTS: Project[] = [
     featured: false,
     archived: true,
     body: [
-      "An emotion-recognition system combining NLP with computer vision, analysing written input alongside facial expression to predict emotional state and shape a response.",
+      "Reads what someone wrote and what their face is doing at the same time, then makes a guess at how they feel. Combining the two signals turned out to be far better than either one alone.",
     ],
     tech: ["Deep learning", "NLP", "Computer vision"],
     highlights: ["Text and vision signals fused for a single prediction"],
@@ -226,7 +226,7 @@ export const PROJECTS: Project[] = [
     featured: false,
     archived: true,
     body: [
-      "Built for the Amazon ML Challenge: an entity-extraction system reading product attributes — weight, dimensions, volume — directly from images using OCR and machine learning.",
+      "Built for the Amazon ML Challenge. It pulls weight, dimensions and volume straight out of a product photo using OCR and a bit of machine learning, so nobody has to type them in.",
     ],
     tech: ["Computer vision", "OCR", "Machine learning"],
     highlights: ["Participant — Amazon ML Challenge"],
@@ -391,7 +391,7 @@ export const AWARDS: Award[] = [
     org: "Microsoft · Hyderabad",
     year: "2024 — 2026",
     kind: "role",
-    body: "Four sessions on Microsoft campuses, including Generative AI at the Generative AI Summit and GitHub Copilot in Visual Studio Code at GitHub Copilot Dev Days Telangana — an event that crossed 1,100 registrations in under 24 hours.",
+    body: "Four sessions on Microsoft campuses. Generative AI at the Generative AI Summit, and GitHub Copilot in Visual Studio Code at Copilot Dev Days Telangana, which crossed 1,100 registrations inside a day.",
   },
   {
     title: "Microsoft Learn Student Ambassador",
@@ -419,7 +419,7 @@ export const AWARDS: Award[] = [
     org: "Amazon",
     year: "2024",
     kind: "award",
-    body: "Built an OCR and machine-learning system extracting product attributes — weight, dimensions, volume — directly from product images.",
+    body: "Built an OCR and machine-learning system that reads weight, dimensions and volume straight out of a product photo.",
   },
   {
     title: "Community leadership",
@@ -496,7 +496,7 @@ export const TALKS: Talk[] = [
     venue: "T-Hub Phase 2, Hyderabad",
     year: "2024",
     role: "Asked a question on stage",
-    note: "Asked the co-inventor of Ethernet what new applications he was excited to build on it. He talked about industrial automation, cloud computing and continuous health monitoring — and Ethernet reaching 400 Gbps.",
+    note: "Asked the co-inventor of Ethernet what he was excited to build on it next. He talked about industrial automation, cloud computing, continuous health monitoring, and Ethernet getting to 400 Gbps.",
   },
   {
     title: "AWS Summit Mumbai 2026",

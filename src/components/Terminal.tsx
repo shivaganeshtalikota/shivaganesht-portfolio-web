@@ -13,14 +13,14 @@ type Line = { t: "out" | "cmd" | "accent" | "dim" | "err"; v: string };
 const PROMPT = "visitor@shivaganesh:~$";
 
 const MENU: Line[] = [
-  { t: "accent", v: "shivaganesh.sh — interactive résumé" },
-  { t: "dim", v: "type a number, or a command. `help` for everything." },
+  { t: "accent", v: "shivaganesh.sh" },
+  { t: "dim", v: "pick a number, or type something. `help` lists the rest." },
   { t: "out", v: "" },
-  { t: "out", v: "  1  about        who I am, in about 60 seconds" },
-  { t: "out", v: "  2  projects     what I've built and how it works" },
+  { t: "out", v: "  1  about        the short version" },
+  { t: "out", v: "  2  projects     what I have built" },
   { t: "out", v: "  3  experience   where I've worked" },
   { t: "out", v: "  4  speaking     stages, talks and workshops" },
-  { t: "out", v: "  5  awards       recognition, stated precisely" },
+  { t: "out", v: "  5  awards       and what they mean" },
   { t: "out", v: "  6  contact      how to reach me" },
   { t: "out", v: "" },
 ];
@@ -36,7 +36,7 @@ const HELP: Line[] = [
   { t: "out", v: "  clear        clear the screen" },
   { t: "out", v: "  exit         close the terminal" },
   { t: "dim", v: "" },
-  { t: "dim", v: "  there are a few commands not on this list. try things." },
+  { t: "dim", v: "  a few more exist that are not on this list. poke around." },
   { t: "out", v: "" },
 ];
 
@@ -136,13 +136,13 @@ export function Terminal() {
         push([
           { t: "accent", v: "about" },
           { t: "out", v: "" },
-          { t: "out", v: "  Founder & Product Engineer. I started matriXO in 2023 to fix" },
-          { t: "out", v: "  something broken in how students find opportunities — it maps" },
-          { t: "out", v: "  what they actually learn against what roles actually ask for." },
-          { t: "out", v: "  Zero to 2,000+ users, built while I was still an undergraduate." },
+          { t: "out", v: "  I started matriXO in 2023, in my second year of college." },
+          { t: "out", v: "  It compares what a student has covered against what jobs" },
+          { t: "out", v: "  are asking for, and points at the gap. Over 2,000 people" },
+          { t: "out", v: "  use it. I built all of it." },
           { t: "out", v: "" },
           { t: "out", v: "  B.Tech CSE (AI & ML), KPRIT Hyderabad, 2022 — 2026." },
-          { t: "dim", v: "  `open about` for the long version." },
+          { t: "dim", v: "  type `open about` if you want the longer story." },
           { t: "out", v: "" },
         ]);
         break;
@@ -190,7 +190,7 @@ export function Terminal() {
             v: `  ${t.year.padEnd(10)} ${t.title}`,
           })),
           { t: "out", v: "" },
-          { t: "dim", v: "  4× speaker at Microsoft. 31 photographs on the site." },
+          { t: "dim", v: "  four of those were at Microsoft. 31 photos on the site." },
           { t: "out", v: "" },
         ]);
         break;
@@ -231,9 +231,9 @@ export function Terminal() {
           { t: "out", v: "" },
           { t: "out", v: "  next.js 16 · react 19 · typescript strict · tailwind v4" },
           { t: "out", v: "  instrument serif / instrument sans / jetbrains mono" },
-          { t: "out", v: "  hero: hand-written webgl — a 3d node graph, ~5kb" },
-          { t: "dim", v: "  no three.js. perspective matrices written by hand." },
-          { t: "out", v: "  every route statically prerendered" },
+          { t: "out", v: "  the hero is a 3d node graph in raw webgl, about 5kb" },
+          { t: "dim", v: "  no three.js. i wrote the perspective matrices by hand." },
+          { t: "out", v: "  every page is prerendered" },
           { t: "out", v: "" },
         ]);
         break;
@@ -274,7 +274,7 @@ export function Terminal() {
       case "sudo -i":
         push([
           { t: "err", v: "visitor is not in the sudoers file." },
-          { t: "dim", v: "This incident will be reported. (it will not)" },
+          { t: "dim", v: "this incident will be reported. (it will not be)" },
           { t: "out", v: "" },
         ]);
         break;
@@ -282,15 +282,15 @@ export function Terminal() {
       case "rm -rf":
         push([
           { t: "err", v: "nice try." },
-          { t: "dim", v: "this terminal is statically generated. there is nothing to delete." },
+          { t: "dim", v: "this whole thing is prerendered. there is nothing here to delete." },
           { t: "out", v: "" },
         ]);
         break;
       case "coffee":
-        push([{ t: "err", v: "418 — I'm a teapot." }, { t: "dim", v: "but I do run on chai." }, { t: "out", v: "" }]);
+        push([{ t: "err", v: "418 — I'm a teapot." }, { t: "dim", v: "i run on chai though." }, { t: "out", v: "" }]);
         break;
       case "42":
-        push([{ t: "accent", v: "the answer to life, the universe, and everything." }, { t: "dim", v: "still doesn't ship itself though." }, { t: "out", v: "" }]);
+        push([{ t: "accent", v: "the answer to life, the universe, and everything." }, { t: "dim", v: "still does not ship itself." }, { t: "out", v: "" }]);
         break;
       case "matrix":
         push([{ t: "accent", v: "wake up, Neo…" }, { t: "dim", v: "(try the konami code on the page instead: ↑↑↓↓←→←→BA)" }, { t: "out", v: "" }]);
@@ -309,7 +309,7 @@ export function Terminal() {
         break;
       case "vim":
       case "vi":
-        push([{ t: "err", v: "you're already trapped in one terminal. don't push it." }, { t: "out", v: "" }]);
+        push([{ t: "err", v: "you are already stuck in one terminal. do not push your luck." }, { t: "out", v: "" }]);
         break;
       case "npm install":
         push([{ t: "dim", v: "added 105 packages in 1m" }, { t: "dim", v: "(that actually happened)" }, { t: "out", v: "" }]);

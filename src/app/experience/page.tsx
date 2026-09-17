@@ -16,8 +16,8 @@ export default function ExperiencePage() {
       <PageHeader
         index="01"
         eyebrow="Experience"
-        title={<>Seven roles, run <em className="italic">alongside a degree.</em></>}
-        lede="Where I've worked and what I actually shipped there."
+        title={<>Seven jobs, one <em className="italic">degree,</em> same three years.</>}
+        lede="Where I have worked, and what came out of it."
       />
 
       <section className="shell">

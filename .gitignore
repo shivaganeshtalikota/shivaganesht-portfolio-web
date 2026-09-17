@@ -34,3 +34,8 @@ yarn-error.log*
 
 # original high-res source material (kept locally, not in git)
 /_source/
+
+# scratch/debug output that should never be committed
+/*.html
+/*.css
+!src/**/*.css

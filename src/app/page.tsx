@@ -41,7 +41,7 @@ export default function HomePage() {
             </Reveal>
             <Reveal delay={0.06}>
               <h2 className="t-2 mt-6 max-w-[20ch] text-balance">
-                Founder first. <em className="italic">Engineer</em> always.
+                Why I started <em className="italic">matriXO</em>.
               </h2>
             </Reveal>
             <Reveal delay={0.12}>
@@ -61,7 +61,7 @@ export default function HomePage() {
         <div className="shell">
           <SectionHead
             index="02 — Selected work"
-            title={<>Four things that are <em className="italic">live right now.</em></>}
+            title={<>Four things you can <em className="italic">open right now.</em></>}
             action={{ href: "/projects", label: "All work" }}
           />
           <Stagger className="grid items-stretch gap-5 lg:grid-cols-2">
@@ -79,8 +79,8 @@ export default function HomePage() {
         <div className="shell">
           <SectionHead
             index="03 — Speaking"
-            title={<>Microsoft, ISB, <em className="italic">T-Hub.</em></>}
-            lede="Ten documented events as speaker, organiser and sponsorship director — photographed as they happened."
+            title={<>Where I{"'"}ve been <em className="italic">talking.</em></>}
+            lede="Ten of them are documented here, with the photographs. Speaking, organising, and one stint running sponsorship."
             action={{ href: "/speaking", label: "All events" }}
           />
         </div>
@@ -116,7 +116,7 @@ export default function HomePage() {
         <div className="shell">
           <SectionHead
             index="04 — Recognition"
-            title={<>Some of it got <em className="italic">written down.</em></>}
+            title={<>Awards, and the <em className="italic">honest version.</em></>}
             action={{ href: "/awards", label: "All recognition" }}
           />
           <Stagger className="grid gap-5 md:grid-cols-3">
@@ -145,13 +145,13 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={0.06}>
           <h2 className="t-1 mt-7 max-w-[16ch] text-balance">
-            Got a hard problem? <em className="italic text-[var(--accent)]">Good.</em>
+            Working on something <em className="italic text-[var(--accent)]">difficult?</em>
           </h2>
         </Reveal>
         <Reveal delay={0.12}>
           <p className="t-lede safe-text mt-6 max-w-[46ch] text-pretty">
-            Open to engineering roles, collaborations and speaking invitations. I read every message
-            myself.
+            I read everything that comes in. Roles, collaborations, or an invitation to come and
+            speak somewhere.
           </p>
         </Reveal>
         <Reveal delay={0.18}>

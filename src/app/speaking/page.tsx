@@ -20,8 +20,8 @@ export default function SpeakingPage() {
       <PageHeader
         index="01"
         eyebrow="Speaking & Events"
-        title={<>Rooms I stood in, and what <em className="italic">happened in them.</em></>}
-        lede="Talks, pitches, workshops and the volunteering in between — most of it photographed as it happened."
+        title={<>Talks, workshops, and a few <em className="italic">very good rooms.</em></>}
+        lede="Some of these I spoke at, some I helped run, and a couple I just turned up to and learned something. Most of it was photographed."
       />
 
       <section className="shell pb-12">
@@ -54,7 +54,7 @@ export default function SpeakingPage() {
           </Reveal>
           <Reveal delay={0.06}>
             <h2 className="t-2 mt-8 max-w-[24ch] text-balance">
-              Stages and rooms <em className="italic">without a camera.</em>
+              The ones nobody <em className="italic">photographed.</em>
             </h2>
           </Reveal>
 
@@ -89,7 +89,7 @@ export default function SpeakingPage() {
 
       <section className="shell py-14">
         <p className="mono-sm text-[var(--ink-3)]">
-          All photographs are from the events described. Click any image to open it full size.
+          Every photograph here is from the event it sits under. Click any of them to see it properly.
         </p>
       </section>
     </>

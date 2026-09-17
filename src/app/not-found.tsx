@@ -8,7 +8,7 @@ export default function NotFound() {
         This page doesn&apos;t <em className="italic text-[var(--accent)]">exist.</em>
       </h1>
       <p className="t-lede mt-5 max-w-[42ch] text-pretty">
-        The link may be old, or the page may have moved. Press <kbd className="font-mono text-[var(--ink)]">⌘K</kbd> to search.
+        Either the link is old or I moved something. Press <kbd className="font-mono text-[var(--ink)]">⌘K</kbd> and it will probably turn up.
       </p>
       <div className="mt-10 flex flex-wrap gap-3">
         <Button href="/">Back home</Button>

@@ -17,7 +17,7 @@ export default function ContactPage() {
         index="01"
         eyebrow="Contact"
         title={<>Let's <em className="italic">talk.</em></>}
-        lede="Open to engineering roles, collaborations and speaking invitations. I read every message myself."
+        lede="Roles, collaborations, or a talk you want someone for. It comes straight to me and I read all of it."
       />
 
       <section className="shell pb-24 md:pb-32">
@@ -51,8 +51,8 @@ export default function ContactPage() {
                 <div>
                   <p className="label">Mentoring</p>
                   <p className="safe-text mt-3 text-[14.5px] leading-relaxed text-[var(--ink-2)]">
-                    I take 1:1 sessions on Topmate — career, engineering, building in public. There's a
-                    free discovery call if you just want to talk.
+                    I do 1:1 sessions on Topmate about careers, engineering, and building things in the open.
+                    There is a free call on there if you just want to talk first.
                   </p>
                   <a
                     href={SITE.topmate}

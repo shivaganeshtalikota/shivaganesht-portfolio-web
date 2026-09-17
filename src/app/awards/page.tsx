@@ -27,8 +27,8 @@ export default function AwardsPage() {
       <PageHeader
         index="01"
         eyebrow="Recognition"
-        title={<>The parts that got <em className="italic">written down.</em></>}
-        lede="Stated precisely — where something is a participation rather than a win, it says so."
+        title={<>Awards, and what they <em className="italic">actually mean.</em></>}
+        lede="Written carefully. Where I took part rather than won, it says that, because the difference matters."
       />
 
       <section className="shell">
