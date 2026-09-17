@@ -70,11 +70,28 @@ export function Easter() {
     );
   }, []);
 
-  /* ── konami ────────────────────────────────────────────────── */
+  /* ── konami, plus a few typed words ────────────────────────── */
   useEffect(() => {
     let i = 0;
+    let buf = "";
+
+    // typing any of these anywhere on the page does something
+    const WORDS: Record<string, () => void> = {
+      shiva: () => window.dispatchEvent(new Event("open-terminal")),
+      sudo: () => window.dispatchEvent(new Event("open-terminal")),
+      hire: () => window.dispatchEvent(new Event("open-palette")),
+      theme: () => setTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark"),
+    };
+
     const onKey = (e: KeyboardEvent) => {
+      const el = document.activeElement;
+      const typing =
+        el instanceof HTMLElement &&
+        (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
+
       const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+
+      // konami
       if (k === KONAMI[i]) {
         i += 1;
         if (i === KONAMI.length) {
@@ -84,10 +101,27 @@ export function Easter() {
       } else {
         i = k === KONAMI[0] ? 1 : 0;
       }
+
+      // typed words — never while the visitor is filling in a field
+      if (typing) {
+        buf = "";
+        return;
+      }
+      if (e.key.length === 1 && /[a-z]/i.test(e.key)) {
+        buf = (buf + e.key.toLowerCase()).slice(-12);
+        for (const w of Object.keys(WORDS)) {
+          if (buf.endsWith(w)) {
+            buf = "";
+            WORDS[w]();
+            break;
+          }
+        }
+      }
     };
+
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [setTheme]);
 
   /* type out the boot sequence */
   useEffect(() => {

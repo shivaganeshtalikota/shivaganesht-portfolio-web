@@ -53,7 +53,7 @@ export function EventGallery({ events }: { events: SpeakingEvent[] }) {
             <article
               key={ev.slug}
               id={ev.slug}
-              className="scroll-mt-28 border-t border-[var(--rule)] py-16 md:py-24"
+              className="scroll-mt-28 border-t border-[var(--rule)] py-14 md:py-24"
             >
               <div className="shell">
                 <div className="grid gap-6 md:grid-cols-12 md:gap-10">

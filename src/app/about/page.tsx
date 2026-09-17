@@ -5,6 +5,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { ABOUT_LONG, EDUCATION, SITE, SKILLS } from "@/data/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/about" },
   title: "About",
   description:
     "Shiva Ganesh Talikota — founder of matriXO, product engineer and speaker in Hyderabad. The longer version.",
@@ -71,7 +72,7 @@ export default function AboutPage() {
       </section>
 
       {/* education */}
-      <section className="shell py-24 md:py-32">
+      <section className="shell py-20 md:py-32">
         <Reveal>
           <div className="flex items-baseline gap-4 border-b border-[var(--rule)] pb-4">
             <span className="label">02</span>
@@ -101,7 +102,7 @@ export default function AboutPage() {
       </section>
 
       {/* skills */}
-      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-24 md:py-32">
+      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-20 md:py-32">
         <div className="shell">
           <Reveal>
             <div className="flex items-baseline gap-4 border-b border-[var(--rule)] pb-4">

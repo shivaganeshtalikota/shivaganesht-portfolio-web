@@ -5,6 +5,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { AWARDS, CERTIFICATIONS } from "@/data/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/awards" },
   title: "Recognition",
   description:
     "Guinness World Records participation at Agentathon 2025, Runner-Up at SAP Code Unnati 4.0, 4× speaker at Microsoft, and more.",
@@ -83,7 +84,7 @@ export default function AwardsPage() {
         </Stagger>
       </section>
 
-      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-24 md:py-32">
+      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-20 md:py-32">
         <div className="shell">
           <Reveal>
             <div className="flex items-baseline gap-4 border-b border-[var(--rule)] pb-4">

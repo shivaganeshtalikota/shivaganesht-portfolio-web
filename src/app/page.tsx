@@ -16,7 +16,7 @@ export default function HomePage() {
       <Hero />
 
       {/* ── about ───────────────────────────────────────────── */}
-      <section className="shell py-24 md:py-36">
+      <section className="shell py-20 md:py-36">
         <div className="grid gap-12 md:grid-cols-12 md:gap-10">
           <div className="md:col-span-4">
             <Reveal>
@@ -57,7 +57,7 @@ export default function HomePage() {
       </section>
 
       {/* ── work ────────────────────────────────────────────── */}
-      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-24 md:py-36">
+      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-20 md:py-36">
         <div className="shell">
           <SectionHead
             index="02 — Selected work"
@@ -75,7 +75,7 @@ export default function HomePage() {
       </section>
 
       {/* ── speaking ────────────────────────────────────────── */}
-      <section className="py-24 md:py-36">
+      <section className="py-20 md:py-36">
         <div className="shell">
           <SectionHead
             index="03 — Speaking"
@@ -112,7 +112,7 @@ export default function HomePage() {
       </section>
 
       {/* ── recognition ─────────────────────────────────────── */}
-      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-24 md:py-36">
+      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-20 md:py-36">
         <div className="shell">
           <SectionHead
             index="04 — Recognition"
@@ -139,7 +139,7 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA ─────────────────────────────────────────────── */}
-      <section className="shell py-28 md:py-40">
+      <section className="shell py-24 md:py-40">
         <Reveal>
           <p className="label">05 — Contact</p>
         </Reveal>

@@ -5,6 +5,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { PROJECTS } from "@/data/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/projects" },
   title: "Work",
   description:
     "matriXO, automapp, pAIr and more — the systems Shiva Ganesh Talikota has designed, built and shipped.",
@@ -33,7 +34,7 @@ export default function ProjectsPage() {
         </Stagger>
       </section>
 
-      <section className="shell py-24 md:py-32">
+      <section className="shell py-20 md:py-32">
         <Reveal>
           <div className="flex items-baseline gap-4 border-b border-[var(--rule)] pb-4">
             <span className="label">02</span>

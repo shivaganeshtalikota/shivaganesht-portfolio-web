@@ -5,6 +5,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { EVENTS, TALKS } from "@/data/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/speaking" },
   title: "Speaking",
   description:
     "Speaking at the Microsoft Campus and GitHub Copilot Dev Days, pitching at ISB, organising at T-Hub, DraperU and South India's CSR Summit.",
@@ -43,7 +44,7 @@ export default function SpeakingPage() {
       <EventGallery events={EVENTS} />
 
       {/* engagements without photography */}
-      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-24 md:py-32">
+      <section className="border-t border-[var(--rule)] bg-[var(--bg-sunken)] py-20 md:py-32">
         <div className="shell">
           <Reveal>
             <div className="flex items-baseline gap-4 border-b border-[var(--rule)] pb-4">

@@ -5,6 +5,7 @@ import { Reveal } from "@/components/Reveal";
 import { SITE, SOCIALS } from "@/data/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/contact" },
   title: "Contact",
   description: `Get in touch with Shiva Ganesh Talikota — ${SITE.email}. Open to engineering roles, collaborations and speaking invitations.`,
 };

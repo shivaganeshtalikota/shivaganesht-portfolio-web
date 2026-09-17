@@ -14,7 +14,7 @@ export function PageHeader({
   lede?: string;
 }) {
   return (
-    <header className="shell pb-14 pt-32 md:pb-20 md:pt-44">
+    <header className="shell pb-12 pt-28 md:pb-20 md:pt-44">
       <Reveal>
         <div className="flex items-baseline gap-4 border-b border-[var(--rule)] pb-4">
           <span className="label">{index}</span>

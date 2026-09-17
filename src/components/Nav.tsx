@@ -59,15 +59,29 @@ export function Nav() {
 
   return (
     <>
-      <header
-        className="fixed inset-x-0 top-0 z-[60] transition-[background-color,border-color,backdrop-filter] duration-500"
-        style={{
-          background: scrolled || open ? "var(--glass)" : "transparent",
-          backdropFilter: scrolled || open ? "saturate(160%) blur(16px)" : "none",
-          WebkitBackdropFilter: scrolled || open ? "saturate(160%) blur(16px)" : "none",
-          borderBottom: `1px solid ${scrolled && !open ? "var(--glass-rule)" : "transparent"}`,
-        }}
-      >
+      <header className="fixed inset-x-0 top-0 z-[60]">
+        {/* The blur lives on its own layer and is masked to fade out at the
+            bottom, so there's no hard grey band cutting across the page.
+            Nav content sits above it and stays perfectly crisp. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 transition-opacity duration-500"
+          style={{
+            opacity: scrolled || open ? 1 : 0,
+            background: open
+              ? "var(--bg)"
+              : "linear-gradient(to bottom, var(--glass) 0%, var(--glass) 55%, transparent 100%)",
+            backdropFilter: "saturate(180%) blur(22px)",
+            WebkitBackdropFilter: "saturate(180%) blur(22px)",
+            maskImage: open
+              ? "none"
+              : "linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%)",
+            WebkitMaskImage: open
+              ? "none"
+              : "linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%)",
+            height: open ? "100%" : "calc(100% + 18px)",
+          }}
+        />
         <nav
           className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-5 md:px-10"
           style={{ height: "var(--nav-h)" }}

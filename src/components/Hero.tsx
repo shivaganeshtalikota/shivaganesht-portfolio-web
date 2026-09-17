@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { HERO, SITE } from "@/data/site";
-import { ShaderField } from "./ShaderField";
+import { NeuralField } from "./NeuralField";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -13,10 +13,10 @@ export function Hero() {
 
   return (
     <section className="relative isolate overflow-hidden">
-      <ShaderField className="pointer-events-none absolute inset-0 -z-10 h-full w-full" />
+      <NeuralField className="pointer-events-none absolute inset-0 -z-10 h-full w-full" />
 
-      <div className="shell pt-32 md:pt-40">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
+      <div className="shell pt-28 md:pt-40">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
           {/* headline */}
           <div className="lg:col-span-7">
             <motion.div
@@ -117,23 +117,21 @@ export function Hero() {
           </motion.figure>
         </div>
 
-        {/* stat band */}
+        {/* Stat band. Each cell carries its own top rule, so the dividers
+            always line up however the grid reflows. */}
         <motion.dl
-          className="mt-20 grid grid-cols-2 border-t border-[var(--rule)] md:mt-28 md:grid-cols-4"
+          className="mt-14 grid grid-cols-2 gap-x-5 gap-y-8 md:mt-24 md:grid-cols-4 md:gap-x-8 md:gap-y-0"
           initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.9, delay: 0.65, ease: EASE }}
         >
           {HERO.stats.map((s) => (
-            <div
-              key={s.label}
-              className="border-b border-[var(--rule)] py-7 pr-5 last:border-b-0 sm:[&:nth-last-child(-n+2)]:border-b-0 md:border-b-0 md:py-9"
-            >
+            <div key={s.label} className="flex flex-col border-t border-[var(--rule)] pt-5">
               <dt className="label">{s.label}</dt>
-              <dd className="font-display mt-2 text-[34px] leading-none tracking-[-0.02em] md:text-[44px]">
+              <dd className="font-display mt-2.5 text-[32px] leading-none tracking-[-0.02em] md:text-[44px]">
                 {s.value}
               </dd>
-              <dd className="mono-sm mt-2 text-[var(--ink-3)]">{s.note}</dd>
+              <dd className="mono-sm mt-2 text-pretty text-[var(--ink-3)]">{s.note}</dd>
             </div>
           ))}
         </motion.dl>
