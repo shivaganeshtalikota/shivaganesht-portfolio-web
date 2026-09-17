@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { NAV, SITE, SOCIALS } from "@/data/site";
+import { EXTRA_ROUTES, NAV, SITE, SOCIALS } from "@/data/site";
+import { FooterName } from "./FooterName";
 
 export function Footer() {
   return (
@@ -7,8 +8,8 @@ export function Footer() {
       <div className="shell py-16 md:py-20">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
-            <p className="font-display text-[30px] leading-none md:text-[38px]">{SITE.name}</p>
-            <p className="safe-text mt-4 max-w-[34ch] text-[14.5px] leading-relaxed text-[var(--ink-2)]">
+            <FooterName />
+            <p className="safe-text mt-7 max-w-[34ch] text-[14.5px] leading-relaxed text-[var(--ink-2)]">
               {SITE.role} at{" "}
               <a href={SITE.companyUrl} target="_blank" rel="noreferrer" className="link-underline text-[var(--ink)]">
                 matriXO
@@ -26,7 +27,7 @@ export function Footer() {
           <nav className="md:col-span-3" aria-label="Footer">
             <p className="label">Pages</p>
             <ul className="mt-4 space-y-2.5">
-              {NAV.map((n) => (
+              {[...NAV, ...EXTRA_ROUTES].map((n) => (
                 <li key={n.href}>
                   <Link href={n.href} className="text-[14px] text-[var(--ink-2)] transition-colors duration-300 hover:text-[var(--ink)]">
                     {n.label}

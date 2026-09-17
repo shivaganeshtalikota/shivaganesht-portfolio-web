@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { NAV, SITE } from "@/data/site";
+import { EXTRA_ROUTES, NAV, SITE } from "@/data/site";
 
 const PRIORITY: Record<string, number> = {
   "/": 1,
@@ -9,11 +9,13 @@ const PRIORITY: Record<string, number> = {
   "/experience": 0.8,
   "/awards": 0.7,
   "/contact": 0.7,
+  "/now": 0.6,
+  "/speaking-kit": 0.6,
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  return NAV.map((n) => ({
+  return [...NAV, ...EXTRA_ROUTES].map((n) => ({
     url: `${SITE.url}${n.href === "/" ? "" : n.href}`,
     lastModified: now,
     changeFrequency: n.href === "/" ? ("weekly" as const) : ("monthly" as const),

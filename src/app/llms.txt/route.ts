@@ -102,6 +102,8 @@ function build() {
   p(`- ${SITE.url}/experience — role history`);
   p(`- ${SITE.url}/speaking — talks and events, with photography`);
   p(`- ${SITE.url}/awards — recognition and certifications`);
+  p(`- ${SITE.url}/now — what he is working on at the moment, kept current`);
+  p(`- ${SITE.url}/speaking-kit — bio at three lengths, headshots, topics, past talks`);
   p(`- ${SITE.url}/contact — how to get in touch`);
   p();
 

@@ -6,6 +6,8 @@ import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Easter } from "@/components/Easter";
 import { Terminal } from "@/components/Terminal";
+import { ScrollReset } from "@/components/ScrollReset";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const serif = Instrument_Serif({
@@ -260,6 +262,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
+          <ScrollReset />
           <a
             href="#main"
             className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-[var(--accent)] focus:px-5 focus:py-2.5 focus:text-sm focus:text-[var(--accent-ink)]"
@@ -271,6 +274,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
           <Easter />
           <Terminal />
+          <Analytics />
         </Providers>
       </body>
     </html>

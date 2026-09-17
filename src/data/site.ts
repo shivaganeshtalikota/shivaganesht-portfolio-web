@@ -523,5 +523,80 @@ export const NAV = [
   { href: "/experience", label: "Experience" },
   { href: "/speaking", label: "Speaking" },
   { href: "/awards", label: "Recognition" },
+  { href: "/now", label: "Now" },
   { href: "/contact", label: "Contact" },
 ] as const;
+
+/* Reachable and in the sitemap, but kept out of the main nav so it
+   doesn't crowd it. Linked from the speaking page and the footer. */
+export const EXTRA_ROUTES = [{ href: "/speaking-kit", label: "Speaker kit" }] as const;
+
+/* ── /now ──────────────────────────────────────────────────────── */
+
+export const NOW = {
+  updated: "September 2026",
+  intro:
+    "A /now page, in the spirit of nownownow.com. What I am actually doing at the moment, rather than everything I have ever done. I try to keep this honest and up to date.",
+  sections: [
+    {
+      heading: "Building",
+      items: [
+        "automapp. Hardening the connector layer and writing the docs I keep wishing existed.",
+        "matriXO. Recommendation quality is the thing I am chipping at right now.",
+        "This site. It keeps growing features I did not plan.",
+      ],
+    },
+    {
+      heading: "Running",
+      items: [
+        "DevAgentic, our agentic-AI workshop series at DraperU India.",
+        "1:1 sessions on Topmate, mostly with students trying to get a first role.",
+      ],
+    },
+    {
+      heading: "Learning",
+      items: [
+        "Writing WebGL by hand instead of reaching for a library. The hero on this site came out of that.",
+        "Evaluation for agent systems, which is still mostly an unsolved mess.",
+      ],
+    },
+    {
+      heading: "Open to",
+      items: [
+        "Engineering roles, full time.",
+        "Speaking invitations, particularly on agentic AI and on building things as a student.",
+      ],
+    },
+  ],
+} as const;
+
+/* ── /speaking-kit ─────────────────────────────────────────────── */
+
+export const KIT = {
+  topics: [
+    "Agentic AI and multi-agent systems, from the building side",
+    "Generative AI in practice, and where it still falls over",
+    "GitHub Copilot and AI-assisted development",
+    "Building a company while still a student",
+    "Turning an idea into something people actually use",
+  ],
+  bios: [
+    {
+      length: "One line",
+      text: "Shiva Ganesh Talikota is the founder of matriXO and a product engineer in Hyderabad.",
+    },
+    {
+      length: "Fifty words",
+      text: "Shiva Ganesh Talikota is the founder of matriXO, an education-technology platform he started in 2023 and grew to over 2,000 users while still an undergraduate. He builds AI systems, has spoken four times at Microsoft, and took Runner-Up at the SAP Code Unnati Innovation Marathon 4.0.",
+    },
+    {
+      length: "The full one",
+      text: "Shiva Ganesh Talikota is a founder and product engineer based in Hyderabad. He started matriXO in 2023, during his second year of college, to close the gap between what students learn and what employers ask for; it now serves more than 2,000 users at 99.9% uptime. His engineering work includes automapp, a natural-language automation engine built so that the model can propose a plan but never execute one, and pAIr, a seven-agent compliance navigator over 310 Indian government policy documents that took Runner-Up at the SAP Code Unnati Innovation Marathon 4.0. He has spoken four times at Microsoft, including on GitHub Copilot at Copilot Dev Days Telangana, and to 350 students on agentic AI at AVNIET. He holds a Guinness World Records participation certificate from Agentathon 2025. He graduated in Computer Science with an AI and ML specialisation in May 2026.",
+    },
+  ],
+  headshots: [
+    { label: "Formal, square", src: "/portrait/hero.webp", note: "1400 × 1400" },
+    { label: "Formal, wide", src: "/portrait/wide.webp", note: "2200 × 1467" },
+    { label: "Candid, Microsoft Campus", src: "/portrait/microsoft.webp", note: "900 × 900" },
+  ],
+} as const;

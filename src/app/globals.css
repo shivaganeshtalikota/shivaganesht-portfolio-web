@@ -126,7 +126,9 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  scroll-behavior: smooth;
+  /* NOT smooth: it fights Next's scroll-to-top on navigation and leaves you
+     partway down the new page. Smooth is opt-in per interaction instead. */
+  scroll-behavior: auto;
   scroll-padding-top: calc(var(--nav-h) + var(--safe-t) + 28px);
   /* also on html so the page never paints against the browser's white canvas */
   background: var(--bg);
@@ -326,6 +328,18 @@ body::after {
     border-color: var(--rule-strong);
     box-shadow: var(--shadow-lg);
   }
+}
+
+/* The footer name, after enough provocation. */
+@keyframes barrel-roll {
+  from { transform: rotate(0turn); }
+  to   { transform: rotate(1turn); }
+}
+html.barrel-roll {
+  overflow-x: clip;
+}
+html.barrel-roll body {
+  animation: barrel-roll 1.15s cubic-bezier(0.62, 0.02, 0.34, 1) 1;
 }
 
 /* ── reduced motion ───────────────────────────────────────────── */
