@@ -393,7 +393,8 @@ export function Terminal() {
   return (
     <>
       {/* launcher */}
-      <div className="no-print fixed bottom-5 right-5 z-[95] flex items-center gap-3 md:bottom-7 md:right-7">
+      <div className="no-print fixed right-4 z-[95] flex items-center gap-3 md:right-7"
+        style={{ bottom: "calc(1.25rem + var(--safe-b))" }}>
         <AnimatePresence>
           {nudge && !open && (
             <motion.button
@@ -437,7 +438,12 @@ export function Terminal() {
             exit={{ opacity: 0, y: 12, scale: 0.98, pointerEvents: "none" }}
             transition={{ duration: 0.34, ease: EASE }}
             onClick={() => inputRef.current?.focus()}
-            className="no-print fixed inset-x-3 bottom-[88px] z-[96] flex h-[min(62vh,520px)] flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--rule-strong)] bg-[var(--bg-raised)] shadow-[var(--shadow-lg)] sm:inset-x-auto sm:right-7 sm:w-[420px] md:bottom-[100px] md:w-[460px]"
+            className="no-print fixed inset-x-3 z-[96] flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--rule-strong)] bg-[var(--bg-raised)] shadow-[var(--shadow-lg)] sm:inset-x-auto sm:right-7 sm:w-[420px] md:w-[460px]"
+            style={{
+              bottom: "calc(5.5rem + var(--safe-b))",
+              height: "min(60vh, 480px)",
+              maxHeight: "calc(100dvh - 9rem - var(--safe-t) - var(--safe-b))",
+            }}
           >
             <header className="flex shrink-0 items-center gap-2 border-b border-[var(--rule)] px-4 py-2.5">
               <span className="flex gap-1.5" aria-hidden>
@@ -461,7 +467,7 @@ export function Terminal() {
 
             <div
               ref={bodyRef}
-              className="flex-1 overflow-y-auto px-4 py-3 font-mono text-[12.5px] leading-[1.65]"
+              className="flex-1 overflow-y-auto px-4 py-3 font-mono text-[11.5px] leading-[1.6] sm:text-[12.5px] sm:leading-[1.65]"
               role="log"
               aria-live="polite"
             >
@@ -491,6 +497,7 @@ export function Terminal() {
                 aria-label="Terminal input"
                 placeholder="try 1, or `help`"
                 className="w-full bg-transparent font-mono text-[12.5px] text-[var(--ink)] outline-none placeholder:text-[var(--ink-3)]"
+                style={{ fontSize: "16px" }}
               />
             </div>
           </motion.section>

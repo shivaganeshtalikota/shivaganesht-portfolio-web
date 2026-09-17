@@ -84,6 +84,8 @@ export const viewport: Viewport = {
   ],
   width: "device-width",
   initialScale: 1,
+  // lets the page (and the nav glass) extend under the notch
+  viewportFit: "cover",
 };
 
 /* ── structured data ────────────────────────────────────────────

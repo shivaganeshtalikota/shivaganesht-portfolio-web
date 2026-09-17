@@ -15,7 +15,7 @@ export function Hero() {
     <section className="relative isolate overflow-hidden">
       <NeuralField className="pointer-events-none absolute inset-0 -z-10 h-full w-full" />
 
-      <div className="shell pt-28 md:pt-40">
+      <div className="shell pt-page">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
           {/* headline */}
           <div className="lg:col-span-7">
