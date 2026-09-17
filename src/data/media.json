@@ -1,0 +1,317 @@
+{
+  "portraits": {
+    "hero": {
+      "src": "/portrait/hero.webp",
+      "w": 1400,
+      "h": 1400
+    },
+    "hero-sm": {
+      "src": "/portrait/hero-sm.webp",
+      "w": 640,
+      "h": 640
+    },
+    "wide": {
+      "src": "/portrait/wide.webp",
+      "w": 2200,
+      "h": 1467
+    },
+    "microsoft": {
+      "src": "/portrait/microsoft.webp",
+      "w": 900,
+      "h": 900
+    },
+    "gwr-award": {
+      "src": "/portrait/gwr-award.webp",
+      "w": 885,
+      "h": 1400
+    }
+  },
+  "events": [
+    {
+      "slug": "genai-summit-microsoft",
+      "year": "2024",
+      "title": "Generative AI Summit — Microsoft Campus",
+      "venue": "Microsoft Campus, Hyderabad",
+      "role": "Speaker & Organising Team",
+      "blurb": "Spoke on Generative AI at the Generative AI Summit at the Microsoft Campus in Hyderabad, showing how AI can reshape artistic expression through music creation. Also served on the organising team alongside the e-DAM team, working with industry experts and fellow speakers.",
+      "photos": [
+        {
+          "src": "/events/genai-summit-microsoft-1.webp",
+          "thumb": "/events/thumbs/genai-summit-microsoft-1.webp",
+          "w": 1600,
+          "h": 1066
+        },
+        {
+          "src": "/events/genai-summit-microsoft-2.webp",
+          "thumb": "/events/thumbs/genai-summit-microsoft-2.webp",
+          "w": 1600,
+          "h": 1066
+        },
+        {
+          "src": "/events/genai-summit-microsoft-3.webp",
+          "thumb": "/events/thumbs/genai-summit-microsoft-3.webp",
+          "w": 901,
+          "h": 1600
+        },
+        {
+          "src": "/events/genai-summit-microsoft-4.webp",
+          "thumb": "/events/thumbs/genai-summit-microsoft-4.webp",
+          "w": 1600,
+          "h": 1066
+        },
+        {
+          "src": "/events/genai-summit-microsoft-5.webp",
+          "thumb": "/events/thumbs/genai-summit-microsoft-5.webp",
+          "w": 1600,
+          "h": 1066
+        },
+        {
+          "src": "/events/genai-summit-microsoft-6.webp",
+          "thumb": "/events/thumbs/genai-summit-microsoft-6.webp",
+          "w": 1600,
+          "h": 734
+        }
+      ]
+    },
+    {
+      "slug": "jbiet-creativity-innovation",
+      "year": "2025",
+      "title": "Creativity & Innovation — JBIET",
+      "venue": "J.B. Institute of Engineering and Technology, Hyderabad",
+      "role": "Guest Speaker",
+      "blurb": "Delivered a guest speaker session on “Creativity & Innovation” to 100+ students on turning ideas into startups, building real-world projects, and building an innovation mindset. A key milestone in the move from learner to speaker and mentor.",
+      "photos": [
+        {
+          "src": "/events/jbiet-creativity-innovation-1.webp",
+          "thumb": "/events/thumbs/jbiet-creativity-innovation-1.webp",
+          "w": 1200,
+          "h": 1600
+        },
+        {
+          "src": "/events/jbiet-creativity-innovation-2.webp",
+          "thumb": "/events/thumbs/jbiet-creativity-innovation-2.webp",
+          "w": 900,
+          "h": 1600
+        }
+      ]
+    },
+    {
+      "slug": "aivi-2025-isb",
+      "year": "2025",
+      "title": "AiVi 2025 — Indian School of Business",
+      "venue": "Indian School of Business (ISB), Hyderabad",
+      "role": "Startup Pitch — Shortlisted",
+      "blurb": "Our startup idea was shortlisted to pitch to investors under the Startup and Business Track at AiVi 2025 at ISB Hyderabad. The event featured sessions on Agentic AI and Vibe Coding, a fireside chat on India’s AI adoption journey, and a chance to meet the CEO of T-Hub.",
+      "photos": [
+        {
+          "src": "/events/aivi-2025-isb-1.webp",
+          "thumb": "/events/thumbs/aivi-2025-isb-1.webp",
+          "w": 578,
+          "h": 1280
+        },
+        {
+          "src": "/events/aivi-2025-isb-2.webp",
+          "thumb": "/events/thumbs/aivi-2025-isb-2.webp",
+          "w": 1280,
+          "h": 720
+        },
+        {
+          "src": "/events/aivi-2025-isb-3.webp",
+          "thumb": "/events/thumbs/aivi-2025-isb-3.webp",
+          "w": 1280,
+          "h": 720
+        },
+        {
+          "src": "/events/aivi-2025-isb-4.webp",
+          "thumb": "/events/thumbs/aivi-2025-isb-4.webp",
+          "w": 1280,
+          "h": 720
+        }
+      ]
+    },
+    {
+      "slug": "ai-day-liet",
+      "year": "2024",
+      "title": "AI Day — CodeWave Hub at LIET",
+      "venue": "Lords Institute of Engineering & Technology, Hyderabad",
+      "role": "Speaker",
+      "blurb": "Represented the e-DAM Community as a speaker at the AI Day event organised by CodeWave Hub, addressing 250+ participants on artificial intelligence, innovation and collaboration — and building momentum for HACKPRIX 2025.",
+      "photos": [
+        {
+          "src": "/events/ai-day-liet-1.webp",
+          "thumb": "/events/thumbs/ai-day-liet-1.webp",
+          "w": 1600,
+          "h": 1200
+        },
+        {
+          "src": "/events/ai-day-liet-2.webp",
+          "thumb": "/events/thumbs/ai-day-liet-2.webp",
+          "w": 1080,
+          "h": 1440
+        },
+        {
+          "src": "/events/ai-day-liet-3.webp",
+          "thumb": "/events/thumbs/ai-day-liet-3.webp",
+          "w": 1200,
+          "h": 1600
+        },
+        {
+          "src": "/events/ai-day-liet-4.webp",
+          "thumb": "/events/thumbs/ai-day-liet-4.webp",
+          "w": 1200,
+          "h": 1600
+        }
+      ]
+    },
+    {
+      "slug": "gfg-hyderabad-meetup",
+      "year": "2025",
+      "title": "GeeksforGeeks Hyderabad Tech Meetup",
+      "venue": "Hyderabad",
+      "role": "Attendee",
+      "blurb": "Attended the GeeksforGeeks Hyderabad Tech Meetup, powered by the GFG Classroom Program, featuring an in-depth MERN stack session and a career guidance talk, “Engineer Your Roadmap.” Engaged directly with industry expert Mallesham Devasane.",
+      "photos": [
+        {
+          "src": "/events/gfg-hyderabad-meetup-1.webp",
+          "thumb": "/events/thumbs/gfg-hyderabad-meetup-1.webp",
+          "w": 1200,
+          "h": 1600
+        },
+        {
+          "src": "/events/gfg-hyderabad-meetup-2.webp",
+          "thumb": "/events/thumbs/gfg-hyderabad-meetup-2.webp",
+          "w": 900,
+          "h": 1600
+        }
+      ]
+    },
+    {
+      "slug": "csr-summit-2025",
+      "year": "2025",
+      "title": "South India’s CSR Summit 2025",
+      "venue": "Hyderabad",
+      "role": "Director — Sponsorship Relations",
+      "blurb": "Joined South India’s CSR Summit 2025 as Director — Sponsorship Relations, after serving as Associate for Sponsorship, Experience Zone and Goodies Relations. Built sponsor partnerships, ran experience zones, and drove brand collaboration at one of South India’s leading CSR events.",
+      "photos": [
+        {
+          "src": "/events/csr-summit-2025-1.webp",
+          "thumb": "/events/thumbs/csr-summit-2025-1.webp",
+          "w": 900,
+          "h": 1600
+        },
+        {
+          "src": "/events/csr-summit-2025-2.webp",
+          "thumb": "/events/thumbs/csr-summit-2025-2.webp",
+          "w": 800,
+          "h": 342
+        }
+      ]
+    },
+    {
+      "slug": "cardano-codex-thub",
+      "year": "2024",
+      "title": "Cardano Codex — T-Hub",
+      "venue": "T-Hub, Hyderabad",
+      "role": "Attendee",
+      "blurb": "Attended Cardano Codex at T-Hub Hyderabad, organised by Hyderabad DAO, with speakers from EMURGO, Nucast, Intersect MBO and NMKR Studios. Explored the Cardano ecosystem, smart contracts and dApp development through live demos.",
+      "photos": [
+        {
+          "src": "/events/cardano-codex-thub-1.webp",
+          "thumb": "/events/thumbs/cardano-codex-thub-1.webp",
+          "w": 901,
+          "h": 1600
+        },
+        {
+          "src": "/events/cardano-codex-thub-2.webp",
+          "thumb": "/events/thumbs/cardano-codex-thub-2.webp",
+          "w": 1536,
+          "h": 1536
+        },
+        {
+          "src": "/events/cardano-codex-thub-3.webp",
+          "thumb": "/events/thumbs/cardano-codex-thub-3.webp",
+          "w": 1600,
+          "h": 1600
+        }
+      ]
+    },
+    {
+      "slug": "gdsc-wow-hyderabad",
+      "year": "2023–2024",
+      "title": "Google DSC WoW Hyderabad",
+      "venue": "Hyderabad",
+      "role": "Volunteer & Creative Contributor",
+      "blurb": "Volunteered across two consecutive annual editions of Google Developer Student Clubs WoW Hyderabad — stage engagement, registration, hospitality and design. Built interactive polls and Figma designs while collaborating across the AI, Web3 and Design tracks.",
+      "photos": [
+        {
+          "src": "/events/gdsc-wow-hyderabad-1.webp",
+          "thumb": "/events/thumbs/gdsc-wow-hyderabad-1.webp",
+          "w": 1536,
+          "h": 1536
+        },
+        {
+          "src": "/events/gdsc-wow-hyderabad-2.webp",
+          "thumb": "/events/thumbs/gdsc-wow-hyderabad-2.webp",
+          "w": 1536,
+          "h": 1536
+        },
+        {
+          "src": "/events/gdsc-wow-hyderabad-3.webp",
+          "thumb": "/events/thumbs/gdsc-wow-hyderabad-3.webp",
+          "w": 1280,
+          "h": 853
+        }
+      ]
+    },
+    {
+      "slug": "bharat-blockchain-yatra",
+      "year": "2024",
+      "title": "Bharat Blockchain Yatra — T-Hub",
+      "venue": "T-Hub Phase 2, Hyderabad",
+      "role": "Attendee",
+      "blurb": "Attended Bharat Blockchain Yatra at T-Hub Phase 2, exploring blockchain’s real-world applications and the innovation opportunities shaping India’s digital future. Networked with speakers including Dr. Chandrasekhar Buddha of AICTE, Ministry of Education.",
+      "photos": [
+        {
+          "src": "/events/bharat-blockchain-yatra-1.webp",
+          "thumb": "/events/thumbs/bharat-blockchain-yatra-1.webp",
+          "w": 1600,
+          "h": 901
+        },
+        {
+          "src": "/events/bharat-blockchain-yatra-2.webp",
+          "thumb": "/events/thumbs/bharat-blockchain-yatra-2.webp",
+          "w": 1600,
+          "h": 901
+        },
+        {
+          "src": "/events/bharat-blockchain-yatra-3.webp",
+          "thumb": "/events/thumbs/bharat-blockchain-yatra-3.webp",
+          "w": 1600,
+          "h": 901
+        }
+      ]
+    },
+    {
+      "slug": "isb-pgp-connect",
+      "year": "2025",
+      "title": "ISB PGP Admissions & Alumni Connect",
+      "venue": "Indian School of Business (ISB), Hyderabad",
+      "role": "Attendee",
+      "blurb": "Attended “Connect with the PGP Admissions Team and Alumni” at the ISB Hyderabad campus on 16 June 2025, learning about ISB’s vision, academic rigour and career outcomes directly from the admissions team and alumni.",
+      "photos": [
+        {
+          "src": "/events/isb-pgp-connect-1.webp",
+          "thumb": "/events/thumbs/isb-pgp-connect-1.webp",
+          "w": 1600,
+          "h": 988
+        },
+        {
+          "src": "/events/isb-pgp-connect-2.webp",
+          "thumb": "/events/thumbs/isb-pgp-connect-2.webp",
+          "w": 1600,
+          "h": 900
+        }
+      ]
+    }
+  ]
+}

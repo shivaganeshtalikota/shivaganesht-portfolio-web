@@ -1,0 +1,346 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════════════════════
+   Apple / iOS design system
+   Real SF Pro on Apple devices; Inter tuned to match everywhere else.
+   ══════════════════════════════════════════════════════════════════ */
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco,
+    "Cascadia Mono", "Roboto Mono", monospace;
+
+  /* Apple system colors — light */
+  --color-blue: #007aff;
+  --color-indigo: #5856d6;
+  --color-purple: #af52de;
+  --color-pink: #ff2d55;
+  --color-red: #ff3b30;
+  --color-orange: #ff9500;
+  --color-yellow: #ffcc00;
+  --color-green: #34c759;
+  --color-teal: #5ac8fa;
+  --color-mint: #00c7be;
+
+  /* Radii — Apple's squircle scale */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-2xl: 36px;
+
+  /* Apple easing curves */
+  --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-out-apple: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-marketing: cubic-bezier(0.28, 0.11, 0.32, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+:root {
+  color-scheme: light;
+
+  /* Backgrounds */
+  --bg: #ffffff;
+  --bg-secondary: #f5f5f7;
+  --bg-tertiary: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-grouped: #f2f2f7;
+
+  /* Labels (Apple's exact alpha ladder) */
+  --label: #1d1d1f;
+  --label-secondary: rgba(60, 60, 67, 0.6);
+  --label-tertiary: rgba(60, 60, 67, 0.3);
+  --label-quaternary: rgba(60, 60, 67, 0.18);
+
+  /* Separators */
+  --separator: rgba(60, 60, 67, 0.12);
+  --separator-opaque: #d2d2d7;
+
+  /* Fills */
+  --fill: rgba(120, 120, 128, 0.2);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+
+  /* Materials — the frosted glass that sells it */
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-strong: rgba(255, 255, 255, 0.86);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-blur: saturate(180%) blur(20px);
+
+  --accent: #0071e3;
+  --accent-hover: #0077ed;
+  --accent-soft: rgba(0, 113, 227, 0.1);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08), 0 24px 64px rgba(0, 0, 0, 0.1);
+
+  --nav-h: 52px;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #000000;
+  --bg-secondary: #0a0a0c;
+  --bg-tertiary: #1c1c1e;
+  --bg-elevated: #1c1c1e;
+  --bg-grouped: #000000;
+
+  --label: #f5f5f7;
+  --label-secondary: rgba(235, 235, 245, 0.6);
+  --label-tertiary: rgba(235, 235, 245, 0.3);
+  --label-quaternary: rgba(235, 235, 245, 0.18);
+
+  --separator: rgba(84, 84, 88, 0.45);
+  --separator-opaque: #38383a;
+
+  --fill: rgba(120, 120, 128, 0.36);
+  --fill-secondary: rgba(120, 120, 128, 0.32);
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+
+  --glass: rgba(22, 22, 24, 0.72);
+  --glass-strong: rgba(22, 22, 24, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  --accent: #0a84ff;
+  --accent-hover: #409cff;
+  --accent-soft: rgba(10, 132, 255, 0.16);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6), 0 24px 64px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --bg: #000000;
+    --bg-secondary: #0a0a0c;
+    --bg-tertiary: #1c1c1e;
+    --bg-elevated: #1c1c1e;
+    --bg-grouped: #000000;
+
+    --label: #f5f5f7;
+    --label-secondary: rgba(235, 235, 245, 0.6);
+    --label-tertiary: rgba(235, 235, 245, 0.3);
+    --label-quaternary: rgba(235, 235, 245, 0.18);
+
+    --separator: rgba(84, 84, 88, 0.45);
+    --separator-opaque: #38383a;
+
+    --fill: rgba(120, 120, 128, 0.36);
+    --fill-secondary: rgba(120, 120, 128, 0.32);
+    --fill-tertiary: rgba(118, 118, 128, 0.24);
+
+    --glass: rgba(22, 22, 24, 0.72);
+    --glass-strong: rgba(22, 22, 24, 0.9);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    --accent: #0a84ff;
+    --accent-hover: #409cff;
+    --accent-soft: rgba(10, 132, 255, 0.16);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6), 0 24px 64px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ── base ─────────────────────────────────────────────────────── */
+
+* {
+  border-color: var(--separator);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-h) + 24px);
+}
+
+body {
+  background: var(--bg);
+  color: var(--label);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Inter tuned to sit closer to SF Pro */
+@supports not (font: -apple-system-body) {
+  body {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    font-optical-sizing: auto;
+  }
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Apple hides scrollbar chrome but keeps the affordance */
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--label-quaternary);
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--label-tertiary);
+  background-clip: content-box;
+}
+
+/* ── typography: Apple's negative tracking at display sizes ───── */
+
+@utility text-display {
+  font-size: clamp(2.75rem, 8vw, 5.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.028em;
+  font-weight: 700;
+}
+
+@utility text-title-1 {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+}
+
+@utility text-title-2 {
+  font-size: clamp(1.5rem, 3.2vw, 2.125rem);
+  line-height: 1.14;
+  letter-spacing: -0.017em;
+  font-weight: 650;
+}
+
+@utility text-title-3 {
+  font-size: clamp(1.1875rem, 2vw, 1.5rem);
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  font-weight: 600;
+}
+
+@utility text-body-lg {
+  font-size: clamp(1.0625rem, 1.5vw, 1.3125rem);
+  line-height: 1.5;
+  letter-spacing: -0.008em;
+}
+
+@utility text-caption {
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+/* ── materials & motion ───────────────────────────────────────── */
+
+@utility glass {
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+@utility glass-strong {
+  background: var(--glass-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* Squircle-ish continuous corners */
+@utility squircle {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+@utility card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--separator);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.4s var(--ease-out-apple),
+    box-shadow 0.4s var(--ease-out-apple),
+    border-color 0.4s var(--ease-out-apple);
+}
+
+@utility card-hover {
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--label-quaternary);
+  }
+}
+
+@utility shell {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: 22px;
+}
+
+@media (min-width: 768px) {
+  .shell {
+    padding-inline: 32px;
+  }
+}
+
+/* gradient text used sparingly, Apple-style */
+@utility text-gradient {
+  background: linear-gradient(135deg, var(--label) 20%, var(--label-secondary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility accent-gradient {
+  background: linear-gradient(135deg, #0071e3 0%, #5856d6 50%, #af52de 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── reduced motion ───────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── print ────────────────────────────────────────────────────── */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
