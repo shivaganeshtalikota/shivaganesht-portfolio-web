@@ -531,12 +531,48 @@ export const NAV = [
   { href: "/contact", label: "Contact" },
 ] as const;
 
-/* Reachable and in the sitemap, but kept out of the main nav so it
-   doesn't crowd it. Linked from the speaking page and the footer. */
 export const EXTRA_ROUTES = [
   { href: "/work-with-me", label: "Work with me" },
   { href: "/speaking-kit", label: "Speaker kit" },
+  { href: "/links", label: "Links" },
+  { href: "/brand", label: "Logo & brand" },
 ] as const;
+
+/* The main navigation, grouped so every page is at most two clicks away.
+   A group's own link goes to its first page; the dropdown lists the rest.
+   The footer and the mobile menu use the same groups. */
+export type MenuLink = { href: string; label: string; note: string };
+export type MenuGroup = { label: string; href: string; items?: MenuLink[] };
+
+export const MENU: MenuGroup[] = [
+  {
+    label: "About",
+    href: "/about",
+    items: [
+      { href: "/about", label: "About me", note: "the longer story, and the facts" },
+      { href: "/now", label: "Now", note: "what I'm doing this month" },
+    ],
+  },
+  {
+    label: "Work",
+    href: "/projects",
+    items: [
+      { href: "/projects", label: "Projects", note: "matriXO, automapp, pAIr and more" },
+      { href: "/experience", label: "Experience", note: "every role since 2023" },
+    ],
+  },
+  {
+    label: "Speaking",
+    href: "/speaking",
+    items: [
+      { href: "/speaking", label: "Talks & events", note: "Microsoft, ISB, T-Hub, with photos" },
+      { href: "/speaking-kit", label: "Speaker kit", note: "bios, headshots, topics, as a PDF" },
+      { href: "/contact?topic=talk", label: "Invite me to speak", note: "goes straight to my inbox" },
+    ],
+  },
+  { label: "Recognition", href: "/awards" },
+  { label: "Contact", href: "/contact" },
+];
 
 /* ── /now ──────────────────────────────────────────────────────── */
 
@@ -689,11 +725,6 @@ export const TESTIMONIALS = [
       "I joined clueless and left confident. Cleared every doubt I had about college, internships, and tech careers. Super friendly and chill vibes!",
     name: "Hindu Reddy Dubba",
     context: "Topmate, 1:1 session",
-  },
-  {
-    quote: "Your words are like music to my ears. I really love the session…",
-    name: "A Topmate mentee",
-    context: "April 2024",
   },
 ] as const;
 

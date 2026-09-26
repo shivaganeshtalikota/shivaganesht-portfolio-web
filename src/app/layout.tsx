@@ -9,6 +9,8 @@ import { Terminal } from "@/components/Terminal";
 import { ScrollReset } from "@/components/ScrollReset";
 import { Analytics } from "@vercel/analytics/next";
 import { Field3D } from "@/components/Field3D";
+import { Intro } from "@/components/Intro";
+import { ScrollRail } from "@/components/ScrollRail";
 import { Secrets } from "@/components/Secrets";
 import { Shortcuts } from "@/components/Shortcuts";
 import { JsonLd } from "@/components/JsonLd";
@@ -254,12 +256,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}})();`,
+            // theme before first paint, and whether this load gets the intro:
+            // every time a page is opened, never for reduced motion (moving
+            // between pages inside the site doesn't reload, so it doesn't replay)
+            __html: `(function(){var d=document.documentElement;try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){d.setAttribute('data-theme',t)}}catch(e){}try{var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;d.setAttribute('data-intro',rm?'done':'on')}catch(e){d.setAttribute('data-intro','done')}})();`,
           }}
         />
         <JsonLd data={graph} />
       </head>
       <body>
+        <Intro />
         <Providers>
           <ScrollReset />
           <Field3D />
@@ -270,6 +276,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Skip to content
           </a>
           <Nav />
+          <ScrollRail />
           <main id="main">{children}</main>
           <Footer />
           <Easter />

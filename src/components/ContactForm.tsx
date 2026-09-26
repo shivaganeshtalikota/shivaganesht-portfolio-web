@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useTransform, useVelocity } from "motion/react";
 import { CONTACT_TOPICS, SITE } from "@/data/site";
 import { field } from "@/lib/field";
 
@@ -32,6 +32,259 @@ const KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY || SITE.web3formsKey;
    A hidden honeypot field catches most bots; Web3Forms filters the rest.
    If the key is missing or the service is down, this falls back to
    opening the visitor's own mail app, so a message is never lost. */
+
+/* The topic picker, as a piece of Liquid Glass.
+
+   A glass bar holds every option; a clear glass lens sits over the chosen
+   one. On a phone the options wrap onto two rows and the lens moves between
+   them too. The lens:
+   - shows the word under it once, through the glass: the row of labels has
+     a hole cut where the lens is, and the lens carries its own aligned copy;
+   - morphs straight to the size of whichever word it's moving to, and on the
+     way narrows and grows taller, the way a drop of liquid does in motion,
+     with a small overshoot when it arrives;
+   - can be held and dragged anywhere, by mouse or finger. Held, it swells
+     out past the edges of the bar and magnifies what's under it; let go and
+     it springs onto the nearest option.
+   Arrow keys move the choice, as a radio group should. */
+
+type Slot = { key: TopicKey; x: number; y: number; w: number; h: number };
+
+function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: TopicKey) => void }) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [held, setHeld] = useState(false);
+
+  // the lens: where it is and how big, in the wrapper's coordinates
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const w = useMotionValue(0);
+  const h = useMotionValue(0);
+  const swell = useMotionValue(1);
+
+  // in motion it narrows and grows taller, like the reference switch
+  const vx = useVelocity(x);
+  const squashX = useTransform(vx, [-2400, 0, 2400], [0.86, 1, 0.86]);
+  const squashY = useTransform(vx, [-2400, 0, 2400], [1.14, 1, 1.14]);
+
+  // the copy inside the lens stays on top of the words it covers
+  const innerX = useTransform(x, (v) => -v);
+  const innerY = useTransform(y, (v) => -v);
+
+  // a hole in the labels where the lens is, so no word ever shows twice
+  const holeSize = useTransform([w, h, swell], ([W, H, S]: number[]) => `100% 100%, ${Math.max(0, W * S - 10)}px ${Math.max(0, H * S - 8)}px`);
+  const holePos = useTransform([x, y, w, h, swell], ([X, Y, W, H, S]: number[]) => {
+    const cx = X + W / 2;
+    const cy = Y + H / 2;
+    return `0 0, ${cx - (W * S - 10) / 2}px ${cy - (H * S - 8) / 2}px`;
+  });
+
+  const valueRef = useRef(value);
+  valueRef.current = value;
+  const placed = useRef(false);
+  const drag = useRef<{ id: number; gx: number; gy: number; ax: number; ay: number } | null>(null);
+
+  useEffect(() => {
+    animate(swell, held && !reduce ? 1.42 : 1, { type: "spring", stiffness: 420, damping: held ? 15 : 22 });
+  }, [held, reduce, swell]);
+
+  const measure = useCallback((): Slot[] => {
+    const el = wrap.current;
+    if (!el) return [];
+    return [...el.querySelectorAll<HTMLElement>("[data-key]")].map((b) => ({
+      key: b.dataset.key as TopicKey,
+      x: b.offsetLeft,
+      y: b.offsetTop,
+      w: b.offsetWidth,
+      h: b.offsetHeight,
+    }));
+  }, []);
+
+  const moveTo = useCallback(
+    (s: Slot, instant = false) => {
+      if (instant || !placed.current || reduce) {
+        x.jump(s.x);
+        y.jump(s.y);
+        w.jump(s.w);
+        h.jump(s.h);
+        placed.current = true;
+        return;
+      }
+      // one spring for position and size alike, so the lens is the new word's
+      // size the moment it arrives, with a small overshoot like the reference
+      const spring = { type: "spring", stiffness: 420, damping: 30, mass: 0.9 } as const;
+      animate(x, s.x, spring);
+      animate(y, s.y, spring);
+      animate(w, s.w, spring);
+      animate(h, s.h, spring);
+    },
+    [x, y, w, h, reduce]
+  );
+
+  const home = useCallback(
+    (instant: boolean) => {
+      const all = measure();
+      setSlots(all);
+      const s = all.find((t) => t.key === valueRef.current);
+      if (s) moveTo(s, instant);
+    },
+    [measure, moveTo]
+  );
+
+  useEffect(() => home(false), [value, home]);
+
+  // the options reflow as fonts load or the window changes width (one row or
+  // two), so follow them; one observer for good, since a new one reports at
+  // once and would snap the lens mid-glide
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el) return;
+    let first = true;
+    const ro = new ResizeObserver(() => {
+      if (first) {
+        first = false;
+        return;
+      }
+      home(true);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [home]);
+
+  /* ── holding and dragging, by mouse or finger ── */
+  const onDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    e.preventDefault();
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      /* a pointer the browser doesn't know: drag without capture */
+    }
+    const r = wrap.current?.getBoundingClientRect();
+    if (!r) return;
+    const cx = x.get() + w.get() / 2;
+    const cy = y.get() + h.get() / 2;
+    drag.current = { id: e.pointerId, gx: e.clientX - r.left - cx, gy: e.clientY - r.top - cy, ax: cx, ay: cy };
+    setHeld(true);
+  };
+
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    const el = wrap.current;
+    if (!d || d.id !== e.pointerId || !el) return;
+    const r = el.getBoundingClientRect();
+    let cx = e.clientX - r.left - d.gx;
+    let cy = e.clientY - r.top - d.gy;
+    // past the edges it resists, like glass pressed against its frame
+    const band = (v: number, lo: number, hi: number) => (v < lo ? lo - (lo - v) * 0.25 : v > hi ? hi + (v - hi) * 0.25 : v);
+    cx = band(cx, w.get() / 2, r.width - w.get() / 2);
+    cy = band(cy, h.get() / 2, r.height - h.get() / 2);
+    d.ax = cx;
+    d.ay = cy;
+    const follow = { type: "spring", stiffness: 1300, damping: 60, mass: 0.45 } as const;
+    animate(x, cx - w.get() / 2, follow);
+    animate(y, cy - h.get() / 2, follow);
+  };
+
+  const onUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d || d.id !== e.pointerId) return;
+    drag.current = null;
+    setHeld(false);
+    // settle on the option nearest to where it was let go
+    const all = measure();
+    if (!all.length) return;
+    const dist = (s: Slot) => Math.hypot(s.x + s.w / 2 - d.ax, (s.y + s.h / 2 - d.ay) * 1.4);
+    const best = all.reduce((a, b) => (dist(b) < dist(a) ? b : a));
+    if (best.key !== valueRef.current) onChange(best.key);
+    else moveTo(best);
+  };
+
+  const onKey = (e: React.KeyboardEvent) => {
+    const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+    if (!step) return;
+    e.preventDefault();
+    const i = CONTACT_TOPICS.findIndex((t) => t.key === value);
+    const n = CONTACT_TOPICS.length;
+    const next = CONTACT_TOPICS[(i + step + n) % n].key;
+    onChange(next);
+    wrap.current?.querySelector<HTMLElement>(`[data-key="${next}"]`)?.focus();
+  };
+
+  const label = "whitespace-nowrap px-3.5 py-2 text-[13.5px]";
+
+  return (
+    <div
+      role="radiogroup"
+      aria-label="What's this about?"
+      onKeyDown={onKey}
+      className="glass-surface glass-focus mt-4 rounded-[26px] p-1 backdrop-blur-xl backdrop-saturate-150"
+    >
+      <div ref={wrap} className="relative">
+        {/* the labels, with a hole where the lens sits */}
+        <motion.div
+          className="flex flex-wrap gap-y-1"
+          style={{
+            maskImage: "linear-gradient(#000 0 0), linear-gradient(#000 0 0)",
+            WebkitMaskImage: "linear-gradient(#000 0 0), linear-gradient(#000 0 0)",
+            maskRepeat: "no-repeat",
+            WebkitMaskRepeat: "no-repeat",
+            maskComposite: "exclude",
+            WebkitMaskComposite: "xor",
+            maskSize: holeSize,
+            WebkitMaskSize: holeSize,
+            maskPosition: holePos,
+            WebkitMaskPosition: holePos,
+          }}
+        >
+          {CONTACT_TOPICS.map((t) => {
+            const on = t.key === value;
+            return (
+              <button
+                key={t.key}
+                data-key={t.key}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                tabIndex={on ? 0 : -1}
+                onClick={() => onChange(t.key)}
+                className={`flex-auto rounded-full text-[var(--ink-2)] outline-none transition-colors duration-300 hover:text-[var(--ink)] ${label}`}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </motion.div>
+
+        {/* the lens */}
+        <motion.div
+          aria-hidden
+          onPointerDown={onDown}
+          onPointerMove={onMove}
+          onPointerUp={onUp}
+          onPointerCancel={onUp}
+          className="glass-lens absolute left-0 top-0 z-10 cursor-grab touch-none overflow-hidden rounded-full backdrop-blur-[2px] backdrop-saturate-200 active:cursor-grabbing"
+          style={{ x, y, width: w, height: h, scale: swell, scaleX: squashX, scaleY: squashY }}
+        >
+          {/* the words it covers, seen through it: exactly aligned at rest,
+              magnified with the lens while it's held */}
+          <motion.div className="pointer-events-none absolute left-0 top-0" style={{ x: innerX, y: innerY }}>
+            {slots.map((s) => (
+              <span
+                key={s.key}
+                className={`absolute flex items-center justify-center text-[var(--accent)] ${label}`}
+                style={{ left: s.x, top: s.y, width: s.w, height: s.h }}
+              >
+                {CONTACT_TOPICS.find((t) => t.key === s.key)?.label}
+              </span>
+            ))}
+          </motion.div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
 
 export function ContactForm() {
   const [topic, setTopic] = useState<TopicKey>("role");
@@ -144,25 +397,7 @@ export function ContactForm() {
           >
             <fieldset>
               <legend className="label">What&apos;s this about?</legend>
-              <div className="mt-4 flex flex-wrap gap-1.5" role="radiogroup">
-                {CONTACT_TOPICS.map((t) => (
-                  <button
-                    key={t.key}
-                    type="button"
-                    role="radio"
-                    aria-checked={topic === t.key}
-                    onClick={() => setTopic(t.key)}
-                    className="relative rounded-full border px-3.5 py-1.5 text-[13px] transition-colors duration-300"
-                    style={{
-                      borderColor: topic === t.key ? "var(--ink)" : "var(--rule-strong)",
-                      background: topic === t.key ? "var(--ink)" : "transparent",
-                      color: topic === t.key ? "var(--bg)" : "var(--ink-2)",
-                    }}
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
+              <TopicPicker value={topic} onChange={setTopic} />
             </fieldset>
 
             <div className="mt-7 grid gap-4 sm:grid-cols-2">

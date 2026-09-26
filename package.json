@@ -2,12 +2,13 @@
   "name": "shivaganesht-portfolio-web",
   "version": "1.0.0",
   "private": true,
-  "description": "Personal portfolio of Shiva Ganesh Talikota — founder, engineer, speaker.",
+  "description": "Personal portfolio of Shiva Ganesh Talikota \u2014 founder, engineer, speaker.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "brand": "python scripts/brand.py && node scripts/brand-raster.mjs && python scripts/brand.py zip"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

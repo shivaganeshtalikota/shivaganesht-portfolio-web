@@ -8,10 +8,12 @@ import { unlock } from "@/lib/secrets";
 /* ─────────────────────────────────────────────────────────────────
    One particle field behind the whole site.
 
-   Every page has its own shape, chosen to mean something: a network on
-   the home page, a double helix on About, a sound wave on Speaking. When
-   you navigate, each particle travels from where it is to its place in
-   the next shape, staggered so it feels organic rather than mechanical.
+   Every page has its own shape, and each one is a thing you can name at a
+   glance: a network on the home page, DNA on About, a laptop with code on
+   Work, a staircase for Experience, a microphone for Speaking, a trophy for
+   Recognition, a clock at the hour I was born for Now, a paper plane for Contact, a rocket for
+   Work with me. When you navigate, each particle travels from where it is
+   to its place in the next shape, staggered so it feels organic.
 
    It also takes commands (src/lib/field.ts): form a word or an emoji,
    rain like the Matrix, pulse to a beat, or send a shockwave out from
@@ -24,47 +26,81 @@ const MORPH_SECONDS = 1.55;
 
 type Shape =
   | "sphere"
-  | "helix"
-  | "lattice"
-  | "spiral"
-  | "wave"
-  | "torus"
-  | "rings"
+  | "dna"
+  | "laptop"
+  | "stairs"
+  | "mic"
+  | "trophy"
+  | "clock"
+  | "plane"
+  | "rocket"
+  | "mark"
   | "links"
-  | "bloom"
   | "scatter";
 
 const ROUTE_SHAPE: Record<string, Shape> = {
   "/": "sphere",
-  "/about": "helix",
-  "/projects": "lattice",
-  "/experience": "spiral",
-  "/speaking": "wave",
-  "/speaking-kit": "wave",
-  "/awards": "torus",
-  "/now": "rings",
-  "/contact": "links",
-  "/work-with-me": "bloom",
+  "/about": "dna",
+  "/projects": "laptop",
+  "/experience": "stairs",
+  "/speaking": "mic",
+  "/speaking-kit": "mic",
+  "/awards": "trophy",
+  "/now": "clock",
+  "/contact": "plane",
+  "/work-with-me": "rocket",
+  "/brand": "mark",
+  "/links": "links",
 };
 
 // how far each shape reaches from its centre, so the sideways shift on
 // inner pages never pushes it off the edge of a narrow window
-const REACH: Partial<Record<Shape, number>> = { wave: 2.0, links: 1.6 };
+const REACH: Partial<Record<Shape, number>> = { plane: 1.8, links: 1.6, rocket: 1.5, stairs: 1.45 };
 
-// a fixed lean, so flat shapes are seen from above rather than edge-on
-const LEAN: Partial<Record<Shape, number>> = { wave: -0.55, torus: 0.95 };
+// a fixed lean towards the camera, so flat things are seen a little from above
+const LEAN: Partial<Record<Shape, number>> = { stairs: 0.22, plane: 0.42, laptop: 0.3, mic: 0.15, trophy: 0.12, rocket: 0.08 };
+
+// a fixed sideways tilt: the rocket takes off at an angle, the mic is held
+const TILT: Partial<Record<Shape, number>> = { rocket: -0.42, mic: 0.22, plane: 0.28 };
+
+// Shapes that only read from the front sway around it instead of spinning
+// all the way round: base is the angle they face, amp how far they rock.
+const SWAY: Partial<Record<Shape, { base: number; amp: number }>> = {
+  clock: { base: 0, amp: 0.4 },
+  laptop: { base: 0, amp: 0.5 },
+  plane: { base: -0.62, amp: 0.3 },
+  stairs: { base: -0.25, amp: 0.3 },
+  mark: { base: 0, amp: 0.45 },
+  links: { base: 0, amp: 0.55 },
+};
+
+// Some shapes are built big for detail and drawn a bit smaller
+const SIZE: Partial<Record<Shape, number>> = { plane: 0.74, stairs: 0.8, trophy: 0.86 };
+
+// How much of each shape is drawn in the accent: the trophy is mostly
+// vermilion, everything else keeps the usual sprinkle.
+const ACCENT_SHARE: Partial<Record<Shape, number>> = { trophy: 0.72, mark: 0.08 };
+
+// A region of the shape that is always accent: the rocket's flame, the
+// mark's full stop. [xmin, ymin, xmax, ymax] in the shape's own space.
+const ACCENT_BOX: Partial<Record<Shape, [number, number, number, number]>> = {
+  rocket: [-9, -9, 9, -0.62],
+  mark: [0.42, -1.45, 1.2, -0.7],
+};
 
 const CAPTION: Record<Shape, string> = {
-  sphere: "the field: a network, agents talking to agents. push it around, or click the background",
-  helix: "the field: a double helix, because this page is about me",
-  lattice: "the field: a lattice, since systems are built from small boring pieces",
-  spiral: "the field: a rising spiral, seven jobs pointing one way",
-  wave: "the field: a sound wave. this is the talking part",
-  torus: "the field: a ring, the closest thing I own to a medal",
-  rings: "the field: rings going outward. this is what is happening now",
-  links: "the field: two nodes and the link between them. that's us",
-  bloom: "the field: a burst, all the ways we could work together",
-  scatter: "the field: scattered, a bit like whatever link got you here",
+  sphere: "background: a network of people and agents. move the mouse through it, or click an empty spot",
+  dna: "background: a strand of DNA, because this page is about who I am",
+  laptop: "background: a laptop with code on the screen. this page is the work",
+  stairs: "background: a staircase, one step for each role, and a flag at the top",
+  mic: "background: a microphone. this page is the talking part",
+  trophy: "background: a trophy, for the recognition on this page",
+  clock: "background: a clock at 2 a.m., the hour I was born. this page is what I'm up to now",
+  plane: "background: a paper plane. that's your message, on its way to me",
+  rocket: "background: a rocket. let's launch something together",
+  mark: "background: the S from the logo, in particles",
+  links: "background: two nodes and the link between them. that's what this page is",
+  scatter: "background: scattered, a bit like whatever link got you here",
 };
 
 /* ── deterministic randomness, so shapes are identical every visit ── */
@@ -80,9 +116,91 @@ function rng(seed: number) {
   };
 }
 
-/* ── shapes ────────────────────────────────────────────────────────── */
+/* ── building blocks for the shapes ─────────────────────────────────
+   A shape is a list of parts, each a way of picking one random point on
+   some surface or line, and a weight: how many particles it gets. */
+
+type V3 = [number, number, number];
+type Rand = () => number;
+type Part = { w: number; at: (r: Rand) => V3 };
+
+const TAU = Math.PI * 2;
+const lerp3 = (a: V3, b: V3, t: number): V3 => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const jit = (r: Rand, s = 0.03) => (r() - 0.5) * s;
+
+// a uniform point inside a triangle
+const tri = (a: V3, b: V3, c: V3) => (r: Rand): V3 => {
+  let u = r();
+  let v = r();
+  if (u + v > 1) {
+    u = 1 - u;
+    v = 1 - v;
+  }
+  return [
+    a[0] + (b[0] - a[0]) * u + (c[0] - a[0]) * v,
+    a[1] + (b[1] - a[1]) * u + (c[1] - a[1]) * v,
+    a[2] + (b[2] - a[2]) * u + (c[2] - a[2]) * v,
+  ];
+};
+
+// a point on one of a list of line segments, longer ones getting more
+const lines = (segs: [V3, V3][], j = 0.012) => {
+  const len = segs.map(([a, b]) => Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]));
+  const total = len.reduce((s, l) => s + l, 0);
+  return (r: Rand): V3 => {
+    let x = r() * total;
+    let k = 0;
+    while (k < segs.length - 1 && x > len[k]) x -= len[k++];
+    const p = lerp3(segs[k][0], segs[k][1], r());
+    return [p[0] + jit(r, j), p[1] + jit(r, j), p[2] + jit(r, j)];
+  };
+};
+
+// a point on the surface of an axis-aligned box, faces weighted by area
+const box = (hw: number, y0: number, y1: number, hd: number) => (r: Rand): V3 => {
+  const h = y1 - y0;
+  const areas = [4 * hw * hd, 2 * hw * h, 2 * hw * h, 2 * hd * h, 2 * hd * h];
+  let x = r() * areas.reduce((s, a) => s + a, 0);
+  let f = 0;
+  while (f < areas.length - 1 && x > areas[f]) x -= areas[f++];
+  const u = r() * 2 - 1;
+  const v = r();
+  if (f === 0) return [u * hw, y1, (r() * 2 - 1) * hd];
+  if (f === 1) return [u * hw, y0 + v * h, hd];
+  if (f === 2) return [u * hw, y0 + v * h, -hd];
+  if (f === 3) return [hw, y0 + v * h, u * hd];
+  return [-hw, y0 + v * h, u * hd];
+};
+
+function compose(parts: Part[], n: number, r: Rand, out: Float32Array, off: V3 = [0, 0, 0]) {
+  const total = parts.reduce((s, p) => s + p.w, 0);
+  let i = 0;
+  parts.forEach((p, k) => {
+    const count = k === parts.length - 1 ? n - i : Math.round((p.w / total) * n);
+    for (let j = 0; j < count && i < n; j++, i++) {
+      const [x, y, z] = p.at(r);
+      out[i * 3] = x + off[0];
+      out[i * 3 + 1] = y + off[1];
+      out[i * 3 + 2] = z + off[2];
+    }
+  });
+}
+
+/* ── the shapes ────────────────────────────────────────────────────── */
+
+// lines of "code" on the laptop screen: [indent, length, row]
+const CODE: [number, number, number][] = [
+  [0, 5, 0], [1, 7, 1], [2, 4, 2], [2, 9, 3], [1, 3, 4], [1, 6, 5], [2, 8, 6], [3, 5, 7], [1, 2, 8], [0, 2, 9],
+];
 
 function buildShape(shape: Shape, n: number): Float32Array {
+  const out = buildRaw(shape, n);
+  const size = SIZE[shape];
+  if (size) for (let i = 0; i < out.length; i++) out[i] *= size;
+  return out;
+}
+
+function buildRaw(shape: Shape, n: number): Float32Array {
   const out = new Float32Array(n * 3);
   const r = rng(shape.length * 7919 + n);
   const set = (i: number, x: number, y: number, z: number) => {
@@ -101,77 +219,288 @@ function buildShape(shape: Shape, n: number): Float32Array {
       }
       break;
     }
-    case "helix": {
-      for (let i = 0; i < n; i++) {
-        if (i % 8 < 6) {
-          const strand = i % 2;
-          const t = i / n;
-          const a = t * Math.PI * 6 + strand * Math.PI;
-          set(i, Math.cos(a) * 0.62, -1.4 + t * 2.8, Math.sin(a) * 0.62);
-        } else {
-          const k = Math.floor(r() * 34) / 34;
-          const a = k * Math.PI * 6;
-          const along = r() * 2 - 1;
-          set(i, Math.cos(a) * 0.62 * along, -1.4 + k * 2.8, Math.sin(a) * 0.62 * along);
-        }
-      }
-      break;
-    }
-    case "lattice": {
-      const g = Math.ceil(Math.cbrt(n));
-      const side = 1.9;
-      for (let i = 0; i < n; i++) {
-        const gx = i % g;
-        const gy = Math.floor(i / g) % g;
-        const gz = Math.floor(i / (g * g)) % g;
-        const f = (v: number) => (v / (g - 1) - 0.5) * side;
-        set(i, f(gx), f(gy), f(gz));
-      }
-      break;
-    }
-    case "spiral": {
-      for (let i = 0; i < n; i++) {
-        const t = i / n;
-        const a = t * Math.PI * 7;
-        const rad = 0.2 + t * 1.05 + (r() - 0.5) * 0.06;
-        set(i, Math.cos(a) * rad, -1.35 + t * 2.7, Math.sin(a) * rad);
-      }
-      break;
-    }
-    case "wave": {
-      const cols = Math.ceil(Math.sqrt(n * 1.7));
-      const rows = Math.ceil(n / cols);
-      for (let i = 0; i < n; i++) {
-        const cx = i % cols;
-        const cz = Math.floor(i / cols);
-        const x = (cx / (cols - 1) - 0.5) * 3.8;
-        const z = (cz / Math.max(1, rows - 1) - 0.5) * 2.2;
-        set(i, x, 0.18 * Math.sin(x * 2.2) * Math.cos(z * 1.6), z);
-      }
-      break;
-    }
-    case "torus": {
-      for (let i = 0; i < n; i++) {
-        const u = r() * Math.PI * 2;
-        const v = r() * Math.PI * 2;
-        const rr = 1.0 + 0.32 * Math.cos(v);
-        set(i, rr * Math.cos(u), 0.32 * Math.sin(v), rr * Math.sin(u));
-      }
-      break;
-    }
-    case "rings": {
-      const radii = [0.35, 0.72, 1.08, 1.45];
-      const total = radii.reduce((a, b) => a + b, 0);
-      let i = 0;
-      radii.forEach((rad, k) => {
-        const count = k === radii.length - 1 ? n - i : Math.round((rad / total) * n);
-        for (let j = 0; j < count && i < n; j++, i++) {
-          const a = (j / count) * Math.PI * 2;
-          set(i, Math.cos(a) * rad, Math.sin(a) * rad, (r() - 0.5) * 0.12 + k * 0.05);
-        }
+
+    case "dna": {
+      // two strands winding round each other, with the base pairs as rungs
+      const H = 1.45;
+      const rad = 0.55;
+      const ang = (y: number) => (y / H) * Math.PI * 2.2;
+      const strand = (s: number): Part => ({
+        w: 34,
+        at: (r) => {
+          const y = (r() * 2 - 1) * H;
+          const a = ang(y) + s * Math.PI;
+          return [Math.cos(a) * rad + jit(r), y + jit(r), Math.sin(a) * rad + jit(r)];
+        },
       });
+      const rungs = 22;
+      const rung: Part = {
+        w: 32,
+        at: (r) => {
+          const y = -H + ((Math.floor(r() * rungs) + 0.5) * 2 * H) / rungs;
+          const a = ang(y);
+          const t = r() * 2 - 1;
+          return [Math.cos(a) * rad * t, y + jit(r, 0.02), Math.sin(a) * rad * t];
+        },
+      };
+      compose([strand(0), strand(1), rung], n, r, out);
       break;
     }
+
+    case "laptop": {
+      // an open laptop: keyboard deck, trackpad, and a screen full of code
+      const yb = -0.7;
+      const W = 1.2;
+      const D = 0.85;
+      const Hs = 1.42;
+      const th = 0.26; // screen tilted back
+      const base = (x: number, z: number): V3 => [x, yb, z - 0.15];
+      const scr = (x: number, h: number): V3 => [x, yb + h * Math.cos(th), -h * Math.sin(th) - 0.15];
+      const rect = (a: V3, b: V3, c: V3, d: V3): [V3, V3][] => [[a, b], [b, c], [c, d], [d, a]];
+      const units = CODE.reduce((s, c) => s + c[1], 0);
+      compose(
+        [
+          { w: 10, at: lines(rect(base(-W, 0), base(W, 0), base(W, D), base(-W, D))) },
+          {
+            w: 22,
+            at: (r) => {
+              const row = Math.floor(r() * 4);
+              const col = Math.floor(r() * 13);
+              return base(-1.02 + col * 0.17 + jit(r, 0.1), 0.1 + row * 0.13 + jit(r, 0.06));
+            },
+          },
+          { w: 5, at: lines(rect(base(-0.3, 0.64), base(0.3, 0.64), base(0.3, 0.8), base(-0.3, 0.8))) },
+          { w: 16, at: lines(rect(scr(-W, 0), scr(W, 0), scr(W, Hs), scr(-W, Hs))) },
+          {
+            w: 47,
+            at: (r) => {
+              // longer lines get proportionally more particles
+              let x = r() * units;
+              let k = 0;
+              while (k < CODE.length - 1 && x > CODE[k][1]) x -= CODE[k++][1];
+              const [indent, len, row] = CODE[k];
+              return scr(-1.0 + indent * 0.16 + r() * len * 0.16, 1.26 - row * 0.12 + jit(r, 0.025));
+            },
+          },
+        ],
+        n,
+        r,
+        out
+      );
+      break;
+    }
+
+    case "stairs": {
+      // seven steps up, one per role, and a flag on the top one
+      const steps = 7;
+      const sw = 0.36;
+      const rise = 0.27;
+      const x0 = -1.36;
+      const y0 = -1.25;
+      const dz = 0.42;
+      const topX = x0 + 6.5 * sw;
+      const topY = y0 + steps * rise;
+      compose(
+        [
+          { w: 48, at: (r) => { const i = Math.floor(r() * steps); return [x0 + (i + r()) * sw, y0 + (i + 1) * rise, (r() * 2 - 1) * dz]; } },
+          { w: 28, at: (r) => { const i = Math.floor(r() * steps); return [x0 + i * sw, y0 + (i + r()) * rise, (r() * 2 - 1) * dz]; } },
+          { w: 12, at: (r) => { const i = Math.floor(r() * steps); return [x0 + (i + r()) * sw, y0 + (i + 1) * rise, r() < 0.5 ? -dz : dz]; } },
+          { w: 4, at: lines([[[topX, topY, 0], [topX, topY + 0.62, 0]]]) },
+          { w: 8, at: tri([topX, topY + 0.62, 0], [topX, topY + 0.34, 0], [topX + 0.4, topY + 0.48, 0]) },
+        ],
+        n,
+        r,
+        out
+      );
+      break;
+    }
+
+    case "mic": {
+      // a stage microphone: a mesh head, a collar, a tapering handle, and sound
+      const hc = 0.78;
+      const hr = 0.44;
+      const onHead = (phi: number, a: number): V3 => [
+        Math.cos(phi) * Math.cos(a) * hr,
+        hc + Math.sin(phi) * hr,
+        Math.cos(phi) * Math.sin(a) * hr,
+      ];
+      compose(
+        [
+          { w: 26, at: (r) => onHead(-Math.PI / 2 + (Math.floor(r() * 8) + 0.5) * (Math.PI / 8), r() * TAU) },
+          { w: 20, at: (r) => onHead(-Math.PI / 2 + r() * Math.PI, Math.floor(r() * 12) * (TAU / 12)) },
+          { w: 6, at: (r) => { const a = r() * TAU; return [Math.cos(a) * 0.3, hc - hr * 0.92 + jit(r, 0.06), Math.sin(a) * 0.3]; } },
+          {
+            w: 34,
+            at: (r) => {
+              const t = r();
+              const a = r() * TAU;
+              const rr = 0.27 - t * 0.1;
+              return [Math.cos(a) * rr, hc - hr - 0.02 - t * 1.55, Math.sin(a) * rr];
+            },
+          },
+          { w: 4, at: (r) => { const a = r() * TAU; const rr = Math.sqrt(r()) * 0.17; return [Math.cos(a) * rr, hc - hr - 1.57, Math.sin(a) * rr]; } },
+          {
+            w: 10,
+            at: (r) => {
+              const rad = 0.66 + Math.floor(r() * 3) * 0.22;
+              const a = (r() - 0.5) * 1.1;
+              const side = r() < 0.5 ? 1 : -1;
+              return [side * Math.cos(a) * rad, hc + Math.sin(a) * rad, 0];
+            },
+          },
+        ],
+        n,
+        r,
+        out
+      );
+      break;
+    }
+
+    case "trophy": {
+      // a cup with two handles on a stem, on a two-step base
+      const cupTop = 1.1;
+      const cupBot = 0;
+      const cupR = (y: number) => 0.1 + 0.75 * Math.pow((y - cupBot) / (cupTop - cupBot), 0.55);
+      compose(
+        [
+          { w: 36, at: (r) => { const y = cupBot + r() * (cupTop - cupBot); const a = r() * TAU; const rr = cupR(y); return [Math.cos(a) * rr, y, Math.sin(a) * rr]; } },
+          { w: 7, at: (r) => { const a = r() * TAU; return [Math.cos(a) * 0.85, cupTop, Math.sin(a) * 0.85]; } },
+          {
+            w: 12,
+            at: (r) => {
+              const side = r() < 0.5 ? 1 : -1;
+              const a = -Math.PI / 2 + r() * Math.PI;
+              return [side * (0.66 + Math.cos(a) * 0.3), 0.66 + Math.sin(a) * 0.3, jit(r, 0.05)];
+            },
+          },
+          { w: 6, at: (r) => { const a = r() * TAU; return [Math.cos(a) * 0.09, -0.57 + r() * 0.6, Math.sin(a) * 0.09]; } },
+          {
+            w: 4,
+            at: (r) => {
+              const u = r() * 2 - 1;
+              const a = r() * TAU;
+              const s = Math.sqrt(1 - u * u);
+              return [s * Math.cos(a) * 0.16, -0.27 + u * 0.12, s * Math.sin(a) * 0.16];
+            },
+          },
+          { w: 12, at: box(0.42, -0.75, -0.57, 0.42) },
+          { w: 18, at: box(0.62, -1.1, -0.75, 0.62) },
+        ],
+        n,
+        r,
+        out
+      );
+      break;
+    }
+
+    case "clock": {
+      // a wall clock stopped at two in the morning: the time I was born
+      const hours = 2;
+      const mins = 0;
+      const ang = (turns: number) => Math.PI / 2 - turns * TAU; // 12 at the top, clockwise
+      const R0 = 1.25;
+      const hand = (turns: number, len: number, width: number, z: number) => (r: Rand): V3 => {
+        const a = ang(turns);
+        const t = r() * len;
+        const s = jit(r, width);
+        return [Math.cos(a) * t - Math.sin(a) * s, Math.sin(a) * t + Math.cos(a) * s, z];
+      };
+      compose(
+        [
+          { w: 34, at: (r) => { const a = r() * TAU; const rr = R0 + jit(r, 0.07); return [Math.cos(a) * rr, Math.sin(a) * rr, jit(r, 0.12)]; } },
+          {
+            w: 12,
+            at: (r) => {
+              const k = Math.floor(r() * 60);
+              const a = ang(k / 60);
+              const rr = R0 - 0.08 - r() * (k % 5 === 0 ? 0.2 : 0.06);
+              return [Math.cos(a) * rr, Math.sin(a) * rr, 0];
+            },
+          },
+          { w: 16, at: hand(hours / 12, 0.62, 0.06, 0.05) },
+          { w: 22, at: hand(mins / 60, 0.98, 0.03, 0.08) },
+          { w: 4, at: (r) => { const a = r() * TAU; const rr = Math.sqrt(r()) * 0.07; return [Math.cos(a) * rr, Math.sin(a) * rr, 0.1]; } },
+        ],
+        n,
+        r,
+        out
+      );
+      break;
+    }
+
+    case "plane": {
+      // a paper plane heading up and to the right, with a dotted trail
+      const N: V3 = [1.3, 0.3, 0];
+      // the wings rise from the centre fold in a shallow V, like a real one
+      const TL: V3 = [-1.0, 0.14, -0.72];
+      const TR: V3 = [-1.0, 0.14, 0.72];
+      const TC: V3 = [-1.0, -0.08, 0];
+      const K: V3 = [-1.0, -0.42, 0];
+      const P0: V3 = [-1.15, -0.15, 0];
+      const P1: V3 = [-1.7, 0.1, 0];
+      const P2: V3 = [-2.0, -0.85, 0.25];
+      const trail = (t: number): V3 => {
+        const u = 1 - t;
+        return [0, 1, 2].map((d) => u * u * P0[d] + 2 * u * t * P1[d] + t * t * P2[d]) as V3;
+      };
+      compose(
+        [
+          { w: 15, at: tri(N, TL, TC) },
+          { w: 15, at: tri(N, TR, TC) },
+          { w: 8, at: tri(N, TC, K) },
+          // the edges and the centre fold carry the shape
+          { w: 42, at: lines([[N, TL], [N, TR], [TL, TC], [TR, TC], [N, K], [TC, K], [N, TC]], 0.008) },
+          {
+            w: 14,
+            at: (r) => {
+              const p = trail((Math.floor(r() * 6) + r() * 0.5) / 6); // six dashes
+              return [p[0] + jit(r, 0.02), p[1] + jit(r, 0.02), p[2]];
+            },
+          },
+        ],
+        n,
+        r,
+        out,
+        [0.32, 0.25, 0]
+      );
+      break;
+    }
+
+    case "rocket": {
+      // body, nose cone, porthole, three fins, and a flame that flickers
+      const fin = tri([0.33, -0.15, 0], [0.33, -0.6, 0], [0.74, -0.8, 0]);
+      compose(
+        [
+          { w: 28, at: (r) => { const a = r() * TAU; return [Math.cos(a) * 0.33, -0.55 + r() * 1.1, Math.sin(a) * 0.33]; } },
+          { w: 14, at: (r) => { const t = r(); const a = r() * TAU; const rr = 0.33 * Math.sqrt(1 - t * t); return [Math.cos(a) * rr, 0.55 + t * 0.75, Math.sin(a) * rr]; } },
+          { w: 5, at: (r) => { const a = r() * TAU; const rr = r() < 0.5 ? 0.12 : 0.08; return [Math.cos(a) * rr, 0.22 + Math.sin(a) * rr, 0.345]; } },
+          {
+            w: 14,
+            at: (r) => {
+              const phi = Math.floor(r() * 3) * (TAU / 3) + Math.PI / 2;
+              const p = fin(r);
+              return [Math.cos(phi) * p[0], p[1], Math.sin(phi) * p[0]];
+            },
+          },
+          { w: 5, at: (r) => { const t = r(); const a = r() * TAU; const rr = 0.2 + t * 0.08; return [Math.cos(a) * rr, -0.55 - t * 0.18, Math.sin(a) * rr]; } },
+          {
+            w: 26,
+            at: (r) => {
+              const t = Math.pow(r(), 0.7);
+              const a = r() * TAU;
+              const rr = (0.24 * (1 - t) + 0.02) * Math.sqrt(r());
+              return [Math.cos(a) * rr, -0.78 - t * 0.8, Math.sin(a) * rr];
+            },
+          },
+        ],
+        n,
+        r,
+        out,
+        [0, 0.14, 0]
+      );
+      break;
+    }
+
     case "links": {
       const g = Math.PI * (3 - Math.sqrt(5));
       const each = Math.floor(n * 0.4);
@@ -189,22 +518,74 @@ function buildShape(shape: Shape, n: number): Float32Array {
       }
       break;
     }
-    case "bloom": {
-      const rays = 40;
-      const g = Math.PI * (3 - Math.sqrt(5));
-      for (let i = 0; i < n; i++) {
-        const k = i % rays;
-        const y = 1 - (k / (rays - 1)) * 2;
-        const rr = Math.sqrt(Math.max(0, 1 - y * y));
-        const t = 0.18 + Math.pow(r(), 0.7) * 1.25;
-        set(i, Math.cos(g * k) * rr * t, y * t, Math.sin(g * k) * rr * t);
-      }
-      break;
-    }
+
+    case "mark":
+      return buildMark(n, r);
+
     case "scatter":
     default: {
       for (let i = 0; i < n; i++) set(i, (r() - 0.5) * 4.2, (r() - 0.5) * 3, (r() - 0.5) * 2.4);
     }
+  }
+  return out;
+}
+
+// the site's serif, by whatever name next/font gave it
+function serifFamily() {
+  const v = getComputedStyle(document.documentElement).getPropertyValue("--font-instrument-serif").trim();
+  return v ? `${v}, Georgia, serif` : '"Instrument Serif", Georgia, serif';
+}
+
+/* The logo as a slab of particles: the S traced from the site's serif, and
+   the full stop placed exactly where the mark puts it (Mark.tsx). In mark
+   units the S spans x 36.7 to 64.2 and y 16 to 76.6; the dot sits at 74.5, 72.5. */
+function buildMark(n: number, r: Rand): Float32Array {
+  const out = new Float32Array(n * 3);
+  const W = 300;
+  const c = document.createElement("canvas");
+  c.width = W;
+  c.height = W;
+  const ctx = c.getContext("2d", { willReadFrequently: true });
+  if (!ctx) return out;
+  ctx.font = `260px ${serifFamily()}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("S", W / 2, W / 2);
+  const data = ctx.getImageData(0, 0, W, W).data;
+  const pts: number[] = [];
+  let x0 = W;
+  let x1 = 0;
+  let y0 = W;
+  let y1 = 0;
+  for (let y = 0; y < W; y += 2)
+    for (let x = 0; x < W; x += 2)
+      if (data[(y * W + x) * 4 + 3] > 120) {
+        pts.push(x, y);
+        x0 = Math.min(x0, x);
+        x1 = Math.max(x1, x);
+        y0 = Math.min(y0, y);
+        y1 = Math.max(y1, y);
+      }
+  const k = 2.5 / 60.6; // mark units to world: the S is 2.5 tall
+  const toWorld = (u: number, v: number): [number, number] => [(u - 55.5) * k, -(v - 47.5) * k];
+  const count = pts.length / 2;
+  const dotN = Math.round(n * 0.12);
+  for (let i = 0; i < n; i++) {
+    let wx: number;
+    let wy: number;
+    if (i < dotN || !count) {
+      const a = r() * TAU;
+      const rr = Math.sqrt(r()) * 6.5;
+      [wx, wy] = toWorld(74.5 + Math.cos(a) * rr, 72.5 + Math.sin(a) * rr);
+    } else {
+      const p = Math.floor(r() * count);
+      const u = 36.7 + ((pts[p * 2] - x0) / Math.max(1, x1 - x0)) * (64.2 - 36.7);
+      const v = 16 + ((pts[p * 2 + 1] - y0) / Math.max(1, y1 - y0)) * (76.6 - 16);
+      [wx, wy] = toWorld(u + jit(r, 0.6), v + jit(r, 0.6));
+    }
+    out[i * 3] = wx;
+    out[i * 3 + 1] = wy;
+    out[i * 3 + 2] = jit(r, 0.3); // a slab, not a sheet
   }
   return out;
 }
@@ -222,7 +603,7 @@ function buildText(text: string, n: number, emoji: boolean, halfW: number): Floa
 
   const family = emoji
     ? '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'
-    : '"Instrument Serif","Nirmala UI","Noto Sans Telugu","Telugu Sangam MN",Georgia,serif';
+    : `${serifFamily().replace(/, Georgia, serif$/, "")},"Nirmala UI","Noto Sans Telugu","Telugu Sangam MN",Georgia,serif`;
   let size = emoji ? 220 : 190;
   ctx.font = `${size}px ${family}`;
   const w = ctx.measureText(text).width;
@@ -304,6 +685,10 @@ function rotX(t: number) {
 function translate(x: number, y: number, z: number) {
   return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1]);
 }
+function rotZ(t: number) {
+  const c = Math.cos(t), s = Math.sin(t);
+  return new Float32Array([c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+}
 function scale(k: number) {
   return new Float32Array([k, 0, 0, 0, 0, k, 0, 0, 0, 0, k, 0, 0, 0, 0, 1]);
 }
@@ -327,16 +712,27 @@ uniform mat4 u_model;
 uniform float u_t, u_time, u_dpr, u_mouseOn, u_matrix, u_beat, u_wave, u_aspect, u_dist, u_halfW, u_halfH, u_size;
 uniform vec2 u_mouse;
 uniform vec3 u_pulse;
+uniform vec4 u_accentBox;
+uniform float u_accentCut, u_flame;
 varying float v_depth;
 varying float v_seed;
 varying float v_glow;
 varying float v_matrix;
 varying float v_pulse;
+varying float v_acc;
 
 void main(){
   float t = clamp(u_t * 1.35 - a_seed.x * 0.35, 0.0, 1.0);
   float e = t * t * (3.0 - 2.0 * t);
   vec3 p = mix(a_from, a_to, e);
+
+  // particles headed for the shape's accent region (the rocket's flame, the
+  // logo's full stop) are always accent, and the flame ones flicker
+  float inBox = step(u_accentBox.x, a_to.x) * step(a_to.x, u_accentBox.z)
+              * step(u_accentBox.y, a_to.y) * step(a_to.y, u_accentBox.w);
+  float fl = inBox * u_flame;
+  p.xz *= 1.0 + fl * 0.22 * sin(u_time * 11.0 + a_seed.x * 40.0);
+  p.y += fl * 0.07 * sin(u_time * 17.0 + a_seed.z * 30.0);
 
   p += 0.018 * vec3(
     sin(u_time * 0.6 + a_seed.y * 40.0),
@@ -383,6 +779,7 @@ void main(){
   // computed here, not in the fragment shader: WebGL 1 refuses to link two
   // shaders that declare u_time at different precisions (highp vs mediump)
   v_pulse = 0.5 + 0.5 * sin(u_time * 1.7 + a_seed.y * 62.83);
+  v_acc = max(step(u_accentCut, a_seed.y), inBox * e);
   gl_PointSize = (1.4 + 3.2 * v_depth + glow * 3.0 + u_beat * 1.6) * u_dpr * u_size;
 }
 `;
@@ -392,22 +789,33 @@ precision mediump float;
 uniform vec3 u_ink;
 uniform vec3 u_accent;
 uniform float u_alpha;
+uniform float u_textMask;
+uniform float u_light;
+uniform vec2 u_res;
 varying float v_depth;
-varying float v_seed;
 varying float v_glow;
 varying float v_matrix;
 varying float v_pulse;
+varying float v_acc;
+
+// quieter on the left, where the text column is, so it never fights the words
+float textMask() {
+  float xn = gl_FragCoord.x / u_res.x;
+  return mix(1.0 - 0.6 * u_textMask, 1.0, smoothstep(0.3, 0.64, xn));
+}
+
 void main(){
   vec2 c = gl_PointCoord - 0.5;
   float d = length(c);
   if (d > 0.5) discard;
   float disc = 1.0 - smoothstep(0.22, 0.5, d);
-  float isAcc = step(0.88, v_seed);
+  float isAcc = v_acc;
   float pulse = v_pulse;
   vec3 col = mix(u_ink, u_accent, clamp(isAcc + v_glow, 0.0, 1.0));
   col = mix(col, vec3(0.3, 1.0, 0.45), v_matrix);
   float a = disc * (0.12 + 0.58 * v_depth) * mix(1.0, 0.55 + 0.8 * pulse, isAcc);
   a = min(1.0, a + v_glow * 0.5) * u_alpha;
+  a *= textMask() * mix(1.0, 0.85, u_light);
   gl_FragColor = vec4(col * a, a);
 }
 `;
@@ -417,9 +825,14 @@ precision mediump float;
 uniform vec3 u_ink;
 uniform float u_alpha;
 uniform float u_lineAlpha;
+uniform float u_textMask;
+uniform float u_light;
+uniform vec2 u_res;
 varying float v_depth;
 void main(){
-  float a = (0.03 + 0.16 * v_depth) * u_alpha * u_lineAlpha;
+  float xn = gl_FragCoord.x / u_res.x;
+  float mask = mix(1.0 - 0.6 * u_textMask, 1.0, smoothstep(0.3, 0.64, xn));
+  float a = (0.03 + 0.16 * v_depth) * u_alpha * u_lineAlpha * mask * mix(1.0, 0.65, u_light);
   gl_FragColor = vec4(u_ink * a, a);
 }
 `;
@@ -542,7 +955,7 @@ export function Field3D() {
     let matrix = 0;
     let matrixUntil = 0;
     let beat = 0;
-    let wave = routeShape === "wave" ? 1 : 0;
+    const wave = 0; // the old sound-wave shape is gone; the shader hook stays for text eggs to reuse
     let pulseStart = -1;
     let pulseX = 0;
     let pulseY = 0;
@@ -551,15 +964,27 @@ export function Field3D() {
     let mouseOn = 0;
     let wantMouse = 0;
     let shift = -1; // eased sideways offset; -1 until the first frame sets it
+    let lift = 0; // eased: inner pages raise the shape beside the page title
     let fit = -1; // eased scale for shapes wider than the screen; same -1 rule
-    let spinAngle = 0;
+    let spinAngle = SWAY[routeShape]?.base ?? 0;
     let lean = LEAN[routeShape] ?? 0;
+    let tiltZ = TILT[routeShape] ?? 0;
+    let accentCut = 1 - (ACCENT_SHARE[routeShape] ?? 0.12);
+    let accentBox: [number, number, number, number] = ACCENT_BOX[routeShape] ?? [0, 0, -1, -1];
+    let flame = routeShape === "rocket" ? 1 : 0;
+    let textMask = 0;
+    let light = false;
 
     let ink: [number, number, number] = [0.9, 0.9, 0.9];
     let accent: [number, number, number] = [1, 0.36, 0.15];
     const readTheme = () => {
       const cs = getComputedStyle(document.documentElement);
-      ink = hexToRgb(cs.getPropertyValue("--ink"));
+      const bg = hexToRgb(cs.getPropertyValue("--bg"));
+      const rawInk = hexToRgb(cs.getPropertyValue("--ink"));
+      light = bg[0] + bg[1] + bg[2] > 1.5;
+      // On paper, full-strength ink dots read as grit rather than light, so
+      // in light mode the field is drawn in a softer graphite.
+      ink = light ? [0, 1, 2].map((k) => rawInk[k] + (bg[k] - rawInk[k]) * 0.35) as [number, number, number] : rawInk;
       accent = hexToRgb(cs.getPropertyValue("--accent"));
     };
     readTheme();
@@ -605,6 +1030,7 @@ export function Field3D() {
       t = reduce ? 1 : 0;
       current = label;
       faceTarget = label === "text" ? 1 : 0;
+      accentBox = label === "text" ? [0, 0, -1, -1] : (ACCENT_BOX[label] ?? [0, 0, -1, -1]);
       if (reduce) draw(performance.now());
     };
 
@@ -671,7 +1097,8 @@ export function Field3D() {
       const names = [
         "u_vp", "u_model", "u_t", "u_time", "u_dpr", "u_mouseOn", "u_matrix", "u_beat", "u_wave",
         "u_aspect", "u_dist", "u_halfW", "u_halfH", "u_size", "u_mouse", "u_pulse", "u_ink",
-        "u_accent", "u_alpha", "u_lineAlpha",
+        "u_accent", "u_alpha", "u_lineAlpha", "u_accentBox", "u_accentCut", "u_flame", "u_textMask",
+        "u_light", "u_res",
       ];
       const u: Record<string, WebGLUniformLocation | null> = {};
       names.forEach((nm) => (u[nm] = gl.getUniformLocation(p, nm)));
@@ -715,13 +1142,19 @@ export function Field3D() {
       gl.uniform1f(u.u_dist, dist);
       gl.uniform1f(u.u_halfW, halfW());
       gl.uniform1f(u.u_halfH, halfH());
-      gl.uniform1f(u.u_size, small ? 0.9 : 1);
+      gl.uniform1f(u.u_size, (small ? 0.9 : 1) * (light ? 0.9 : 1));
       gl.uniform2f(u.u_mouse, mouseX, mouseY);
       gl.uniform3f(u.u_pulse, pulseX, pulseY, pulseStart < 0 ? -1 : (performance.now() - pulseStart) / 1000);
       gl.uniform3fv(u.u_ink, ink);
       gl.uniform3fv(u.u_accent, accent);
       gl.uniform1f(u.u_alpha, alpha);
       gl.uniform1f(u.u_lineAlpha, lineAlpha);
+      gl.uniform4f(u.u_accentBox, accentBox[0], accentBox[1], accentBox[2], accentBox[3]);
+      gl.uniform1f(u.u_accentCut, accentCut);
+      gl.uniform1f(u.u_flame, flame);
+      gl.uniform1f(u.u_textMask, textMask);
+      gl.uniform1f(u.u_light, light ? 1 : 0);
+      gl.uniform2f(u.u_res, canvas.width, canvas.height);
     };
 
     function draw(now: number) {
@@ -742,7 +1175,6 @@ export function Field3D() {
       mouseOn += (wantMouse - mouseOn) * Math.min(1, dt * 4);
       matrix += ((now < matrixUntil ? 1 : 0) - matrix) * Math.min(1, dt * 2.2);
       beat *= Math.exp(-dt * 5);
-      wave += ((current === "wave" ? 1 : 0) - wave) * Math.min(1, dt * 2);
       lineAlpha += ((current === "sphere" && t > 0.6 ? 1 : 0) - lineAlpha) * Math.min(1, dt * 2.5);
       if (pulseStart >= 0 && now - pulseStart > 1600) pulseStart = -1;
 
@@ -750,7 +1182,13 @@ export function Field3D() {
       const vh = window.innerHeight || 800;
       const home = homeRef.current;
       const scrollFade = 1 - Math.min(1, scrollY / vh) * (home ? 0.5 : 0.42);
-      const alpha = scrollFade * (home ? 1 : 0.85) * (small ? 0.82 : 1);
+      // quieter than it was: it's a background, and the words come first
+      const alpha = scrollFade * (home ? 0.8 : 0.62) * (small ? 0.78 : 1);
+      // on wide screens the text sits on the left, so the field dims there
+      textMask += ((aspect > 1.15 ? 1 : 0) * (1 - faceOn) - textMask) * Math.min(1, dt * 2);
+      const shape = current === "text" ? null : current;
+      accentCut += ((shape ? 1 - (ACCENT_SHARE[shape] ?? 0.12) : 0.88) - accentCut) * Math.min(1, dt * 2);
+      flame += ((shape === "rocket" ? 1 : 0) - flame) * Math.min(1, dt * 2);
 
       // shift the shape right on wide inner pages so it doesn't sit behind the
       // text column, but only as far as the window has room for
@@ -758,24 +1196,35 @@ export function Field3D() {
       const wantShift = aspect > 1.15 && !home ? Math.max(0, Math.min(halfW() * 0.42, halfW() - reach * 1.08)) : 0;
       shift = shift < 0 ? wantShift : shift + (wantShift - shift) * Math.min(1, dt * 2.5);
       const offX = shift * (1 - faceOn);
+      // On wide inner pages the first card starts halfway down the screen and
+      // would hide the bottom of the shape, so it sits a little higher and a
+      // little smaller, in the empty space beside the page title.
+      const inner = aspect > 1.15 && !home;
+      lift += ((inner ? halfH() * 0.2 : 0) - lift) * Math.min(1, dt * 2.5);
+      const shrink = 1 - (0.16 * lift) / Math.max(0.001, halfH() * 0.2);
       // on a phone held upright the wide shapes (the wave, the two links) are
       // wider than the screen, so shrink them to fit
       const wantFit = reach ? Math.min(1, (halfW() * 0.94) / reach) : 1;
       fit = fit < 0 ? wantFit : fit + (wantFit - fit) * Math.min(1, dt * 2.5);
-      lean += ((current === "text" ? 0 : (LEAN[current] ?? 0)) - lean) * Math.min(1, dt * 2);
-      if (current === "links") {
-        // two nodes would hide behind each other half the time, so sway around
-        // the nearest face-on angle instead of turning all the way round
-        const faceOnAngle = Math.round(spinAngle / Math.PI) * Math.PI;
-        spinAngle += (faceOnAngle + Math.sin(time * 0.35) * 0.55 - spinAngle) * Math.min(1, dt * 1.5);
+      lean += ((shape ? (LEAN[shape] ?? 0) : 0) - lean) * Math.min(1, dt * 2);
+      tiltZ += ((shape ? (TILT[shape] ?? 0) : 0) - tiltZ) * Math.min(1, dt * 2);
+      const sway = shape ? SWAY[shape] : undefined;
+      if (sway) {
+        // things that only read from the front rock around it instead of
+        // turning all the way round (a clock seen edge-on is just a line)
+        const face = Math.round((spinAngle - sway.base) / TAU) * TAU + sway.base;
+        spinAngle += (face + Math.sin(time * 0.35) * sway.amp - spinAngle) * Math.min(1, dt * 1.5);
       } else {
         spinAngle += dt * 0.11;
       }
       const spin = (1 - faceOn) * (spinAngle + scrollY * 0.00035 + mouseX * 0.25);
       const tilt = (1 - faceOn) * (Math.sin(time * 0.21) * 0.12 + lean - mouseY * 0.12);
-      // spin each shape about its own axis, then lean it towards the camera, so
-      // a tilted ring keeps reading as a ring instead of turning edge-on
-      const model = mul(translate(offX, 0, 0), mul(rotX(tilt), mul(rotY(spin), scale(fit))));
+      // spin each shape about its own axis, tip it sideways, then lean it
+      // towards the camera, so a tilted shape keeps reading as itself
+      const model = mul(
+        translate(offX, lift * (1 - faceOn), 0),
+        mul(rotX(tilt), mul(rotZ(tiltZ * (1 - faceOn)), mul(rotY(spin), scale(fit * (1 - (1 - shrink) * (1 - faceOn))))))
+      );
       const vp = mul(perspective(FOV, aspect, 0.1, 100), translate(0, 0, -dist));
 
       gl.clear(gl.COLOR_BUFFER_BIT);

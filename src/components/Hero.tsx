@@ -2,13 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { introDelay } from "./Intro";
 import { HERO, SITE } from "@/data/site";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 export function Hero() {
   const reduce = useReducedMotion();
+  // on a first visit, hold the entrance until the intro lifts
+  const [d] = useState(introDelay);
 
   return (
     <section className="relative">
@@ -21,7 +25,7 @@ export function Hero() {
               className="flex items-center gap-3"
               initial={reduce ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, ease: EASE }}
+              transition={{ duration: 0.8, delay: d, ease: EASE }}
             >
               {SITE.available && (
                 <span className="flex items-center gap-2">
@@ -41,7 +45,7 @@ export function Hero() {
                     className="block"
                     initial={reduce ? false : { y: "110%" }}
                     animate={{ y: "0%" }}
-                    transition={{ duration: 1, delay: 0.08 + i * 0.08, ease: EASE }}
+                    transition={{ duration: 1, delay: d + 0.08 + i * 0.08, ease: EASE }}
                   >
                     {i === HERO.lines.length - 1 ? (
                       <>
@@ -59,7 +63,7 @@ export function Hero() {
               className="t-lede safe-text mt-8 max-w-[46ch]"
               initial={reduce ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.42, ease: EASE }}
+              transition={{ duration: 0.8, delay: d + 0.42, ease: EASE }}
             >
               {HERO.sub}
             </motion.p>
@@ -68,7 +72,7 @@ export function Hero() {
               className="mt-10 flex flex-wrap items-center gap-x-3 gap-y-3"
               initial={reduce ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.52, ease: EASE }}
+              transition={{ duration: 0.8, delay: d + 0.52, ease: EASE }}
             >
               <Link
                 href="/projects"
@@ -96,7 +100,7 @@ export function Hero() {
             className="lg:col-span-5 lg:pt-3"
             initial={reduce ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, delay: 0.24, ease: EASE }}
+            transition={{ duration: 1.1, delay: d + 0.24, ease: EASE }}
           >
             <div className="relative mx-auto aspect-[4/5] w-full max-w-[340px] overflow-hidden rounded-[var(--radius-md)] bg-[var(--bg-sunken)] lg:max-w-none">
               <Image
@@ -121,7 +125,7 @@ export function Hero() {
           className="mt-14 grid grid-cols-2 gap-x-5 gap-y-8 md:mt-24 md:grid-cols-4 md:gap-x-8 md:gap-y-0"
           initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.9, delay: 0.65, ease: EASE }}
+          transition={{ duration: 0.9, delay: d + 0.65, ease: EASE }}
         >
           {HERO.stats.map((s) => (
             <div key={s.label} className="flex flex-col border-t border-[var(--rule)] pt-5">

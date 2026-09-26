@@ -73,7 +73,7 @@ export function Secrets() {
       {/* toasts */}
       <div
         className="no-print pointer-events-none fixed left-4 z-[94] flex max-w-[min(360px,calc(100vw-6rem))] flex-col gap-2 md:left-7"
-        style={{ bottom: `calc(${found.length ? "4.4rem" : "1.25rem"} + var(--safe-b))` }}
+        style={{ bottom: "calc(1.25rem + var(--safe-b))" }}
         aria-live="polite"
       >
         <AnimatePresence initial={false}>
@@ -93,31 +93,8 @@ export function Secrets() {
         </AnimatePresence>
       </div>
 
-      {/* the counter */}
-      <AnimatePresence>
-        {found.length > 0 && (
-          <motion.button
-            type="button"
-            onClick={() => setOpen(true)}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: EASE }}
-            aria-label={`${found.length} of ${total} secrets found. Show the list.`}
-            className="no-print mono-sm fixed left-4 z-[94] flex items-center gap-2 rounded-full border border-[var(--rule-strong)] bg-[var(--bg-raised)] px-3.5 py-2 text-[11.5px] shadow-[var(--shadow)] transition-colors duration-300 hover:border-[var(--accent)] md:left-7"
-            style={{ bottom: "calc(1.25rem + var(--safe-b))" }}
-          >
-            <span className="text-[var(--accent)]" aria-hidden>
-              ✦
-            </span>
-            <span className="tabular-nums">
-              {found.length}
-              <span className="text-[var(--ink-3)]"> / {total}</span>
-            </span>
-            <span className="hidden text-[var(--ink-3)] sm:inline">secrets</span>
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {/* No floating counter: the count and the clues live in the footer
+          (FooterSecrets), and a toast says so whenever one is found. */}
 
       {/* the list */}
       <AnimatePresence>

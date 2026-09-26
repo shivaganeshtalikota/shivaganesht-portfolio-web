@@ -13,7 +13,7 @@ export function Testimonials({ index = "05", compact = false }: { index?: string
           </div>
         </Reveal>
       )}
-      <Stagger className={`grid gap-5 md:grid-cols-3 ${compact ? "" : "mt-10"}`}>
+      <Stagger className={`grid gap-5 md:grid-cols-2 ${compact ? "" : "mt-10"}`}>
         {TESTIMONIALS.map((t) => (
           <StaggerItem key={t.name} className="h-full">
             <figure className="surface flex h-full flex-col p-7">

@@ -509,7 +509,7 @@ export function Terminal() {
           aria-label={open ? "Close terminal" : "Open interactive terminal"}
           aria-expanded={open}
           whileTap={{ scale: 0.92 }}
-          className="relative grid h-12 w-12 place-items-center rounded-full border border-[var(--rule-strong)] bg-[var(--bg-raised)] shadow-[var(--shadow-lg)] transition-colors duration-300 hover:border-[var(--accent)] md:h-13 md:w-13"
+          className="glass-surface relative grid h-12 w-12 place-items-center rounded-full backdrop-blur-xl backdrop-saturate-150 transition-transform duration-300 hover:scale-105 md:h-13 md:w-13"
         >
           {!open && !nudge && (
             <span className="absolute inset-0 animate-ping rounded-full border border-[var(--accent)] opacity-20" aria-hidden />

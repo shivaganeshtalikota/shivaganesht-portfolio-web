@@ -12,6 +12,8 @@ const PRIORITY: Record<string, number> = {
   "/awards": 0.7,
   "/contact": 0.7,
   "/now": 0.6,
+  "/links": 0.5,
+  "/brand": 0.4,
 };
 
 /* Image entries let the event photographs show up in image search for
@@ -22,6 +24,7 @@ const IMAGES: Record<string, string[]> = {
   "/awards": ["/portrait/gwr-award.webp"],
   "/speaking": EVENTS.flatMap((e) => e.photos.map((p) => p.src)),
   "/speaking-kit": ["/portrait/hero.webp", "/portrait/wide.webp", "/portrait/microsoft.webp"],
+  "/brand": ["/brand/mark-night.png", "/brand/mark-paper.png", "/brand/lockup-night.png"],
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {

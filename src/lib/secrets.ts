@@ -21,26 +21,27 @@ export type SecretId =
   | "shortcuts"
   | "lost";
 
+/* Hints are meant to be followed, not solved: each one says where to go
+   and roughly what to do, without spoiling the exact word. */
 export const SECRETS: { id: SecretId; label: string; hint: string }[] = [
-  { id: "terminal", label: "Opened the terminal", hint: "bottom-right corner" },
-  { id: "palette", label: "Found the command palette", hint: "⌘K, or just /" },
-  { id: "command", label: "Ran a command that isn't on the list", hint: "be rude to the terminal" },
-  { id: "konami", label: "Entered the Konami code", hint: "↑ ↑ ↓ ↓ ← → ← → B A" },
-  { id: "logo", label: "Tapped my name five times", hint: "the name at the top" },
-  { id: "roll", label: "Made the whole site roll over", hint: "the name at the bottom" },
-  { id: "comic", label: "Ruined the design system", hint: "keep clicking the name at the bottom" },
-  { id: "matrix", label: "Took the red pill", hint: "type the name of a film" },
-  { id: "chai", label: "Made chai", hint: "what I run on" },
-  { id: "hyderabad", label: "Typed where I'm from", hint: "a city, or its best dish" },
-  { id: "telugu", label: "Said hello in Telugu", hint: "a greeting" },
-  { id: "record", label: "Typed the record number", hint: "four digits, from Agentathon" },
-  { id: "metcalfe", label: "Met Bob Metcalfe", hint: "the man behind Ethernet" },
-  { id: "music", label: "Played the music", hint: "a terminal command" },
-  { id: "shockwave", label: "Sent a shockwave through the field", hint: "click the empty background" },
-  { id: "shortcuts", label: "Found the keyboard shortcuts", hint: "press ?" },
-  { id: "lost", label: "Got properly lost", hint: "a page that doesn't exist" },
+  { id: "terminal", label: "Opened the terminal", hint: "click the >_ button in the bottom-right corner" },
+  { id: "palette", label: "Found the command palette", hint: "press ⌘K (Ctrl+K on Windows), or just /" },
+  { id: "command", label: "Ran a command that isn't on the list", hint: "in the terminal, try something rude, like sudo" },
+  { id: "konami", label: "Entered the Konami code", hint: "on a keyboard: ↑ ↑ ↓ ↓ ← → ← → B A" },
+  { id: "logo", label: "Tapped the S five times", hint: "tap the S in the top-left corner five times, quickly" },
+  { id: "roll", label: "Made the whole site roll over", hint: "click my name at the very bottom of any page, five times" },
+  { id: "comic", label: "Ruined the design system", hint: "keep clicking my name at the bottom, all the way to twelve" },
+  { id: "matrix", label: "Took the red pill", hint: "type the name of a 1999 film about a simulation, anywhere on the page" },
+  { id: "chai", label: "Made chai", hint: "type the drink I run on (it isn't coffee), anywhere on the page" },
+  { id: "hyderabad", label: "Typed where I'm from", hint: "type the city I live in, or its most famous dish" },
+  { id: "telugu", label: "Said hello in Telugu", hint: "type a hello: namaste works, and so does the Telugu one" },
+  { id: "record", label: "Typed the record number", hint: "type how many people were at Agentathon 2025 (four digits)" },
+  { id: "metcalfe", label: "Met Bob Metcalfe", hint: "type the surname of the man who invented Ethernet" },
+  { id: "music", label: "Played the music", hint: "open the terminal and ask it to play something" },
+  { id: "shockwave", label: "Sent a shockwave through the field", hint: "click any empty patch of background" },
+  { id: "shortcuts", label: "Found the keyboard shortcuts", hint: "press ? (that's Shift and /)" },
+  { id: "lost", label: "Got properly lost", hint: "go to a page that doesn't exist, like /nowhere" },
 ];
-
 const KEY = "sgt-secrets";
 
 export function foundSecrets(): SecretId[] {

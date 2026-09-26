@@ -1,0 +1,448 @@
+{
+  "zip": "/brand/shiva-ganesh-talikota-logo-kit.zip",
+  "groups": [
+    {
+      "title": "The mark",
+      "lede": "The S and the dot on its square. Rounded corners as SVG and PNG; the JPG is a full square, since JPG can't be see-through.",
+      "items": [
+        {
+          "key": "mark-night",
+          "label": "Night",
+          "note": "The original. Use this one when in doubt.",
+          "bg": "#0c0b0a",
+          "colors": [
+            "#0c0b0a",
+            "#f2f0ec",
+            "#ff5c26"
+          ],
+          "preview": "/brand/mark-night.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/mark-night.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/mark-night.png",
+              "from": "mark-night.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/mark-night.jpg",
+              "from": "mark-night-square.svg",
+              "size": 1024
+            }
+          ]
+        },
+        {
+          "key": "mark-paper",
+          "label": "Paper",
+          "note": "For light pages and print.",
+          "bg": "#faf9f7",
+          "colors": [
+            "#faf9f7",
+            "#14130f",
+            "#c93800"
+          ],
+          "preview": "/brand/mark-paper.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/mark-paper.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/mark-paper.png",
+              "from": "mark-paper.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/mark-paper.jpg",
+              "from": "mark-paper-square.svg",
+              "size": 1024
+            }
+          ]
+        },
+        {
+          "key": "mark-white",
+          "label": "White",
+          "note": "Pure white, for slides and documents.",
+          "bg": "#ffffff",
+          "colors": [
+            "#ffffff",
+            "#0c0b0a",
+            "#ff5c26"
+          ],
+          "preview": "/brand/mark-white.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/mark-white.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/mark-white.png",
+              "from": "mark-white.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/mark-white.jpg",
+              "from": "mark-white-square.svg",
+              "size": 1024
+            }
+          ]
+        },
+        {
+          "key": "mark-graphite",
+          "label": "Graphite",
+          "note": "A softer dark, for busy dark layouts.",
+          "bg": "#2b2a27",
+          "colors": [
+            "#2b2a27",
+            "#f2f0ec",
+            "#ff5c26"
+          ],
+          "preview": "/brand/mark-graphite.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/mark-graphite.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/mark-graphite.png",
+              "from": "mark-graphite.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/mark-graphite.jpg",
+              "from": "mark-graphite-square.svg",
+              "size": 1024
+            }
+          ]
+        },
+        {
+          "key": "mark-stone",
+          "label": "Stone",
+          "note": "A warm grey, for light layouts that need contrast.",
+          "bg": "#e6e3dc",
+          "colors": [
+            "#e6e3dc",
+            "#14130f",
+            "#c93800"
+          ],
+          "preview": "/brand/mark-stone.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/mark-stone.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/mark-stone.png",
+              "from": "mark-stone.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/mark-stone.jpg",
+              "from": "mark-stone-square.svg",
+              "size": 1024
+            }
+          ]
+        },
+        {
+          "key": "mark-vermilion",
+          "label": "Vermilion",
+          "note": "The accent as the background. Use sparingly.",
+          "bg": "#ff5c26",
+          "colors": [
+            "#ff5c26",
+            "#0c0b0a",
+            "#0c0b0a"
+          ],
+          "preview": "/brand/mark-vermilion.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/mark-vermilion.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/mark-vermilion.png",
+              "from": "mark-vermilion.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/mark-vermilion.jpg",
+              "from": "mark-vermilion-square.svg",
+              "size": 1024
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Just the S",
+      "lede": "No square, transparent background. For putting the mark straight onto a photo or a colour.",
+      "items": [
+        {
+          "key": "glyph-ink",
+          "label": "Dark ink",
+          "note": "For light backgrounds, no square.",
+          "bg": null,
+          "colors": [
+            "#14130f",
+            "#c93800"
+          ],
+          "preview": "/brand/glyph-ink.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/glyph-ink.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/glyph-ink.png",
+              "from": "glyph-ink.svg",
+              "height": 1024
+            }
+          ]
+        },
+        {
+          "key": "glyph-light",
+          "label": "Light ink",
+          "note": "For dark backgrounds, no square.",
+          "bg": "#0c0b0a",
+          "colors": [
+            "#f2f0ec",
+            "#ff5c26"
+          ],
+          "preview": "/brand/glyph-light.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/glyph-light.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/glyph-light.png",
+              "from": "glyph-light.svg",
+              "height": 1024
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "With my name",
+      "lede": "The mark and the name together, spaced the way the site's top bar spaces them.",
+      "items": [
+        {
+          "key": "lockup-night",
+          "label": "Night",
+          "note": "Mark and name, dark.",
+          "bg": "#0c0b0a",
+          "colors": [
+            "#0c0b0a",
+            "#f2f0ec",
+            "#ff5c26"
+          ],
+          "preview": "/brand/lockup-night.svg",
+          "wide": true,
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/lockup-night.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/lockup-night.png",
+              "from": "lockup-night.svg",
+              "height": 600
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/lockup-night.jpg",
+              "from": "lockup-night.svg",
+              "height": 600,
+              "flatten": "#0c0b0a"
+            }
+          ]
+        },
+        {
+          "key": "lockup-paper",
+          "label": "Paper",
+          "note": "Mark and name, light.",
+          "bg": "#faf9f7",
+          "colors": [
+            "#faf9f7",
+            "#14130f",
+            "#ff5c26"
+          ],
+          "preview": "/brand/lockup-paper.svg",
+          "wide": true,
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/lockup-paper.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/lockup-paper.png",
+              "from": "lockup-paper.svg",
+              "height": 600
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/lockup-paper.jpg",
+              "from": "lockup-paper.svg",
+              "height": 600,
+              "flatten": "#faf9f7"
+            }
+          ]
+        },
+        {
+          "key": "lockup-ink",
+          "label": "Dark ink",
+          "note": "Transparent, for light backgrounds.",
+          "bg": null,
+          "colors": [
+            "#14130f",
+            "#ff5c26"
+          ],
+          "preview": "/brand/lockup-ink.svg",
+          "wide": true,
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/lockup-ink.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/lockup-ink.png",
+              "from": "lockup-ink.svg",
+              "height": 600
+            }
+          ]
+        },
+        {
+          "key": "lockup-light",
+          "label": "Light ink",
+          "note": "Transparent, for dark backgrounds.",
+          "bg": "#0c0b0a",
+          "colors": [
+            "#f2f0ec",
+            "#ff5c26"
+          ],
+          "preview": "/brand/lockup-light.svg",
+          "wide": true,
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/lockup-light.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/lockup-light.png",
+              "from": "lockup-light.svg",
+              "height": 600
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Profile pictures",
+      "lede": "Full-bleed squares with extra room around the S, so a round crop on LinkedIn or Instagram doesn't clip it.",
+      "items": [
+        {
+          "key": "avatar-night",
+          "label": "Night",
+          "note": "Square, with room for a circular crop.",
+          "bg": "#0c0b0a",
+          "colors": [
+            "#0c0b0a",
+            "#f2f0ec",
+            "#ff5c26"
+          ],
+          "preview": "/brand/avatar-night.svg",
+          "round": true,
+          "files": [
+            {
+              "kind": "PNG",
+              "href": "/brand/avatar-night.png",
+              "from": "avatar-night.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/avatar-night.jpg",
+              "from": "avatar-night.svg",
+              "size": 1024
+            }
+          ]
+        },
+        {
+          "key": "avatar-paper",
+          "label": "Paper",
+          "note": "Square, with room for a circular crop.",
+          "bg": "#faf9f7",
+          "colors": [
+            "#faf9f7",
+            "#14130f",
+            "#c93800"
+          ],
+          "preview": "/brand/avatar-paper.svg",
+          "round": true,
+          "files": [
+            {
+              "kind": "PNG",
+              "href": "/brand/avatar-paper.png",
+              "from": "avatar-paper.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/avatar-paper.jpg",
+              "from": "avatar-paper.svg",
+              "size": 1024
+            }
+          ]
+        },
+        {
+          "key": "avatar-vermilion",
+          "label": "Vermilion",
+          "note": "Square, with room for a circular crop.",
+          "bg": "#ff5c26",
+          "colors": [
+            "#ff5c26",
+            "#0c0b0a",
+            "#0c0b0a"
+          ],
+          "preview": "/brand/avatar-vermilion.svg",
+          "round": true,
+          "files": [
+            {
+              "kind": "PNG",
+              "href": "/brand/avatar-vermilion.png",
+              "from": "avatar-vermilion.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/avatar-vermilion.jpg",
+              "from": "avatar-vermilion.svg",
+              "size": 1024
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

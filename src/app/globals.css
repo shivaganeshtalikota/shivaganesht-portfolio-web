@@ -51,6 +51,17 @@
   --glass: rgba(250, 249, 247, 0.6);
   --glass-rule: rgba(20, 19, 15, 0.09);
 
+  /* liquid glass: see the .glass-surface and .glass-lens notes below */
+  --gs-fill: rgba(255, 255, 255, 0.5);
+  --gs-edge-hi: rgba(255, 255, 255, 1);
+  --gs-edge-lo: rgba(20, 19, 15, 0.07);
+  --gs-drop: 0 10px 28px rgba(20, 19, 15, 0.1), 0 2px 6px rgba(20, 19, 15, 0.06);
+  --lens-top: rgba(255, 255, 255, 0.62);
+  --lens-mid: rgba(255, 255, 255, 0.2);
+  --lens-edge: rgba(255, 255, 255, 1);
+  --lens-shade: rgba(20, 19, 15, 0.12);
+  --lens-drop: 0 10px 24px rgba(20, 19, 15, 0.14), 0 2px 6px rgba(20, 19, 15, 0.08);
+
   --shadow: 0 1px 2px rgba(20, 19, 15, 0.05), 0 8px 24px rgba(20, 19, 15, 0.05);
   --shadow-lg: 0 2px 8px rgba(20, 19, 15, 0.06), 0 24px 64px rgba(20, 19, 15, 0.1);
 
@@ -84,6 +95,15 @@
 
   --glass: rgba(12, 11, 10, 0.58);
   --glass-rule: rgba(242, 240, 236, 0.1);
+  --gs-fill: rgba(255, 255, 255, 0.045);
+  --gs-edge-hi: rgba(255, 255, 255, 0.42);
+  --gs-edge-lo: rgba(255, 255, 255, 0.05);
+  --gs-drop: 0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --lens-top: rgba(255, 255, 255, 0.09);
+  --lens-mid: rgba(255, 255, 255, 0.015);
+  --lens-edge: rgba(255, 255, 255, 0.6);
+  --lens-shade: rgba(0, 0, 0, 0.38);
+  --lens-drop: 0 12px 28px rgba(0, 0, 0, 0.42), 0 2px 6px rgba(0, 0, 0, 0.3);
 
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6);
@@ -111,6 +131,15 @@
     --accent-wash: rgba(255, 92, 38, 0.14);
     --glass: rgba(12, 11, 10, 0.58);
     --glass-rule: rgba(242, 240, 236, 0.1);
+    --gs-fill: rgba(255, 255, 255, 0.045);
+    --gs-edge-hi: rgba(255, 255, 255, 0.42);
+    --gs-edge-lo: rgba(255, 255, 255, 0.05);
+    --gs-drop: 0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+    --lens-top: rgba(255, 255, 255, 0.09);
+    --lens-mid: rgba(255, 255, 255, 0.015);
+    --lens-edge: rgba(255, 255, 255, 0.6);
+    --lens-shade: rgba(0, 0, 0, 0.38);
+    --lens-drop: 0 12px 28px rgba(0, 0, 0, 0.42), 0 2px 6px rgba(0, 0, 0, 0.3);
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6);
     --grain: 0.04;
@@ -385,25 +414,582 @@ html.comic-sans * {
 }
 
 @media print {
+  /* the site's chrome never prints: the bar, the footer, the 3D field, the
+     intro, the rail, and anything floating */
   .no-print,
-  header,
+  .site-header,
   footer,
-  canvas { display: none !important; }
+  canvas,
+  #intro,
+  .rail,
+  .rail-line,
+  [aria-label="Open interactive terminal"] {
+    display: none !important;
+  }
   body::after { display: none; }
+
+  /* Paper is always light, whatever theme the screen was in. These selectors
+     match the dark-theme ones exactly, so they win on order, and !important
+     makes sure of it. */
+  :root,
+  :root[data-theme="dark"],
+  :root:not([data-theme="light"]) {
+    color-scheme: light !important;
+    --ink: #111 !important; --ink-2: #333 !important; --ink-3: #555 !important; --ink-4: #888 !important;
+    --bg: #fff !important; --bg-raised: #fff !important; --bg-sunken: #fff !important;
+    --rule: #ddd !important; --rule-strong: #bbb !important; --accent: #b83200 !important;
+  }
   html, body {
     background: #fff !important;
     color: #111 !important;
   }
-  :root {
-    --ink: #111; --ink-2: #333; --ink-3: #555; --ink-4: #888;
-    --bg: #fff; --bg-raised: #fff; --bg-sunken: #fff;
-    --rule: #ddd; --rule-strong: #bbb; --accent: #b83200;
+
+  /* anything still waiting to scroll into view would print invisible */
+  main [style*="opacity"],
+  main [style*="transform"] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
+
   .surface { box-shadow: none !important; border-color: #ddd !important; }
   .pt-page { padding-top: 0 !important; }
-  section, article, figure, li { break-inside: avoid; }
+  /* keep small things whole; let long sections flow across pages */
+  .surface, figure, li, tr, .avoid-break { break-inside: avoid; }
   a { text-decoration: none; }
   .print-only { display: block !important; }
-  @page { margin: 14mm; }
+  .mark { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @page { size: A4; margin: 13mm 14mm 13mm; }
 }
 .print-only { display: none; }
+
+/* ── the printed speaker kit ──────────────────────────────────────
+   Its own layout for A4, used only when printing /speaking-kit. */
+@media print {
+  .kit-sheet {
+    font-family: var(--font-sans);
+    font-size: 9.2pt;
+    line-height: 1.45;
+    color: #14130f;
+  }
+  .ks-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8mm;
+    padding-bottom: 4mm;
+    margin-bottom: 4mm;
+    border-bottom: 1px solid #d8d5ce;
+  }
+  .ks-brand { display: flex; align-items: center; gap: 3mm; }
+  .ks-eyebrow,
+  .kit-sheet h2 {
+    font-family: var(--font-mono);
+    font-size: 7pt;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6e6a61;
+    margin: 0 0 1.8mm;
+  }
+  .ks-name {
+    font-family: var(--font-serif);
+    font-size: 28pt;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin: 3mm 0 1.5mm;
+  }
+  .ks-role { font-size: 10pt; color: #57544c; margin: 0; }
+  .ks-contact { font-family: var(--font-mono); font-size: 7.5pt; color: #57544c; margin: 2mm 0 0; }
+  .ks-photo {
+    width: 32mm;
+    height: 38mm;
+    object-fit: cover;
+    object-position: 50% 18%;
+    border-radius: 2.5mm;
+    flex-shrink: 0;
+  }
+  .kit-sheet section { margin: 0 0 3.6mm; break-inside: avoid; }
+  .kit-sheet p { margin: 0; }
+  .ks-lead { font-family: var(--font-serif); font-size: 14pt; line-height: 1.25; }
+  .ks-cols { display: grid; grid-template-columns: 1.15fr 1fr; gap: 8mm; }
+  .kit-sheet ol,
+  .kit-sheet ul { margin: 0; padding-left: 4.5mm; }
+  .kit-sheet li { margin: 0 0 1mm; }
+  .ks-facts { list-style: none; padding: 0 !important; }
+  .ks-facts li { display: flex; gap: 3mm; }
+  .ks-facts b { font-family: var(--font-serif); font-size: 12pt; font-weight: 400; min-width: 16mm; }
+  .kit-sheet table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+  .kit-sheet td { padding: 1.05mm 2mm 1.05mm 0; border-bottom: 1px solid #e6e3dc; vertical-align: top; }
+  .kit-sheet td:first-child { font-family: var(--font-mono); font-size: 7.5pt; color: #6e6a61; white-space: nowrap; width: 20mm; }
+  .kit-sheet td:last-child { color: #6e6a61; white-space: nowrap; text-align: right; }
+  .ks-foot {
+    margin-top: 3.5mm;
+    padding-top: 2.5mm;
+    border-top: 1px solid #d8d5ce;
+    font-family: var(--font-mono);
+    font-size: 7pt;
+    color: #6e6a61;
+  }
+}
+
+/* ── navigation ───────────────────────────────────────────────── */
+
+.nav-link {
+  position: relative;
+  display: block;
+  padding: 6px 10px;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  transition: color 0.3s ease;
+}
+.nav-link:hover,
+.nav-link:focus-visible,
+.nav-link[aria-current="page"] {
+  color: var(--ink);
+}
+/* The accent line slides in from the left out of a blur, and on the way
+   out slides off to the right. The current page keeps its line. */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--accent);
+  opacity: 0;
+  filter: blur(3px);
+  transform: translateY(3px) scaleX(0);
+  transform-origin: right center;
+  transition:
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.35s ease,
+    filter 0.45s ease;
+}
+.nav-link:hover::after,
+.nav-link:focus-visible::after,
+.nav-link[aria-current="page"]::after {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0) scaleX(1);
+  transform-origin: left center;
+}
+
+/* The logo: the S, and my name folded away beside it. The name opens out
+   letter by letter at the top of the home page, or on hover anywhere. */
+.mark {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+/* Showing and hiding are the same animation, one played backwards: the
+   hide mirrors every duration and delay of the show and swaps each ease-out
+   for its reverse ease-in, so the name leaves exactly the way it arrived.
+   The show: 880ms in all, width easing open over 700ms, letters rising from
+   the S forwards, 16ms apart. */
+.logo-name {
+  display: grid;
+  grid-template-columns: 0fr;
+  /* reverse of the show: starts 180ms in, so it ends when the last letter does */
+  transition: grid-template-columns 0.7s cubic-bezier(0.7, 0, 0.84, 0) 180ms;
+}
+.logo-name > span {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.logo-l {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(35%);
+  filter: blur(3px);
+  /* reverse of the show, from the last letter back to the S */
+  transition:
+    opacity 0.35s cubic-bezier(0.75, 0, 0.75, 0.9) calc((20 - var(--i)) * 16ms + 150ms),
+    transform 0.5s cubic-bezier(0.7, 0, 0.84, 0) calc((20 - var(--i)) * 16ms),
+    filter 0.4s cubic-bezier(0.75, 0, 0.75, 0.9) calc((20 - var(--i)) * 16ms + 100ms);
+}
+.logo[data-expanded="true"] .logo-name,
+.logo:focus-visible .logo-name {
+  grid-template-columns: 1fr;
+  transition: grid-template-columns 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0ms;
+}
+.logo[data-expanded="true"] .logo-l,
+.logo:focus-visible .logo-l {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition:
+    opacity 0.35s ease calc(var(--i) * 16ms + 60ms),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 16ms + 60ms),
+    filter 0.4s ease calc(var(--i) * 16ms + 60ms);
+}
+/* while the intro runs, the bar's own name is hidden and must already be in
+   place for the flying one to land on, so nothing in it animates */
+html[data-intro="on"] .logo-name,
+html[data-intro="run"] .logo-name,
+html[data-intro="on"] .logo-l,
+html[data-intro="run"] .logo-l {
+  transition: none;
+}
+
+/* ── intro ─────────────────────────────────────────────────────
+   Runs once per session (a script in <head> sets data-intro). Everything
+   up to the flight is CSS, so it plays from the first paint. */
+
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  /* if the script that lands it never runs, get out of the way regardless */
+  animation: intro-fallback 0.6s ease 4.5s forwards;
+}
+html[data-intro="run"] #intro {
+  animation: none; /* JavaScript is here and will land it properly */
+}
+html[data-intro="done"] #intro {
+  display: none;
+}
+#intro.intro-leaving {
+  pointer-events: none;
+}
+.intro-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+}
+.intro-leaving .intro-bg {
+  animation: intro-fade 0.7s cubic-bezier(0.7, 0, 0.2, 1) 0.12s forwards;
+}
+.intro-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 0 20px;
+  text-align: center;
+}
+.intro-mark {
+  display: block;
+  will-change: transform, opacity;
+  animation: intro-mark-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.intro-name {
+  font-size: clamp(2.1rem, 7.2vw, 4.6rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--ink);
+  transform-origin: left center;
+  will-change: transform;
+}
+.intro-l {
+  display: inline-block;
+  animation: intro-letter 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(0.22s + var(--i) * 24ms);
+}
+.intro-role {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  animation: intro-up 0.6s ease 0.75s both;
+}
+.intro-leaving .intro-role {
+  animation: none;
+}
+/* seven nodes wiring up: a loading bar that looks like a network */
+.intro-net {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(240px, 60vw);
+  height: 8px;
+}
+.intro-node {
+  position: relative;
+  z-index: 1;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--rule-strong);
+  animation: intro-node 0.4s ease both;
+  animation-delay: calc(0.45s + var(--i) * 0.12s);
+}
+.intro-wire {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 50%;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: intro-wire 0.85s cubic-bezier(0.65, 0, 0.35, 1) 0.45s forwards;
+}
+.intro-role,
+.intro-net {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.intro-leaving .intro-role,
+.intro-leaving .intro-net {
+  opacity: 0;
+  transform: translateY(6px);
+}
+/* the real logo stays hidden until the flying one lands on it */
+html[data-intro="on"] [data-logo-mark],
+html[data-intro="on"] [data-logo-name] {
+  opacity: 0;
+  animation: intro-logo-fallback 0s linear 4.5s forwards;
+}
+html[data-intro="run"] [data-logo-mark],
+html[data-intro="run"] [data-logo-name] {
+  opacity: 0;
+}
+
+/* transform and opacity only: those stay on the GPU, so the build-up runs
+   at full frame rate even while the page is still loading underneath */
+@keyframes intro-mark-in {
+  from { opacity: 0; transform: scale(0.72); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes intro-letter {
+  from { opacity: 0; transform: translateY(0.45em); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes intro-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes intro-node {
+  from { transform: scale(0); }
+  60% { transform: scale(1.7); background-color: var(--accent); }
+  to { transform: scale(1); background-color: var(--accent); }
+}
+@keyframes intro-wire {
+  to { transform: scaleX(1); }
+}
+@keyframes intro-fade {
+  to { opacity: 0; }
+}
+@keyframes intro-fallback {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+@keyframes intro-logo-fallback {
+  to { opacity: 1; }
+}
+
+/* ── scroll rail ──────────────────────────────────────────────── */
+
+.rail {
+  position: fixed;
+  left: 18px;
+  top: 50%;
+  z-index: 40;
+  display: none;
+  transform: translateY(-50%);
+}
+@media (min-width: 1024px) {
+  .rail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+.rail-track {
+  position: relative;
+  width: 9px;
+}
+.rail-wire {
+  position: absolute;
+  left: 4px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule-strong);
+}
+.rail-wire-on {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  transform-origin: top center;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.rail-item {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.rail-node {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: var(--bg);
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+.rail-item[data-state="past"] .rail-node {
+  border-color: var(--accent);
+  background: var(--accent);
+  transform: scale(0.6);
+}
+.rail-item[data-state="on"] .rail-node {
+  border-color: var(--accent);
+  background: var(--accent);
+  animation: rail-pulse 2.4s ease-in-out infinite;
+}
+.rail-item:hover .rail-node,
+.rail-item:focus-visible .rail-node {
+  transform: scale(1.3);
+}
+.rail-label {
+  padding: 4px 9px;
+  border: 1px solid var(--glass-rule);
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-2);
+  opacity: 0;
+  filter: blur(3px);
+  transform: translateX(-6px);
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    filter 0.35s ease,
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.rail-item:hover .rail-label,
+.rail-item:focus-visible .rail-label {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+/* wide screens have a margin to spare, so the current section is named */
+@media (min-width: 1600px) {
+  .rail-item[data-state="on"] .rail-label {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+.rail-pct {
+  margin-left: -2px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+}
+.rail-line {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: calc(var(--nav-h) + var(--safe-t));
+  z-index: 59;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left center;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+@media (min-width: 1024px) {
+  .rail-line {
+    display: none;
+  }
+}
+@keyframes rail-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--accent-wash); }
+  50% { box-shadow: 0 0 0 7px transparent; }
+}
+
+/* ── liquid glass ─────────────────────────────────────────────────
+   One material for the whole site. Blur comes from Tailwind's backdrop
+   utilities on each element (backdrop-filter written in this file gets
+   dropped by the CSS pipeline); everything else is here.
+
+   .glass-surface is the pane: bars, pills, round buttons. Its edge is lit
+   by a gradient border, bright where the light hits the top-left and
+   bottom-right corners and fading along the sides, rather than a flat
+   outline, which is what makes it read as a curved piece of glass. */
+.glass-surface {
+  position: relative;
+  background: var(--gs-fill);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    var(--gs-drop);
+}
+/* The rim is its own 1px ring, drawn over the edge only. (Painted as a
+   background layer under the fill instead, it shows through the
+   translucent glass as a pale diagonal band.) */
+.glass-surface::after,
+.glass-lens::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.glass-surface::after {
+  background: linear-gradient(135deg, var(--gs-edge-hi), var(--gs-edge-lo) 30%, var(--gs-edge-lo) 70%, var(--gs-edge-hi));
+}
+/* .glass-lens is the clear lens that moves: nearly see-through in the
+   middle, a little brighter toward the top where it catches light, shaded
+   just inside the rim at the bottom the way a curved lens darkens at its
+   edge, and a thin edge-lit rim. No bands, no outline. */
+.glass-lens {
+  background: radial-gradient(130% 100% at 50% -10%, var(--lens-top), var(--lens-mid) 58%, var(--lens-mid));
+  box-shadow:
+    inset 0 -12px 18px -14px var(--lens-shade),
+    inset 0 10px 14px -14px rgba(255, 255, 255, 0.45),
+    var(--lens-drop);
+}
+.glass-lens::after {
+  background: linear-gradient(150deg, var(--lens-edge), rgba(255, 255, 255, 0.05) 34%, rgba(255, 255, 255, 0.03) 66%, var(--lens-edge));
+}
+/* keyboard users still see where they are: a ring on the whole control */
+.glass-focus:has(:focus-visible) {
+  outline: 2px solid var(--accent-wash);
+  outline-offset: 3px;
+}
+/* switching theme fades the page from one to the other, as the lens moves */
+html.theme-fade,
+html.theme-fade *,
+html.theme-fade *::before,
+html.theme-fade *::after {
+  transition:
+    background-color 0.45s ease,
+    color 0.45s ease,
+    border-color 0.45s ease,
+    fill 0.45s ease,
+    stroke 0.45s ease !important;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

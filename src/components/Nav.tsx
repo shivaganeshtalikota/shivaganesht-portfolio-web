@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { useTheme } from "next-themes";
-import { NAV, SITE, SOCIALS } from "@/data/site";
+import { MENU, SITE, SOCIALS, type MenuGroup, type MenuLink } from "@/data/site";
 import { unlock } from "@/lib/secrets";
+import { Mark } from "./Mark";
+import { ThemeSwitch } from "./ThemeSwitch";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -48,10 +49,58 @@ function Icon({ name, size = 16 }: { name: string; size?: number }) {
   );
 }
 
-function Elsewhere() {
-  const [open, setOpen] = useState(false);
-  const wrap = useRef<HTMLDivElement>(null);
+/* ── dropdowns ───────────────────────────────────────────────── */
 
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <motion.svg
+      width="10"
+      height="10"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      animate={{ rotate: open ? 180 : 0 }}
+      transition={{ duration: 0.3, ease: EASE }}
+    >
+      <path d="M6 9l6 6 6-6" />
+    </motion.svg>
+  );
+}
+
+/* Opens on hover, with a short grace period on the way out so the pointer
+   can cross the gap into the panel. The chevron opens it by click or keyboard. */
+function Dropdown({
+  label,
+  href,
+  active,
+  align = "left",
+  children,
+}: {
+  label: string;
+  href?: string;
+  active: boolean;
+  align?: "left" | "right";
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const wrap = useRef<HTMLLIElement>(null);
+  const closeT = useRef<number | undefined>(undefined);
+
+  const show = () => {
+    window.clearTimeout(closeT.current);
+    setOpen(true);
+  };
+  const hide = () => {
+    window.clearTimeout(closeT.current);
+    closeT.current = window.setTimeout(() => setOpen(false), 160);
+  };
+
+  useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
@@ -69,114 +118,147 @@ function Elsewhere() {
   }, [open]);
 
   return (
-    <div
-      ref={wrap}
-      className="relative"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
-      <button
-        type="button"
-        aria-haspopup="true"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-[13.5px] transition-colors duration-300"
-        style={{ color: open ? "var(--ink)" : "var(--ink-2)" }}
-      >
-        Elsewhere
-        <motion.svg
-          width="11"
-          height="11"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.3, ease: EASE }}
+    <li ref={wrap} className="relative" onMouseEnter={show} onMouseLeave={hide}>
+      <div className="flex items-center">
+        {href ? (
+          <Link href={href} className="nav-link" aria-current={active ? "page" : undefined}>
+            {label}
+          </Link>
+        ) : (
+          <button type="button" className="nav-link" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+            {label}
+          </button>
+        )}
+        <button
+          type="button"
+          aria-label={`${open ? "Hide" : "Show"} the ${label} pages`}
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+          className="-ml-1.5 grid h-7 w-5 place-items-center text-[var(--ink-3)] transition-colors hover:text-[var(--ink)]"
         >
-          <path d="M6 9l6 6 6-6" />
-        </motion.svg>
-      </button>
+          <Chevron open={open} />
+        </button>
+      </div>
 
       <AnimatePresence>
         {open && (
-          <motion.ul
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0, pointerEvents: "auto" }}
-            exit={{ opacity: 0, y: -4, pointerEvents: "none" }}
-            transition={{ duration: 0.24, ease: EASE }}
-            className="absolute right-0 top-full z-10 w-[236px] overflow-hidden rounded-[var(--radius-md)] border border-[var(--rule-strong)] bg-[var(--bg-raised)] p-1.5 shadow-[var(--shadow-lg)]"
+          <motion.div
+            initial={{ opacity: 0, y: -6, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)", pointerEvents: "auto" }}
+            exit={{ opacity: 0, y: -4, filter: "blur(4px)", pointerEvents: "none" }}
+            transition={{ duration: 0.26, ease: EASE }}
+            className={`absolute top-full z-10 pt-2 ${align === "right" ? "right-0" : "-left-2"}`}
           >
-            {SOCIALS.map((s) => (
-              <li key={s.label}>
-                <a
-                  href={s.href}
-                  target={s.href.startsWith("mailto:") ? undefined : "_blank"}
-                  rel="noreferrer"
-                  className="group flex items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2.5 transition-colors duration-200 hover:bg-[var(--fill-2)]"
-                >
-                  <span className="shrink-0 text-[var(--ink-3)] transition-colors duration-200 group-hover:text-[var(--accent)]">
-                    <Icon name={s.label} />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[13.5px] leading-tight">{s.label}</span>
-                    <span className="mono-sm block truncate text-[10.5px] text-[var(--ink-3)]">
-                      {s.handle}
-                    </span>
-                  </span>
-                  <svg
-                    width="11"
-                    height="11"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden
-                    className="shrink-0 text-[var(--ink-3)] opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100"
-                  >
-                    <path d="M7 17L17 7M9 7h8v8" />
-                  </svg>
-                </a>
-              </li>
-            ))}
-          </motion.ul>
+            <div className="w-[292px] overflow-hidden rounded-[var(--radius-md)] border border-[var(--rule-strong)] bg-[var(--bg-raised)] p-1.5 shadow-[var(--shadow-lg)]">
+              {children}
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </li>
   );
 }
 
-function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const dark = mounted && resolvedTheme === "dark";
+function PanelLink({ item, active }: { item: MenuLink; active: boolean }) {
+  return (
+    <Link
+      href={item.href}
+      aria-current={active ? "page" : undefined}
+      className="group/item flex items-start gap-3 rounded-[var(--radius-sm)] px-3 py-2.5 transition-colors duration-200 hover:bg-[var(--fill-2)]"
+    >
+      <span
+        aria-hidden
+        className="mt-[10px] h-px shrink-0 transition-all duration-300 group-hover/item:!w-4 group-hover/item:!bg-[var(--accent)]"
+        style={{ width: active ? 16 : 10, background: active ? "var(--accent)" : "var(--rule-strong)" }}
+      />
+      <span className="min-w-0">
+        <span className="block text-[14px] leading-snug" style={{ color: active ? "var(--ink)" : undefined }}>
+          {item.label}
+        </span>
+        <span className="mono-sm mt-0.5 block text-[10.5px] leading-snug text-[var(--ink-3)]">{item.note}</span>
+      </span>
+    </Link>
+  );
+}
+
+function SocialLinks() {
+  return (
+    <ul>
+      {SOCIALS.map((s) => (
+        <li key={s.label}>
+          <a
+            href={s.href}
+            target={s.href.startsWith("mailto:") ? undefined : "_blank"}
+            rel="noreferrer"
+            className="group flex items-center gap-3 rounded-[var(--radius-sm)] px-3 py-2.5 transition-colors duration-200 hover:bg-[var(--fill-2)]"
+          >
+            <span className="shrink-0 text-[var(--ink-3)] transition-colors duration-200 group-hover:text-[var(--accent)]">
+              <Icon name={s.label} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[13.5px] leading-tight">{s.label}</span>
+              <span className="mono-sm block truncate text-[10.5px] text-[var(--ink-3)]">{s.handle}</span>
+            </span>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="shrink-0 text-[var(--ink-3)] opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100">
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+const pathOf = (href: string) => href.split("?")[0];
+
+/* ── the logo: the S, which opens out into my name ───────────── */
+
+// how long the name stays open after the pointer leaves the S
+const PEEK_LINGER = 2500;
+
+function Logo({ expanded, onClick }: { expanded: boolean; onClick: () => void }) {
+  // Hover opens the name straight away, but it lingers after the pointer
+  // leaves rather than snapping shut. Mouse only: on a phone a tap would
+  // otherwise leave it stuck open.
+  const [peek, setPeek] = useState(false);
+  const t = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(t.current), []);
+  const enter = (e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    window.clearTimeout(t.current);
+    setPeek(true);
+  };
+  const leave = (e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    window.clearTimeout(t.current);
+    t.current = window.setTimeout(() => setPeek(false), PEEK_LINGER);
+  };
 
   return (
-    <button
-      type="button"
-      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-      onClick={() => setTheme(dark ? "light" : "dark")}
-      className="grid h-8 w-8 place-items-center rounded-full text-[var(--ink-2)] transition-colors hover:bg-[var(--fill)] hover:text-[var(--ink)]"
+    <Link
+      href="/"
+      onClick={onClick}
+      onPointerEnter={enter}
+      onPointerLeave={leave}
+      aria-label={`${SITE.name}, home`}
+      data-expanded={expanded || peek}
+      className="logo flex min-w-0 items-center gap-2.5"
     >
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden suppressHydrationWarning>
-        {dark ? (
-          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
-        ) : (
-          <>
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2.6v2M12 19.4v2M2.6 12h2M19.4 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" />
-          </>
-        )}
-      </svg>
-    </button>
+      <Mark size={30} data-logo-mark="" />
+      <span className="logo-name font-display text-[18px] tracking-[-0.01em] md:text-[19px]" data-logo-name="">
+        <span>
+          {SITE.name.split("").map((ch, i) => (
+            <span key={i} className="logo-l" style={{ "--i": i } as React.CSSProperties}>
+              {ch === " " ? " " : ch}
+            </span>
+          ))}
+        </span>
+      </span>
+    </Link>
   );
 }
+
+/* ── the bar ─────────────────────────────────────────────────── */
 
 export function Nav() {
   const pathname = usePathname();
@@ -184,7 +266,7 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const taps = useRef<number[]>([]);
 
-  /* Tap my name five times quickly: the phone-friendly way into the boot
+  /* Tap the S five times quickly: the phone-friendly way into the boot
      sequence, since the Konami code needs a keyboard. */
   const onLogoTap = () => {
     const now = Date.now();
@@ -205,6 +287,25 @@ export function Nav() {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  // While the intro plays, the bar holds my name open so the flying one has
+  // somewhere to land; three seconds after it lands, the name folds back into
+  // the S (except at the top of the home page, where it always shows).
+  const [hold, setHold] = useState(false);
+  useEffect(() => {
+    const state = document.documentElement.dataset.intro;
+    if (state !== "on" && state !== "run") return;
+    setHold(true);
+    let t = 0;
+    const onDone = () => {
+      t = window.setTimeout(() => setHold(false), 3000);
+    };
+    window.addEventListener("intro-done", onDone);
+    return () => {
+      window.removeEventListener("intro-done", onDone);
+      window.clearTimeout(t);
+    };
+  }, []);
+
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -212,10 +313,24 @@ export function Nav() {
     };
   }, [open]);
 
+  // The full name shows at the top of the home page, and for a moment after
+  // the intro lands it. Everywhere else it's the S, and hovering opens it out
+  // (the Logo handles that itself, so it can linger).
+  const expanded = hold || (pathname === "/" && !scrolled && !open);
+  // a link with a query ("/contact?topic=talk") is an action, not a page,
+  // so it never makes its group look like the page you're on
+  const isActive = (g: MenuGroup) =>
+    pathname === pathOf(g.href) || !!g.items?.some((it) => !it.href.includes("?") && pathname === it.href);
+  const mobileGroups: MenuGroup[] = [
+    { label: "Home", href: "/" },
+    ...MENU,
+    { label: "Work with me", href: "/work-with-me" },
+  ];
+
   return (
     <>
       <header
-        className="fixed inset-x-0 top-0 z-[60]"
+        className="site-header fixed inset-x-0 top-0 z-[60]"
         // padding, not margin, so the glass layer below covers the notch too —
         // otherwise page content scrolls up and shows above the bar
         style={{ paddingTop: "var(--safe-t)" }}
@@ -233,12 +348,8 @@ export function Nav() {
               : "linear-gradient(to bottom, var(--glass) 0%, var(--glass) 62%, transparent 100%)",
             backdropFilter: "saturate(180%) blur(22px)",
             WebkitBackdropFilter: "saturate(180%) blur(22px)",
-            maskImage: open
-              ? "none"
-              : "linear-gradient(to bottom, #000 0%, #000 64%, transparent 100%)",
-            WebkitMaskImage: open
-              ? "none"
-              : "linear-gradient(to bottom, #000 0%, #000 64%, transparent 100%)",
+            maskImage: open ? "none" : "linear-gradient(to bottom, #000 0%, #000 64%, transparent 100%)",
+            WebkitMaskImage: open ? "none" : "linear-gradient(to bottom, #000 0%, #000 64%, transparent 100%)",
             height: open ? "100%" : "calc(100% + 16px)",
           }}
         />
@@ -247,62 +358,53 @@ export function Nav() {
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 -z-10 transition-opacity duration-500"
-          style={{
-            height: "var(--safe-t)",
-            background: "var(--bg)",
-            opacity: scrolled || open ? 1 : 0,
-          }}
+          style={{ height: "var(--safe-t)", background: "var(--bg)", opacity: scrolled || open ? 1 : 0 }}
         />
         <nav
-          className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-5 md:px-10"
+          className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-5 md:px-10 xl:grid xl:grid-cols-[1fr_auto_1fr]"
           style={{ height: "var(--nav-h)" }}
           aria-label="Main"
         >
-          <Link href="/" onClick={onLogoTap} className="group flex min-w-0 items-baseline gap-2">
-            <span className="font-display truncate text-[17px] tracking-[-0.01em] md:text-[19px]">
-              {SITE.name}
-            </span>
-            <span className="label hidden shrink-0 pb-px 2xl:inline">{SITE.initials}</span>
-          </Link>
+          <div className="flex min-w-0 items-center">
+            <Logo expanded={expanded} onClick={onLogoTap} />
+          </div>
 
-          <ul className="hidden items-center gap-0.5 xl:flex">
-            {NAV.filter((n) => n.href !== "/").map((item) => {
-              const active = pathname === item.href;
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="relative block px-2.5 py-1.5 text-[13.5px] transition-colors duration-300"
-                    style={{ color: active ? "var(--ink)" : "var(--ink-2)" }}
-                  >
-                    {active && (
-                      <motion.span
-                        layoutId="nav-dot"
-                        className="absolute inset-x-3 -bottom-px h-px bg-[var(--accent)]"
-                        transition={{ duration: 0.45, ease: EASE }}
-                      />
-                    )}
-                    {item.label}
+          <ul className="hidden items-center gap-1 xl:flex">
+            {MENU.map((g) =>
+              g.items ? (
+                <Dropdown key={g.label} label={g.label} href={g.href} active={isActive(g)}>
+                  {g.items.map((it) => (
+                    <PanelLink key={it.href} item={it} active={pathname === pathOf(it.href) && !it.href.includes("?")} />
+                  ))}
+                </Dropdown>
+              ) : (
+                <li key={g.label}>
+                  <Link href={g.href} className="nav-link" aria-current={isActive(g) ? "page" : undefined}>
+                    {g.label}
                   </Link>
                 </li>
-              );
-            })}
-            <li>
-              <Elsewhere />
-            </li>
+              )
+            )}
+            <Dropdown label="Elsewhere" active={false} align="right">
+              <SocialLinks />
+            </Dropdown>
           </ul>
 
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex shrink-0 items-center justify-end gap-1.5">
             <button
               type="button"
               onClick={() => window.dispatchEvent(new Event("open-palette"))}
-              aria-label="Open command palette"
-              className="hidden items-center gap-2 rounded-full border border-[var(--rule)] px-3 py-1.5 text-[12px] text-[var(--ink-3)] transition-colors hover:border-[var(--rule-strong)] hover:text-[var(--ink)] md:flex"
+              aria-label="Search the site"
+              className="glass-surface hidden items-center gap-2 rounded-full px-3 py-1.5 text-[12px] text-[var(--ink-2)] backdrop-blur-md backdrop-saturate-150 transition-colors hover:text-[var(--ink)] md:flex"
             >
-              <span className="hidden 2xl:inline">Search</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20 20l-3.5-3.5" />
+              </svg>
+              <span className="hidden lg:inline">Search</span>
               <kbd className="font-mono text-[10px] tracking-tight">⌘K</kbd>
             </button>
-            <ThemeToggle />
+            <ThemeSwitch />
             <Link
               href="/work-with-me"
               className="hidden whitespace-nowrap rounded-full bg-[var(--ink)] px-4 py-1.5 text-[13px] text-[var(--bg)] transition-opacity duration-300 hover:opacity-85 md:block"
@@ -336,43 +438,79 @@ export function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-[55] xl:hidden"
-            style={{
-              top: "calc(var(--nav-h) + var(--safe-t))",
-              background: "var(--bg)",
-            }}
+            className="fixed inset-0 z-[55] overflow-y-auto overscroll-contain xl:hidden"
+            style={{ top: "calc(var(--nav-h) + var(--safe-t))", background: "var(--bg)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, pointerEvents: "auto" }}
             exit={{ opacity: 0, pointerEvents: "none" }}
             transition={{ duration: 0.28, ease: EASE }}
           >
             <motion.ul
-              className="flex flex-col px-5 pt-4"
+              className="flex flex-col px-5 pt-2"
               initial="hidden"
               animate="show"
               variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
             >
-              {NAV.map((item, i) => (
-                <motion.li
-                  key={item.href}
-                  variants={{
-                    hidden: { opacity: 0, y: 12 },
-                    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
-                  }}
-                >
-                  <Link
-                    href={item.href}
-                    className="flex items-baseline gap-4 border-b border-[var(--rule)] py-4"
-                    style={{ color: pathname === item.href ? "var(--accent)" : "var(--ink)" }}
+              {mobileGroups.map((g, i) => {
+                // the group's own link already goes to its first page
+                const rest = g.items?.filter((it) => it.href !== g.href) ?? [];
+                const here = pathname === pathOf(g.href);
+                return (
+                  <motion.li
+                    key={g.label}
+                    className="border-b border-[var(--rule)]"
+                    variants={{
+                      hidden: { opacity: 0, y: 12 },
+                      show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
+                    }}
                   >
-                    <span className="label w-6 shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="font-display text-[30px] leading-none">{item.label}</span>
-                  </Link>
-                </motion.li>
-              ))}
+                    <Link
+                      href={g.href}
+                      className="flex items-baseline gap-4 py-3.5"
+                      style={{ color: here ? "var(--accent)" : "var(--ink)" }}
+                    >
+                      <span className="label w-6 shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="font-display text-[28px] leading-none">{g.label}</span>
+                    </Link>
+                    {rest.length > 0 && (
+                      <ul className="-mt-1 pb-3 pl-10">
+                        {rest.map((it) => (
+                          <li key={it.href}>
+                            <Link
+                              href={it.href}
+                              className="flex items-baseline gap-3 py-1.5"
+                              style={{
+                                color:
+                                  pathname === pathOf(it.href) && !it.href.includes("?") ? "var(--accent)" : "var(--ink-2)",
+                              }}
+                            >
+                              <span className="shrink-0 text-[15.5px]">{it.label}</span>
+                              <span className="mono-sm truncate text-[10.5px] text-[var(--ink-3)]">{it.note}</span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </motion.li>
+                );
+              })}
             </motion.ul>
-            <div className="px-5 pt-8">
-              <p className="label">Elsewhere</p>
+            <div className="px-5 pb-12 pt-8">
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  window.dispatchEvent(new Event("open-palette"));
+                }}
+                className="flex w-full items-center gap-3 rounded-full border border-[var(--rule-strong)] px-4 py-3 text-[14px] text-[var(--ink-2)]"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M20 20l-3.5-3.5" />
+                </svg>
+                Search the site
+              </button>
+              <p className="label mt-8">Elsewhere</p>
               <ul className="mt-4 flex flex-wrap gap-2.5">
                 {SOCIALS.map((s) => (
                   <li key={s.label}>
