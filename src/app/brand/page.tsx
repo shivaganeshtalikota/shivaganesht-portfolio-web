@@ -46,6 +46,8 @@ function fileName(href: string) {
 
 export default function BrandPage() {
   const groups = brand.groups as { title: string; lede: string; items: Item[] }[];
+  // counted from the kit itself, so it stays right when versions are added
+  const fileCount = groups.reduce((n, g) => n + g.items.reduce((m, it) => m + it.files.length, 0), 0);
 
   return (
     <>
@@ -76,7 +78,7 @@ export default function BrandPage() {
                 className="mt-8 inline-flex items-center gap-2.5 rounded-full bg-[var(--ink)] px-6 py-3 text-[14.5px] text-[var(--bg)] transition-opacity duration-300 hover:opacity-85"
               >
                 Download everything
-                <span className="mono-sm text-[11px] opacity-70">ZIP · 26 files</span>
+                <span className="mono-sm text-[11px] opacity-70">ZIP · {fileCount} files</span>
               </a>
               <p className="mono-sm mt-4 text-[11px] text-[var(--ink-3)]">
                 SVG, PNG and JPG, every background, plus a short note on using it.
@@ -103,7 +105,7 @@ export default function BrandPage() {
               <StaggerItem key={it.key}>
                 <article className="surface overflow-hidden">
                   <div
-                    className="grid place-items-center p-8"
+                    className="relative"
                     style={{
                       background: it.bg ?? CHECKER,
                       aspectRatio: it.wide ? "2.4 / 1" : "4 / 3",
@@ -113,7 +115,8 @@ export default function BrandPage() {
                     <img
                       src={it.preview}
                       alt={`${SITE.name} logo, ${it.label}`}
-                      className={`max-h-full w-auto ${it.wide ? "max-w-[88%]" : "h-[62%]"} ${it.round ? "rounded-full" : ""}`}
+                      // pinned inside the box, so a tall or wide image can't stretch its card
+                      className={`absolute inset-0 m-auto object-contain ${it.wide ? "h-[70%] w-[88%]" : it.round ? "aspect-square h-[62%] w-auto" : "h-[62%] w-[80%]"} ${it.round ? "rounded-full" : ""}`}
                       loading="lazy"
                     />
                   </div>

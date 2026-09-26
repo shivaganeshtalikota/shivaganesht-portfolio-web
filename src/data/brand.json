@@ -188,6 +188,93 @@
       ]
     },
     {
+      "title": "Liquid glass",
+      "lede": "The same S, made of glass: a translucent letter with light caught inside it and a glossy vermilion bead, on a softly lit plate. For app icons, profile pictures and anywhere the flat mark feels too plain.",
+      "items": [
+        {
+          "key": "glass-night",
+          "label": "Glass night",
+          "note": "The S in glass on a dark plate. The app-icon version.",
+          "bg": "#0c0b0a",
+          "colors": [
+            "#131210",
+            "#ff5c26"
+          ],
+          "preview": "/brand/glass-night.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/glass-night.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/glass-night.png",
+              "from": "glass-night.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/glass-night.jpg",
+              "from": "glass-night-square.svg",
+              "size": 1024
+            }
+          ]
+        },
+        {
+          "key": "glass-frost",
+          "label": "Glass frost",
+          "note": "The same glass, on a light frosted plate.",
+          "bg": "#f2f0ea",
+          "colors": [
+            "#ebe8e1",
+            "#ff5c26"
+          ],
+          "preview": "/brand/glass-frost.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/glass-frost.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/glass-frost.png",
+              "from": "glass-frost.svg",
+              "size": 1024
+            },
+            {
+              "kind": "JPG",
+              "href": "/brand/glass-frost.jpg",
+              "from": "glass-frost-square.svg",
+              "size": 1024
+            }
+          ]
+        },
+        {
+          "key": "glass-clear",
+          "label": "Glass, no plate",
+          "note": "Just the glass S and bead, see-through. For dark photos and backgrounds.",
+          "bg": "#1c1b18",
+          "colors": [
+            "#ffffff",
+            "#ff5c26"
+          ],
+          "preview": "/brand/glass-clear.svg",
+          "files": [
+            {
+              "kind": "SVG",
+              "href": "/brand/glass-clear.svg"
+            },
+            {
+              "kind": "PNG",
+              "href": "/brand/glass-clear.png",
+              "from": "glass-clear.svg",
+              "height": 1024
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "Just the S",
       "lede": "No square, transparent background. For putting the mark straight onto a photo or a colour.",
       "items": [

@@ -359,6 +359,38 @@ carries a brighter, aligned copy of both icons (`x: -lensX`).
   in an effect keyed on the resolved theme. Jump, don't animate, on first mount.
 - Crossfade: add `theme-fade` to `<html>` for about 500ms around `setTheme`.
 
+## 7b. A logo or app icon made of glass (SVG)
+
+To turn a flat mark into a glass app icon, stack these layers in one SVG
+(100×100 viewBox, `rx="22.5"` plate). The letter is a path, so trace it from
+the font first (fontTools + HarfBuzz) and no font is needed to view it.
+
+1. **Plate**: a diagonal three-stop gradient (`#2a2925 → #131210 → #070706` dark,
+   `#fbfaf7 → #ebe8e1 → #d9d5cc` light), then a radial "ambient" light from the
+   top left (`cx 0.28 cy 0.16`, white 11% fading out by 65%).
+2. **Sheen**: a vertical gradient from 7% white to nothing by half height, over
+   the whole plate. Never a shape with an edge: that reads as a line.
+3. **Shadow**: the letter, black, offset 2.4 down, Gaussian blur 1.4, 60% opacity
+   (35% of a warm grey on light), so the glass sits above the plate.
+4. **Glass letter**: the letter filled with a vertical translucent white gradient
+   (36% → 10% → 20% on dark).
+5. **Light caught inside**: clipped to the letter, a blurred white ellipse near
+   the top and a blurred 2.6-wide white stroke of the letter's own outline (an
+   inner glow along its edge).
+6. **Rim**: the letter stroked 0.6 wide with a diagonal gradient, bright top left,
+   faint middle, bright-ish bottom right.
+7. **A glossy bead** (for a dot or accent): a soft coloured glow under it (blur
+   2.6, 32%), a radial gradient from a pale highlight at (0.36, 0.3) through the
+   colour to a dark edge, a small blurred white specular ellipse up and left,
+   and a hairline white ring.
+8. **Plate rim**: the plate outline stroked 0.7 wide with the same edge-lit
+   diagonal gradient as `.glass-surface`.
+
+librsvg (and so `sharp`) renders all of it, so PNG and JPG versions can be
+generated from the same file. For a version without the plate, trim the
+viewBox with room for the glow (at least 2.6× the bead's radius past it), or the
+glow gets cut off in a square.
+
 ---
 
 ## 8. Pitfalls (each one happened)

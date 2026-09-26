@@ -144,6 +144,94 @@ def lockup_svg(bg, name_fg, height=600):
     )
 
 
+
+# ── the mark as Liquid Glass ─────────────────────────────────────────────
+# The same S and dot, made of glass: a dark plate lit from the top left, the
+# S as a translucent glass letter with an edge-lit rim, a highlight caught
+# inside it and a soft shadow under it, and the dot as a glossy bead of
+# vermilion with its own specular spot and glow. Same geometry as the mark.
+
+GLASS_THEMES = {
+    # key: plate stops, ambient light, S fill (top, middle, bottom), S rim, shadow, plate rim
+    "night": {
+        "plate": ["#2a2925", "#131210", "#070706"],
+        "ambient": "rgba(255,255,255,0.11)",
+        "fill": ["rgba(255,255,255,0.36)", "rgba(255,255,255,0.1)", "rgba(255,255,255,0.2)"],
+        "rim": ["rgba(255,255,255,0.95)", "rgba(255,255,255,0.16)", "rgba(255,255,255,0.55)"],
+        "shadow": ("#000000", 0.6),
+        "caught": "rgba(255,255,255,0.5)",
+        "edge": ["rgba(255,255,255,0.5)", "rgba(255,255,255,0.05)", "rgba(255,255,255,0.28)"],
+    },
+    "frost": {
+        "plate": ["#fbfaf7", "#ebe8e1", "#d9d5cc"],
+        "ambient": "rgba(255,255,255,0.7)",
+        "fill": ["rgba(255,255,255,0.75)", "rgba(255,255,255,0.28)", "rgba(255,255,255,0.5)"],
+        "rim": ["rgba(255,255,255,1)", "rgba(20,19,15,0.28)", "rgba(20,19,15,0.45)"],
+        "shadow": ("#5b574e", 0.35),
+        "caught": "rgba(255,255,255,0.9)",
+        "edge": ["rgba(255,255,255,1)", "rgba(20,19,15,0.06)", "rgba(20,19,15,0.18)"],
+    },
+}
+
+
+def glass_svg(theme: str, plate: bool = True, rounded: bool = True, size: int = 1024) -> str:
+    t = GLASS_THEMES[theme]
+    cx, cy, rr = DOT["cx"], DOT["cy"], DOT["r"]
+    rx = ' rx="22.5"' if rounded else ""
+    defs = f"""<defs>
+<linearGradient id="plate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{t['plate'][0]}"/><stop offset="0.55" stop-color="{t['plate'][1]}"/><stop offset="1" stop-color="{t['plate'][2]}"/></linearGradient>
+<linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(255,255,255,0.07)"/><stop offset="0.5" stop-color="rgba(255,255,255,0)"/></linearGradient>
+<radialGradient id="ambient" cx="0.28" cy="0.16" r="0.8"><stop offset="0" stop-color="{t['ambient']}"/><stop offset="0.65" stop-color="rgba(255,255,255,0)"/></radialGradient>
+<linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{t['edge'][0]}"/><stop offset="0.3" stop-color="{t['edge'][1]}"/><stop offset="0.7" stop-color="{t['edge'][1]}"/><stop offset="1" stop-color="{t['edge'][2]}"/></linearGradient>
+<linearGradient id="sfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{t['fill'][0]}"/><stop offset="0.5" stop-color="{t['fill'][1]}"/><stop offset="1" stop-color="{t['fill'][2]}"/></linearGradient>
+<linearGradient id="srim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{t['rim'][0]}"/><stop offset="0.45" stop-color="{t['rim'][1]}"/><stop offset="1" stop-color="{t['rim'][2]}"/></linearGradient>
+<radialGradient id="bead" cx="0.36" cy="0.3" r="0.78"><stop offset="0" stop-color="#ffc9ad"/><stop offset="0.32" stop-color="#ff6a36"/><stop offset="0.78" stop-color="#d63f0e"/><stop offset="1" stop-color="#9a2805"/></radialGradient>
+<clipPath id="sclip"><path d="{S_PATH}"/></clipPath>
+<filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.4"/></filter>
+<filter id="blur2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.6"/></filter>
+<filter id="tiny" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.45"/></filter>
+</defs>"""
+    plate_svg = ""
+    if plate:
+        plate_svg = (
+            f'<rect width="100" height="100"{rx} fill="url(#plate)"/>'
+            f'<rect width="100" height="100"{rx} fill="url(#ambient)"/>'
+            # a faint sheen over the top of the plate that fades out, no edge to it
+            f'<rect width="100" height="100"{rx} fill="url(#sheen)"/>'
+        )
+    shadow_col, shadow_op = t["shadow"]
+    body = (
+        # the glass letter sits a little above the plate: a soft shadow under it
+        f'<g opacity="{shadow_op}" transform="translate(0 2.4)" filter="url(#soft)"><path d="{S_PATH}" fill="{shadow_col}"/></g>'
+        # the letter itself, translucent
+        f'<path d="{S_PATH}" fill="url(#sfill)"/>'
+        # light caught inside the glass: a highlight up top, and a glow along its inner edge
+        f'<g clip-path="url(#sclip)">'
+        f'<ellipse cx="44" cy="25" rx="17" ry="8.5" fill="{t["caught"]}" filter="url(#soft)"/>'
+        f'<path d="{S_PATH}" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2.6" filter="url(#soft)"/>'
+        f"</g>"
+        # its rim, lit where the light hits
+        f'<path d="{S_PATH}" fill="none" stroke="url(#srim)" stroke-width="0.6"/>'
+        # the dot: a bead of vermilion glass, glowing a little, with a specular spot
+        f'<circle cx="{r(cx)}" cy="{r(cy + 1.2)}" r="{r(rr * 1.35)}" fill="#ff5c26" opacity="0.32" filter="url(#blur2)"/>'
+        f'<circle cx="{r(cx)}" cy="{r(cy)}" r="{r(rr)}" fill="url(#bead)"/>'
+        f'<ellipse cx="{r(cx - 2.1)}" cy="{r(cy - 2.5)}" rx="2.5" ry="1.5" fill="rgba(255,255,255,0.85)" filter="url(#tiny)"/>'
+        f'<circle cx="{r(cx)}" cy="{r(cy)}" r="{r(rr - 0.2)}" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="0.35"/>'
+    )
+    rim_svg = f'<rect x="0.35" y="0.35" width="99.3" height="99.3" rx="22.2" fill="none" stroke="url(#edge)" stroke-width="0.7"/>' if (plate and rounded) else ""
+    if plate:
+        view = 'viewBox="0 0 100 100"'
+        dims = f'width="{size}" height="{size}"'
+    else:
+        # just the glass S and bead, trimmed to their bounds with room for the glow
+        x0, y0 = S_X + 41 * S_SIZE / UPM - 5, S_BASELINE - 730 * S_SIZE / UPM - 5
+        # leave room for the bead's glow on the right and below, or it gets cut off square
+        x1, y1 = cx + rr * 2.6, max(S_BASELINE + 9 * S_SIZE / UPM + 6, cy + rr * 2.6)
+        w, h = x1 - x0, y1 - y0
+        view = f'viewBox="{r(x0)} {r(y0)} {r(w)} {r(h)}"'
+        dims = f'width="{round(size * w / h)}" height="{size}"'
+    return f'<svg xmlns="http://www.w3.org/2000/svg" {view} {dims}><title>{NAME}</title>{defs}{plate_svg}{body}{rim_svg}</svg>'
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     groups = []
@@ -163,6 +251,35 @@ def main():
             ],
         })
     groups.append({"title": "The mark", "lede": "The S and the dot on its square. Rounded corners as SVG and PNG; the JPG is a full square, since JPG can't be see-through.", "items": marks})
+
+    # the same mark in Liquid Glass: an addition, the originals above are untouched
+    glass = []
+    for key, label, note, bg in [
+        ("night", "Glass night", "The S in glass on a dark plate. The app-icon version.", "#0c0b0a"),
+        ("frost", "Glass frost", "The same glass, on a light frosted plate.", "#f2f0ea"),
+    ]:
+        (OUT / f"glass-{key}.svg").write_text(glass_svg(key), encoding="utf-8")
+        (OUT / f"glass-{key}-square.svg").write_text(glass_svg(key, rounded=False), encoding="utf-8")
+        glass.append({
+            "key": f"glass-{key}", "label": label, "note": note, "bg": bg,
+            "colors": [GLASS_THEMES[key]["plate"][1], "#ff5c26"],
+            "preview": f"/brand/glass-{key}.svg",
+            "files": [
+                {"kind": "SVG", "href": f"/brand/glass-{key}.svg"},
+                {"kind": "PNG", "href": f"/brand/glass-{key}.png", "from": f"glass-{key}.svg", "size": 1024},
+                {"kind": "JPG", "href": f"/brand/glass-{key}.jpg", "from": f"glass-{key}-square.svg", "size": 1024},
+            ],
+        })
+    (OUT / "glass-clear.svg").write_text(glass_svg("night", plate=False), encoding="utf-8")
+    glass.append({
+        "key": "glass-clear", "label": "Glass, no plate", "note": "Just the glass S and bead, see-through. For dark photos and backgrounds.",
+        "bg": "#1c1b18", "colors": ["#ffffff", "#ff5c26"], "preview": "/brand/glass-clear.svg",
+        "files": [
+            {"kind": "SVG", "href": "/brand/glass-clear.svg"},
+            {"kind": "PNG", "href": "/brand/glass-clear.png", "from": "glass-clear.svg", "height": 1024},
+        ],
+    })
+    groups.append({"title": "Liquid glass", "lede": "The same S, made of glass: a translucent letter with light caught inside it and a glossy vermilion bead, on a softly lit plate. For app icons, profile pictures and anywhere the flat mark feels too plain.", "items": glass})
 
     loose = []
     for key, (label, fg, dot, note) in INKS.items():
