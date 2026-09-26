@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Crumbs } from "@/components/JsonLd";
 import { PageHeader, Arrow } from "@/components/ui";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { NOW, SITE } from "@/data/site";
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default function NowPage() {
   return (
     <>
+      <Crumbs name="Now" path="/now" />
       <PageHeader
         index="01"
         eyebrow={`Now · updated ${NOW.updated}`}

@@ -17,6 +17,9 @@ export const SITE = {
   email: "shivaganesht@icloud.com",
   resume: "/Shiva-Ganesh-Talikota-Resume.pdf",
   topmate: "https://topmate.io/shivaganesht",
+  /* Web3Forms access key. Safe to publish: it can only ever deliver to the
+     inbox it was registered with. Empty = the form falls back to mailto. */
+  web3formsKey: "",
   available: true,
   availableLabel: "Open to engineering roles",
   title: "Shiva Ganesh Talikota — Founder & Product Engineer",
@@ -278,6 +281,7 @@ export const EXPERIENCE: Role[] = [
     place: "Hyderabad, India",
     points: [
       "Led media and marketing for a student-focused platform, building reach and running campaigns across channels.",
+      "Recognised with the Prost. Campus Hero honour for contributions to the campus community.",
     ],
   },
   {
@@ -529,7 +533,10 @@ export const NAV = [
 
 /* Reachable and in the sitemap, but kept out of the main nav so it
    doesn't crowd it. Linked from the speaking page and the footer. */
-export const EXTRA_ROUTES = [{ href: "/speaking-kit", label: "Speaker kit" }] as const;
+export const EXTRA_ROUTES = [
+  { href: "/work-with-me", label: "Work with me" },
+  { href: "/speaking-kit", label: "Speaker kit" },
+] as const;
 
 /* ── /now ──────────────────────────────────────────────────────── */
 
@@ -600,3 +607,101 @@ export const KIT = {
     { label: "Candid, Microsoft Campus", src: "/portrait/microsoft.webp", note: "900 × 900" },
   ],
 } as const;
+
+
+/* ── work with me ──────────────────────────────────────────────── */
+
+export type Service = {
+  slug: string;
+  topic: string;
+  title: string;
+  summary: string;
+  formats: string[];
+  proof: string[];
+  cta: string;
+  external?: string;
+};
+
+export const SERVICES: Service[] = [
+  {
+    slug: "talk",
+    topic: "talk",
+    title: "Talks and keynotes",
+    summary:
+      "Agentic AI, generative AI in practice, GitHub Copilot, and building a company while still a student. I talk like an engineer who ships, because that is what I do the rest of the week.",
+    formats: ["Keynote, 30 to 45 minutes", "Fireside chat or panel", "Guest lecture for a college"],
+    proof: ["Four times at Microsoft, Hyderabad", "350+ students at AVNIET on agentic AI", "Guest speaker at JBIET"],
+    cta: "Invite me to speak",
+  },
+  {
+    slug: "workshop",
+    topic: "workshop",
+    title: "Hands-on workshops",
+    summary:
+      "People leave having built something that works. Your first AI agent, Copilot in VS Code, or going from a prompt to a product in an afternoon.",
+    formats: ["Two to three hours, laptops open", "For college clubs and developer communities", "Can run as a series"],
+    proof: ["I run DevAgentic, matriXO's agentic-AI workshop series", "Have hosted engineers from Microsoft as speakers"],
+    cta: "Plan a workshop",
+  },
+  {
+    slug: "brand",
+    topic: "brand",
+    title: "Brand collaborations",
+    summary:
+      "For tech brands that want their product in front of students and early-career engineers, shown by someone who actually uses it rather than reads off a card.",
+    formats: ["Product demos at events", "Hands-on testing sessions", "Content on LinkedIn and Instagram"],
+    proof: ["Dell Technologies ambassador across two AI events", "4,800+ followers on LinkedIn"],
+    cta: "Pitch a collaboration",
+  },
+  {
+    slug: "role",
+    topic: "role",
+    title: "Engineering roles",
+    summary:
+      "Full-time product or AI engineering. I have shipped a production platform, a seven-agent pipeline, and an automation engine built so the model never gets to run code.",
+    formats: ["Full-time", "Hyderabad, on-site, hybrid or remote"],
+    proof: ["matriXO: 0 to 2,000+ users at 99.9% uptime", "pAIr: Runner-Up, SAP Code Unnati 4.0"],
+    cta: "Talk about a role",
+  },
+  {
+    slug: "mentoring",
+    topic: "mentoring",
+    title: "1:1 mentoring",
+    summary:
+      "Careers, internships, engineering, and getting started when you have no idea where to start. Booked through Topmate, and the first call is free.",
+    formats: ["Free discovery call", "Paid 1:1 sessions"],
+    proof: ["Rated 5 out of 5 on Topmate"],
+    cta: "Book on Topmate",
+    external: "https://topmate.io/shivaganesht",
+  },
+];
+
+/* Real, from topmate.io/shivaganesht. Quoted as written. */
+export const TESTIMONIALS = [
+  {
+    quote:
+      "Shiva’s Quick Chat session was a total game-changer. Super insightful and to the point. In just 30 minutes, I walked away with real strategies and clarity. Highly recommend it!",
+    name: "Degala Sai Varun",
+    context: "Topmate, Quick Chat",
+  },
+  {
+    quote:
+      "I joined clueless and left confident. Cleared every doubt I had about college, internships, and tech careers. Super friendly and chill vibes!",
+    name: "Hindu Reddy Dubba",
+    context: "Topmate, 1:1 session",
+  },
+  {
+    quote: "Your words are like music to my ears. I really love the session…",
+    name: "A Topmate mentee",
+    context: "April 2024",
+  },
+] as const;
+
+export const CONTACT_TOPICS = [
+  { key: "role", label: "A role" },
+  { key: "talk", label: "A talk" },
+  { key: "workshop", label: "A workshop" },
+  { key: "brand", label: "Brand collab" },
+  { key: "mentoring", label: "Mentoring" },
+  { key: "other", label: "Something else" },
+] as const;

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { AWARDS, EXPERIENCE, PROJECTS, SITE, EVENTS, TALKS } from "@/data/site";
+import { SECRETS, foundSecrets, unlock } from "@/lib/secrets";
+import { eggChai, eggHyderabad, eggMatrix, eggMetcalfe, eggMusic, eggRecord, eggTelugu } from "@/lib/eggs";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -22,6 +24,7 @@ const MENU: Line[] = [
   { t: "out", v: "  4  speaking     stages, talks and workshops" },
   { t: "out", v: "  5  awards       and what they mean" },
   { t: "out", v: "  6  contact      how to reach me" },
+  { t: "out", v: "  7  book         talks, workshops, brand collabs" },
   { t: "out", v: "" },
 ];
 
@@ -32,6 +35,8 @@ const HELP: Line[] = [
   { t: "out", v: "  resume       download the PDF" },
   { t: "out", v: "  open <page>  navigate the site" },
   { t: "out", v: "  theme        toggle light / dark" },
+  { t: "out", v: "  music        play something I generated" },
+  { t: "out", v: "  secrets      how many you have found" },
   { t: "out", v: "  menu         show the numbered menu" },
   { t: "out", v: "  clear        clear the screen" },
   { t: "out", v: "  exit         close the terminal" },
@@ -76,6 +81,7 @@ export function Terminal() {
   useEffect(() => {
     if (!open) return;
     setNudge(false);
+    unlock("terminal");
     try {
       localStorage.setItem("term-seen", "1");
     } catch {
@@ -129,7 +135,10 @@ export function Terminal() {
       }, 420);
     };
 
-    switch (cmd) {
+    // people type the whole rude sentence, not the bare word
+    const key = cmd.startsWith("sudo ") ? "sudo" : /^rm\s+-(rf|fr)\b/.test(cmd) ? "rm -rf" : cmd;
+
+    switch (key) {
       case "1":
       case "about":
       case "whoami": {
@@ -209,6 +218,14 @@ export function Terminal() {
         ]);
         break;
       }
+      case "7":
+      case "book":
+      case "work":
+        go("/work-with-me", "work with me");
+        break;
+      case "kit":
+        go("/speaking-kit", "the speaker kit");
+        break;
       case "6":
       case "contact":
       case "hire": {
@@ -272,6 +289,7 @@ export function Terminal() {
       case "sudo":
       case "sudo su":
       case "sudo -i":
+        unlock("command");
         push([
           { t: "err", v: "visitor is not in the sudoers file." },
           { t: "dim", v: "this incident will be reported. (it will not be)" },
@@ -280,6 +298,7 @@ export function Terminal() {
         break;
       case "rm -rf /":
       case "rm -rf":
+        unlock("command");
         push([
           { t: "err", v: "nice try." },
           { t: "dim", v: "this whole thing is prerendered. there is nothing here to delete." },
@@ -287,14 +306,80 @@ export function Terminal() {
         ]);
         break;
       case "coffee":
+        unlock("command");
         push([{ t: "err", v: "418 — I'm a teapot." }, { t: "dim", v: "i run on chai though." }, { t: "out", v: "" }]);
         break;
       case "42":
+        unlock("command");
         push([{ t: "accent", v: "the answer to life, the universe, and everything." }, { t: "dim", v: "still does not ship itself." }, { t: "out", v: "" }]);
         break;
       case "matrix":
-        push([{ t: "accent", v: "wake up, Neo…" }, { t: "dim", v: "(try the konami code on the page instead: ↑↑↓↓←→←→BA)" }, { t: "out", v: "" }]);
+        eggMatrix();
+        push([{ t: "accent", v: "wake up, Neo." }, { t: "dim", v: "look behind this window." }, { t: "out", v: "" }]);
         break;
+      case "chai":
+      case "tea":
+        eggChai();
+        push([{ t: "accent", v: "brewing." }, { t: "dim", v: "look behind this window." }, { t: "out", v: "" }]);
+        break;
+      case "hyderabad":
+      case "biryani":
+      case "hyd":
+        eggHyderabad();
+        push([{ t: "accent", v: "home." }, { t: "out", v: "" }]);
+        break;
+      case "namaste":
+      case "namaskaram":
+      case "telugu":
+        eggTelugu();
+        push([{ t: "accent", v: "నమస్కారం" }, { t: "out", v: "" }]);
+        break;
+      case "2089":
+      case "guinness":
+        eggRecord();
+        push([
+          { t: "accent", v: "2,089." },
+          { t: "dim", v: "the record belongs to GDG Hyderabad, who ran it. I was one of the people in the room." },
+          { t: "out", v: "" },
+        ]);
+        break;
+      case "metcalfe":
+      case "ethernet":
+        eggMetcalfe();
+        push([
+          { t: "accent", v: "value of a network ∝ n²" },
+          { t: "dim", v: "I asked him, at T-Hub, what he was excited to build on it next." },
+          { t: "out", v: "" },
+        ]);
+        break;
+      case "music":
+      case "play": {
+        const secs = eggMusic();
+        push(
+          secs
+            ? [
+                { t: "accent", v: "♪ playing a melody generated from the letters of my name." },
+                { t: "dim", v: "I once gave a talk on generative AI and music. this is not that. this is much worse." },
+                { t: "out", v: "" },
+              ]
+            : [{ t: "err", v: "your browser will not let me make sound. probably for the best." }, { t: "out", v: "" }]
+        );
+        break;
+      }
+      case "secrets": {
+        const got = foundSecrets();
+        push([
+          { t: "accent", v: `${got.length} of ${SECRETS.length} found` },
+          { t: "out", v: "" },
+          ...SECRETS.map<Line>((sec) =>
+            got.includes(sec.id)
+              ? { t: "out", v: `  ✦ ${sec.label}` }
+              : { t: "dim", v: `  · ??? (hint: ${sec.hint})` }
+          ),
+          { t: "out", v: "" },
+        ]);
+        break;
+      }
       case "konami":
         push([{ t: "dim", v: "↑ ↑ ↓ ↓ ← → ← → B A — press it on the page, not in here." }, { t: "out", v: "" }]);
         break;
@@ -309,9 +394,11 @@ export function Terminal() {
         break;
       case "vim":
       case "vi":
+        unlock("command");
         push([{ t: "err", v: "you are already stuck in one terminal. do not push your luck." }, { t: "out", v: "" }]);
         break;
       case "npm install":
+        unlock("command");
         push([{ t: "dim", v: "added 105 packages in 1m" }, { t: "dim", v: "(that actually happened)" }, { t: "out", v: "" }]);
         break;
 
@@ -329,6 +416,11 @@ export function Terminal() {
             awards: "/awards",
             recognition: "/awards",
             contact: "/contact",
+            now: "/now",
+            kit: "/speaking-kit",
+            "speaking-kit": "/speaking-kit",
+            "work-with-me": "/work-with-me",
+            book: "/work-with-me",
           };
           if (page in map) go(map[page], page || "home");
           else push([{ t: "err", v: `no page called "${page}". try: about, projects, experience, speaking, awards, contact` }, { t: "out", v: "" }]);
@@ -340,7 +432,7 @@ export function Terminal() {
         }
         push([
           { t: "err", v: `command not found: ${raw.trim()}` },
-          { t: "dim", v: "type `help`, or a number from 1 to 6." },
+          { t: "dim", v: "type `help`, or a number from 1 to 7." },
           { t: "out", v: "" },
         ]);
       }
@@ -372,7 +464,7 @@ export function Terminal() {
     }
     if (e.key === "Tab") {
       e.preventDefault();
-      const opts = ["about", "projects", "experience", "speaking", "awards", "contact", "stack", "resume", "theme", "menu", "help", "clear", "exit"];
+      const opts = ["about", "projects", "experience", "speaking", "awards", "contact", "book", "kit", "stack", "resume", "theme", "music", "secrets", "menu", "help", "clear", "exit"];
       const m = opts.filter((o) => o.startsWith(input.trim().toLowerCase()));
       if (m.length === 1) setInput(m[0]);
       else if (m.length > 1 && input.trim()) push([{ t: "dim", v: m.join("   ") }]);

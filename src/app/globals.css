@@ -135,7 +135,9 @@ html {
 }
 
 body {
-  background: var(--bg);
+  /* transparent on purpose: the 3D field sits behind the page, over html's
+     background, and would be hidden by an opaque body */
+  background: transparent;
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -383,6 +385,25 @@ html.comic-sans * {
 }
 
 @media print {
-  .no-print { display: none !important; }
+  .no-print,
+  header,
+  footer,
+  canvas { display: none !important; }
   body::after { display: none; }
+  html, body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  :root {
+    --ink: #111; --ink-2: #333; --ink-3: #555; --ink-4: #888;
+    --bg: #fff; --bg-raised: #fff; --bg-sunken: #fff;
+    --rule: #ddd; --rule-strong: #bbb; --accent: #b83200;
+  }
+  .surface { box-shadow: none !important; border-color: #ddd !important; }
+  .pt-page { padding-top: 0 !important; }
+  section, article, figure, li { break-inside: avoid; }
+  a { text-decoration: none; }
+  .print-only { display: block !important; }
+  @page { margin: 14mm; }
 }
+.print-only { display: none; }

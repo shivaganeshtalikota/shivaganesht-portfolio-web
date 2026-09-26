@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Crumbs } from "@/components/JsonLd";
 import { PageHeader } from "@/components/ui";
 import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
+      <Crumbs name="Contact" path="/contact" />
       <PageHeader
         index="01"
         eyebrow="Contact"

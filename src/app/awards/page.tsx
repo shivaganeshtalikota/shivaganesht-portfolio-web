@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Crumbs } from "@/components/JsonLd";
 import Image from "next/image";
 import { PageHeader } from "@/components/ui";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
@@ -24,6 +25,7 @@ export default function AwardsPage() {
 
   return (
     <>
+      <Crumbs name="Recognition" path="/awards" />
       <PageHeader
         index="01"
         eyebrow="Recognition"

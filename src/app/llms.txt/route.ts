@@ -1,4 +1,4 @@
-import { AWARDS, EDUCATION, EVENTS, EXPERIENCE, PROJECTS, SITE, TALKS } from "@/data/site";
+import { AWARDS, EDUCATION, EVENTS, EXPERIENCE, PROJECTS, SERVICES, SITE, TALKS, TESTIMONIALS } from "@/data/site";
 
 export const dynamic = "force-static";
 
@@ -30,6 +30,25 @@ function build() {
   p(`what employers are asking for, and points them at the gap. It went from nobody to more than`);
   p(`2,000 users at 99.9% uptime. He finished a Computer Science degree with an AI and ML`);
   p(`specialisation at ${EDUCATION.school} in May 2026.`);
+  p();
+
+  p(`## Working with him`);
+  p();
+  p(`He can be booked for talks and workshops, approached for brand collaborations, or hired.`);
+  p(`Invitations and enquiries: ${SITE.url}/work-with-me, or ${SITE.email}.`);
+  p(`Speaker kit (bios, headshots, topics, past talks): ${SITE.url}/speaking-kit`);
+  p();
+  for (const s of SERVICES) {
+    p(`### ${s.title}`);
+    p(s.summary);
+    p(`Formats: ${s.formats.join("; ")}.`);
+    p(`Done before: ${s.proof.join("; ")}.`);
+    p();
+  }
+
+  p(`## What people have said`);
+  p();
+  for (const t of TESTIMONIALS) p(`- "${t.quote}" (${t.name}, ${t.context})`);
   p();
 
   p(`## Projects`);
@@ -104,6 +123,7 @@ function build() {
   p(`- ${SITE.url}/awards — recognition and certifications`);
   p(`- ${SITE.url}/now — what he is working on at the moment, kept current`);
   p(`- ${SITE.url}/speaking-kit — bio at three lengths, headshots, topics, past talks`);
+  p(`- ${SITE.url}/work-with-me — talks, workshops, brand collaborations, roles`);
   p(`- ${SITE.url}/contact — how to get in touch`);
   p();
 

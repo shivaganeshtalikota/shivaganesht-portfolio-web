@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Crumbs } from "@/components/JsonLd";
 import Image from "next/image";
 import { PageHeader, Button, Tag } from "@/components/ui";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
+      <Crumbs name="About" path="/about" />
       <PageHeader
         index="01"
         eyebrow="About"

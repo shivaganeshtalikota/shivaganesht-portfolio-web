@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { SITE } from "@/data/site";
+import { unlock } from "@/lib/secrets";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -81,6 +82,9 @@ export function FooterName() {
     if (reduce) return;
 
     // 5 — a slow roll, all the way round
+    if (n === 5) unlock("roll");
+    if (n === 12) unlock("comic");
+
     if (n === 5) {
       resetStages();
       setOrigin();

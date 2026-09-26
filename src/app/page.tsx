@@ -4,7 +4,8 @@ import { Hero } from "@/components/Hero";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { Arrow, Button, SectionHead } from "@/components/ui";
-import { ABOUT_SHORT, AWARDS, EVENTS, PROJECTS, SITE } from "@/data/site";
+import { Testimonials } from "@/components/Testimonials";
+import { ABOUT_SHORT, AWARDS, EVENTS, PROJECTS } from "@/data/site";
 
 export default function HomePage() {
   const featured = PROJECTS.filter((p) => p.featured);
@@ -138,10 +139,20 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── what people said ────────────────────────────────── */}
+      <section className="shell py-20 md:py-32">
+        <SectionHead
+          index="05 — What people said"
+          title={<>From the people <em className="italic">I&apos;ve mentored.</em></>}
+          action={{ href: "/work-with-me", label: "Work with me" }}
+        />
+        <Testimonials compact />
+      </section>
+
       {/* ── CTA ─────────────────────────────────────────────── */}
       <section className="shell py-24 md:py-40">
         <Reveal>
-          <p className="label">05 — Contact</p>
+          <p className="label">06 — Contact</p>
         </Reveal>
         <Reveal delay={0.06}>
           <h2 className="t-1 mt-7 max-w-[16ch] text-balance">
@@ -150,15 +161,15 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={0.12}>
           <p className="t-lede safe-text mt-6 max-w-[46ch] text-pretty">
-            I read everything that comes in. Roles, collaborations, or an invitation to come and
-            speak somewhere.
+            I read everything that comes in. A role, a talk, a workshop, or a brand that wants to
+            put something in front of students and engineers.
           </p>
         </Reveal>
         <Reveal delay={0.18}>
           <div className="mt-10 flex flex-wrap gap-3">
-            <Button href="/contact">Get in touch</Button>
-            <Button href={SITE.topmate} variant="outline">
-              Book a session on Topmate
+            <Button href="/work-with-me">Work with me</Button>
+            <Button href="/contact?topic=talk" variant="outline">
+              Invite me to speak
             </Button>
           </div>
         </Reveal>

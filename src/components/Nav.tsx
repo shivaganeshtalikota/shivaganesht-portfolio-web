@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { NAV, SITE, SOCIALS } from "@/data/site";
+import { unlock } from "@/lib/secrets";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -181,6 +182,19 @@ export function Nav() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const taps = useRef<number[]>([]);
+
+  /* Tap my name five times quickly: the phone-friendly way into the boot
+     sequence, since the Konami code needs a keyboard. */
+  const onLogoTap = () => {
+    const now = Date.now();
+    taps.current = [...taps.current.filter((t) => now - t < 2600), now];
+    if (taps.current.length >= 5) {
+      taps.current = [];
+      window.dispatchEvent(new Event("konami-boot"));
+      unlock("logo");
+    }
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -244,21 +258,21 @@ export function Nav() {
           style={{ height: "var(--nav-h)" }}
           aria-label="Main"
         >
-          <Link href="/" className="group flex min-w-0 items-baseline gap-2">
+          <Link href="/" onClick={onLogoTap} className="group flex min-w-0 items-baseline gap-2">
             <span className="font-display truncate text-[17px] tracking-[-0.01em] md:text-[19px]">
               {SITE.name}
             </span>
-            <span className="label hidden shrink-0 pb-px lg:inline">{SITE.initials}</span>
+            <span className="label hidden shrink-0 pb-px 2xl:inline">{SITE.initials}</span>
           </Link>
 
-          <ul className="hidden items-center gap-1 lg:flex">
+          <ul className="hidden items-center gap-0.5 xl:flex">
             {NAV.filter((n) => n.href !== "/").map((item) => {
               const active = pathname === item.href;
               return (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="relative block px-3 py-1.5 text-[13.5px] transition-colors duration-300"
+                    className="relative block px-2.5 py-1.5 text-[13.5px] transition-colors duration-300"
                     style={{ color: active ? "var(--ink)" : "var(--ink-2)" }}
                   >
                     {active && (
@@ -285,22 +299,22 @@ export function Nav() {
               aria-label="Open command palette"
               className="hidden items-center gap-2 rounded-full border border-[var(--rule)] px-3 py-1.5 text-[12px] text-[var(--ink-3)] transition-colors hover:border-[var(--rule-strong)] hover:text-[var(--ink)] md:flex"
             >
-              <span>Search</span>
+              <span className="hidden 2xl:inline">Search</span>
               <kbd className="font-mono text-[10px] tracking-tight">⌘K</kbd>
             </button>
             <ThemeToggle />
             <Link
-              href="/contact"
-              className="hidden rounded-full bg-[var(--ink)] px-4 py-1.5 text-[13px] text-[var(--bg)] transition-opacity duration-300 hover:opacity-85 md:block"
+              href="/work-with-me"
+              className="hidden whitespace-nowrap rounded-full bg-[var(--ink)] px-4 py-1.5 text-[13px] text-[var(--bg)] transition-opacity duration-300 hover:opacity-85 md:block"
             >
-              Get in touch
+              Work with me
             </Link>
             <button
               type="button"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
-              className="grid h-9 w-9 place-items-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--fill)] lg:hidden"
+              className="grid h-9 w-9 place-items-center rounded-full text-[var(--ink)] transition-colors hover:bg-[var(--fill)] xl:hidden"
             >
               <span className="relative block h-[10px] w-[16px]">
                 <motion.span
@@ -322,7 +336,7 @@ export function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-[55] lg:hidden"
+            className="fixed inset-0 z-[55] xl:hidden"
             style={{
               top: "calc(var(--nav-h) + var(--safe-t))",
               background: "var(--bg)",

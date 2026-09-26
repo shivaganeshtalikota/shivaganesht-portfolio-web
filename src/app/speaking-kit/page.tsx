@@ -3,6 +3,8 @@ import Image from "next/image";
 import { PageHeader, Arrow, Tag } from "@/components/ui";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { CopyButton } from "@/components/CopyButton";
+import { PrintButton } from "@/components/PrintButton";
+import { Crumbs } from "@/components/JsonLd";
 import { EVENTS, KIT, SITE, TALKS } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -32,6 +34,23 @@ export default function SpeakingKitPage() {
         lede="If you're running an event and need my details, take them from here rather than emailing me for them. Copy any bio with one click."
       />
 
+      <Crumbs name="Speaker kit" path="/speaking-kit" />
+
+      <section className="shell no-print -mt-4 mb-12 flex flex-wrap items-center gap-3">
+        <PrintButton />
+        <span className="mono-sm text-[var(--ink-3)]">prints as a clean page, bios and headshot included</span>
+      </section>
+
+      {/* printed header, only on paper */}
+      <div className="print-only shell mb-6">
+        <p style={{ fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+          {SITE.name} · {SITE.role} · {SITE.location}
+        </p>
+        <p style={{ fontSize: "12px", marginTop: "4px" }}>
+          {SITE.email} · {SITE.url.replace("https://", "")} · linkedin.com/in/shivaganesht
+        </p>
+      </div>
+
       {/* bios */}
       <section className="shell">
         <Reveal>
@@ -46,7 +65,7 @@ export default function SpeakingKitPage() {
               <div className="surface p-6 md:p-7">
                 <div className="flex items-center justify-between gap-4">
                   <span className="label">{b.length}</span>
-                  <CopyButton text={b.text} />
+                  <span className="no-print"><CopyButton text={b.text} /></span>
                 </div>
                 <p className="safe-text mt-4 text-pretty text-[15.5px] leading-[1.7] text-[var(--ink-2)]">
                   {b.text}

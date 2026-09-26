@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Crumbs } from "@/components/JsonLd";
 import { PageHeader } from "@/components/ui";
 import { EventGallery } from "@/components/EventGallery";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
@@ -17,6 +18,7 @@ export default function SpeakingPage() {
 
   return (
     <>
+      <Crumbs name="Speaking" path="/speaking" />
       <PageHeader
         index="01"
         eyebrow="Speaking & Events"

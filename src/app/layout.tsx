@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
-import { AWARDS, PROJECTS, SITE } from "@/data/site";
+import { AWARDS, EVENTS, PROJECTS, SERVICES, SITE, TALKS } from "@/data/site";
 import { Providers } from "@/components/Providers";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
@@ -8,6 +8,10 @@ import { Easter } from "@/components/Easter";
 import { Terminal } from "@/components/Terminal";
 import { ScrollReset } from "@/components/ScrollReset";
 import { Analytics } from "@vercel/analytics/next";
+import { Field3D } from "@/components/Field3D";
+import { Secrets } from "@/components/Secrets";
+import { Shortcuts } from "@/components/Shortcuts";
+import { JsonLd } from "@/components/JsonLd";
 import "./globals.css";
 
 const serif = Instrument_Serif({
@@ -34,12 +38,26 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: { default: SITE.title, template: `%s — ${SITE.name}` },
   description: SITE.description,
-  keywords: [...SITE.keywords],
+  keywords: [
+    ...SITE.keywords,
+    "AI speaker Hyderabad",
+    "agentic AI speaker India",
+    "tech speaker for colleges",
+    "GitHub Copilot speaker",
+    "AI workshop for students",
+    "student founder India",
+    "EdTech founder Hyderabad",
+    "tech brand collaboration",
+    "hire AI engineer Hyderabad",
+    "KPRIT",
+  ],
   authors: [{ name: SITE.name, url: SITE.url }],
   creator: SITE.name,
   publisher: SITE.name,
   applicationName: SITE.name,
   category: "technology",
+  referrer: "origin-when-cross-origin",
+  formatDetection: { email: false, address: false, telephone: false },
   alternates: { canonical: "/" },
   openGraph: {
     type: "profile",
@@ -51,13 +69,11 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     title: SITE.title,
     description: SITE.description,
-    images: [{ url: "/portrait/hero.webp", width: 1400, height: 1400, alt: `${SITE.name} — ${SITE.role}` }],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE.title,
     description: SITE.description,
-    images: ["/portrait/hero.webp"],
   },
   robots: {
     index: true,
@@ -148,6 +164,22 @@ const graph = {
       ],
       knowsLanguage: ["en", "te", "hi"],
       seeks: { "@type": "Demand", name: SITE.availableLabel },
+      hasOccupation: {
+        "@type": "Occupation",
+        name: "Product Engineer",
+        occupationLocation: { "@type": "City", name: "Hyderabad" },
+        skills: "Agentic AI, multi-agent systems, Next.js, TypeScript, Python, FastAPI, Firebase",
+      },
+      makesOffer: SERVICES.map((s) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: s.title,
+          description: s.summary,
+          url: `${SITE.url}/work-with-me#${s.slug}`,
+        },
+        areaServed: { "@type": "Country", name: "India" },
+      })),
       sameAs: [
         "https://github.com/shivaganeshtalikota",
         "https://www.linkedin.com/in/shivaganesht",
@@ -197,9 +229,37 @@ const graph = {
       dateCreated: a.year,
       creator: { "@id": personId },
     })),
+    ...[...EVENTS.map((e) => ({ title: e.title, venue: e.venue, year: e.year, role: e.role, note: e.blurb })),
+        ...TALKS.map((t) => ({ title: t.title, venue: t.venue, year: t.year, role: t.role, note: t.note }))]
+      .filter((e) => /speaker|host|organis/i.test(e.role))
+      .map((e) => ({
+        "@type": "Event",
+        name: e.title,
+        startDate: e.year.slice(0, 4),
+        description: e.note,
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        location: { "@type": "Place", name: e.venue, address: { "@type": "PostalAddress", addressCountry: "IN" } },
+        performer: { "@id": personId },
+      })),
     {
       "@type": "FAQPage",
       mainEntity: [
+        {
+          "@type": "Question",
+          name: "Can I invite Shiva Ganesh Talikota to speak at my event?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `Yes. He speaks on agentic AI, generative AI in practice, GitHub Copilot, and building a company as a student, and has spoken four times at Microsoft in Hyderabad. Invitations go through ${SITE.url}/work-with-me or ${SITE.email}. A speaker kit with bios and headshots is at ${SITE.url}/speaking-kit.`,
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Does Shiva Ganesh Talikota do brand collaborations or workshops?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `Yes. He runs hands-on AI workshops, including DevAgentic, matriXO's agentic-AI series, and collaborates with tech brands on product demos, testing sessions and content; he was a Dell Technologies ambassador across two AI events. Details are at ${SITE.url}/work-with-me.`,
+          },
+        },
         {
           "@type": "Question",
           name: "Who is Shiva Ganesh Talikota?",
@@ -258,11 +318,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}})();`,
           }}
         />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }} />
+        <JsonLd data={graph} />
       </head>
       <body>
         <Providers>
           <ScrollReset />
+          <Field3D />
           <a
             href="#main"
             className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-[var(--accent)] focus:px-5 focus:py-2.5 focus:text-sm focus:text-[var(--accent-ink)]"
@@ -274,6 +335,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
           <Easter />
           <Terminal />
+          <Secrets />
+          <Shortcuts />
           <Analytics />
         </Providers>
       </body>

@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { HERO, SITE } from "@/data/site";
-import { NeuralField } from "./NeuralField";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -12,8 +11,7 @@ export function Hero() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative isolate overflow-hidden">
-      <NeuralField className="pointer-events-none absolute inset-0 -z-10 h-full w-full" />
+    <section className="relative">
 
       <div className="shell pt-page">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">

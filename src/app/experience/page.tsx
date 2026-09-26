@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Crumbs } from "@/components/JsonLd";
 import { PageHeader, Button } from "@/components/ui";
 import { Reveal } from "@/components/Reveal";
 import { EDUCATION, EXPERIENCE, SITE } from "@/data/site";
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default function ExperiencePage() {
   return (
     <>
+      <Crumbs name="Experience" path="/experience" />
       <PageHeader
         index="01"
         eyebrow="Experience"

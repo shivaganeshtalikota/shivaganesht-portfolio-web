@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Crumbs } from "@/components/JsonLd";
 import { PageHeader } from "@/components/ui";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
@@ -17,6 +18,7 @@ export default function ProjectsPage() {
 
   return (
     <>
+      <Crumbs name="Work" path="/projects" />
       <PageHeader
         index="01"
         eyebrow="Selected work"

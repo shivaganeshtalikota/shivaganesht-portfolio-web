@@ -4,7 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useTheme } from "next-themes";
-import { NAV, SITE } from "@/data/site";
+import { EXTRA_ROUTES, NAV, SITE } from "@/data/site";
+import { unlock } from "@/lib/secrets";
+import { eggChai, eggHyderabad, eggMatrix, eggMetcalfe, eggRecord, eggTelugu } from "@/lib/eggs";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -19,7 +21,7 @@ const BOOT = [
   "",
   "$ cat /etc/stack",
   "next.js 16 · typescript strict · tailwind v4 · raw webgl",
-  "no three.js. that hero is a 4kb fragment shader.",
+  "no three.js. the background is a hand-written webgl field.",
   "",
   "$ ls ~/shipped",
   "matrixo/      2,000+ users, 99.9% uptime",
@@ -60,9 +62,9 @@ export function Easter() {
    └────────────────────────────────┘
 %cYou opened the console. I like you already.
 
-  · that hero is a hand-written WebGL fragment shader (~4kb, no three.js)
-  · press  ⌘K / Ctrl+K  for the command palette
-  · there is a konami code on this page
+  · the background is a hand-written WebGL particle field. no three.js.
+  · press  ⌘K / Ctrl+K  for the command palette, or  ?  for shortcuts
+  · there are 17 secrets on this site. most of them are about me.
   · hiring, or want to build something?  ${SITE.email}
 `,
       s,
@@ -81,6 +83,16 @@ export function Easter() {
       sudo: () => window.dispatchEvent(new Event("open-terminal")),
       hire: () => window.dispatchEvent(new Event("open-palette")),
       theme: () => setTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark"),
+      matrix: eggMatrix,
+      chai: eggChai,
+      hyderabad: eggHyderabad,
+      biryani: eggHyderabad,
+      namaste: eggTelugu,
+      namaskaram: eggTelugu,
+      telugu: eggTelugu,
+      "2089": eggRecord,
+      metcalfe: eggMetcalfe,
+      ethernet: eggMetcalfe,
     };
 
     const onKey = (e: KeyboardEvent) => {
@@ -97,6 +109,7 @@ export function Easter() {
         if (i === KONAMI.length) {
           i = 0;
           setTerm(true);
+          unlock("konami");
         }
       } else {
         i = k === KONAMI[0] ? 1 : 0;
@@ -107,7 +120,7 @@ export function Easter() {
         buf = "";
         return;
       }
-      if (e.key.length === 1 && /[a-z]/i.test(e.key)) {
+      if (e.key.length === 1 && /[a-z0-9]/i.test(e.key)) {
         buf = (buf + e.key.toLowerCase()).slice(-12);
         for (const w of Object.keys(WORDS)) {
           if (buf.endsWith(w)) {
@@ -122,6 +135,13 @@ export function Easter() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [setTheme]);
+
+  /* the mobile secret (tap the name five times) boots the same sequence */
+  useEffect(() => {
+    const boot = () => setTerm(true);
+    window.addEventListener("konami-boot", boot);
+    return () => window.removeEventListener("konami-boot", boot);
+  }, []);
 
   /* type out the boot sequence */
   useEffect(() => {
@@ -170,7 +190,10 @@ export function Easter() {
 
   useEffect(() => {
     document.body.style.overflow = open || term ? "hidden" : "";
-    if (open) setTimeout(() => inputRef.current?.focus(), 30);
+    if (open) {
+      unlock("palette");
+      setTimeout(() => inputRef.current?.focus(), 30);
+    }
     else {
       setQ("");
       setSel(0);
@@ -190,7 +213,7 @@ export function Easter() {
       setOpen(false);
     };
     return [
-      ...NAV.map((n) => ({
+      ...[...NAV, ...EXTRA_ROUTES].map((n) => ({
         id: `nav${n.href}`,
         label: n.label,
         hint: n.href,
@@ -208,6 +231,23 @@ export function Easter() {
         },
       },
       { id: "resume", label: "Download résumé", hint: "PDF", group: "Actions", run: ext(SITE.resume) },
+      {
+        id: "talk",
+        label: "Invite me to speak",
+        hint: "talks, workshops",
+        group: "Actions",
+        run: go("/contact?topic=talk"),
+      },
+      {
+        id: "secrets",
+        label: "Show the secrets I've found",
+        hint: "17 hidden",
+        group: "Actions",
+        run: () => {
+          setOpen(false);
+          window.dispatchEvent(new Event("open-secrets"));
+        },
+      },
       {
         id: "theme",
         label: `Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`,
