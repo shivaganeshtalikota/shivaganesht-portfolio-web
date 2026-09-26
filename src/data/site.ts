@@ -705,3 +705,38 @@ export const CONTACT_TOPICS = [
   { key: "mentoring", label: "Mentoring" },
   { key: "other", label: "Something else" },
 ] as const;
+
+/* Plain facts in the third person, for anyone writing about me and for the
+   search engines and assistants that answer questions about me. Shown on
+   /about and marked up as that page's FAQ, so the markup matches what is
+   on screen. */
+export const QUICK_ANSWERS: { q: string; a: string }[] = [
+  {
+    q: "Can I invite Shiva Ganesh Talikota to speak at my event?",
+    a: `Yes. He speaks on agentic AI, generative AI in practice, GitHub Copilot, and building a company as a student, and has spoken four times at Microsoft in Hyderabad. Invitations go through ${SITE.url}/work-with-me or ${SITE.email}. A speaker kit with bios and headshots is at ${SITE.url}/speaking-kit.`,
+  },
+  {
+    q: "Does Shiva Ganesh Talikota do brand collaborations or workshops?",
+    a: `Yes. He runs hands-on AI workshops, including DevAgentic, matriXO's agentic-AI series, and collaborates with tech brands on product demos, testing sessions and content; he was a Dell Technologies ambassador across two AI events. Details are at ${SITE.url}/work-with-me.`,
+  },
+  {
+    q: "Who is Shiva Ganesh Talikota?",
+    a: "Shiva Ganesh Talikota is a founder and product engineer based in Hyderabad, India. He founded matriXO in 2023, an education-technology platform that maps what students learn in college against what roles actually ask for, and grew it from zero to more than 2,000 users. He graduated in Computer Science with an AI & ML specialisation from Kommuri Pratap Reddy Institute of Technology in May 2026.",
+  },
+  {
+    q: "What is matriXO?",
+    a: "matriXO is an education-technology platform founded by Shiva Ganesh Talikota in 2023. It maps what students actually learn in college against what employers ask for, then closes the gap with targeted recommendations. It is built on Next.js, React, TypeScript and Firebase, serves over 2,000 users, and also runs DevAgentic, an agentic-AI workshop series.",
+  },
+  {
+    q: "What has Shiva Ganesh Talikota built?",
+    a: "His main builds are matriXO, the EdTech platform he founded; automapp, a natural-language automation engine built on the rule that the language model proposes plans but never executes them; and pAIr, a seven-agent AI compliance and government-scheme navigator for Indian MSMEs that retrieves over a 310-document policy corpus and answers in more than fifteen Indian languages. pAIr was Runner-Up at the SAP Code Unnati Innovation Marathon 4.0.",
+  },
+  {
+    q: "Where has Shiva Ganesh Talikota spoken?",
+    a: "He has spoken four times at Microsoft campuses in Hyderabad, including on Generative AI at the Generative AI Summit and on GitHub Copilot in Visual Studio Code at GitHub Copilot Dev Days Telangana. He has also spoken to 350+ students on agentic AI at AVNIET, delivered a guest session on creativity and innovation at JBIET, pitched at the Indian School of Business, and hosts DevAgentic, matriXO's own agentic-AI workshop series at DraperU India.",
+  },
+  {
+    q: "How can I contact Shiva Ganesh Talikota?",
+    a: `By email at ${SITE.email}, via LinkedIn at linkedin.com/in/shivaganesht, on GitHub at github.com/shivaganeshtalikota, or by booking a 1:1 session at topmate.io/shivaganesht. He is open to engineering roles, collaborations and speaking invitations.`,
+  },
+];

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Crumbs } from "@/components/JsonLd";
+import { Crumbs, JsonLd } from "@/components/JsonLd";
 import Image from "next/image";
 import { PageHeader, Button, Tag } from "@/components/ui";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
-import { ABOUT_LONG, EDUCATION, SITE, SKILLS } from "@/data/site";
+import { ABOUT_LONG, EDUCATION, QUICK_ANSWERS, SITE, SKILLS } from "@/data/site";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/about" },
@@ -137,6 +137,48 @@ export default function AboutPage() {
               </StaggerItem>
             ))}
           </Stagger>
+        </div>
+      </section>
+
+      {/* quick answers: the same facts the FAQ markup below describes */}
+      <section className="shell py-20 md:py-32">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: QUICK_ANSWERS.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          }}
+        />
+        <Reveal>
+          <div className="flex items-baseline gap-4 border-b border-[var(--rule)] pb-4">
+            <span className="label">04</span>
+            <span className="label">Quick answers</span>
+          </div>
+        </Reveal>
+        <Reveal delay={0.06}>
+          <p className="safe-text mt-8 max-w-[56ch] text-[15.5px] leading-relaxed text-[var(--ink-2)]">
+            If you&apos;re writing about me, introducing me on stage, or just want the facts, these are
+            them. They&apos;re in the third person so you can lift them as they are.
+          </p>
+        </Reveal>
+        <div className="mt-8">
+          {QUICK_ANSWERS.map((f) => (
+            <Reveal key={f.q}>
+              <details className="group border-b border-[var(--rule)] py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-[17px] [&::-webkit-details-marker]:hidden">
+                  <span className="safe-text">{f.q}</span>
+                  <span className="mono-sm shrink-0 text-[var(--ink-3)] transition-transform duration-300 group-open:rotate-45" aria-hidden>
+                    +
+                  </span>
+                </summary>
+                <p className="safe-text mt-4 max-w-[68ch] text-pretty text-[15px] leading-relaxed text-[var(--ink-2)]">{f.a}</p>
+              </details>
+            </Reveal>
+          ))}
         </div>
       </section>
     </>

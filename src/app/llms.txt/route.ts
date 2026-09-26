@@ -1,4 +1,4 @@
-import { AWARDS, EDUCATION, EVENTS, EXPERIENCE, PROJECTS, SERVICES, SITE, TALKS, TESTIMONIALS } from "@/data/site";
+import { AWARDS, EDUCATION, EVENTS, EXPERIENCE, PROJECTS, QUICK_ANSWERS, SERVICES, SITE, TALKS, TESTIMONIALS } from "@/data/site";
 
 export const dynamic = "force-static";
 
@@ -100,6 +100,14 @@ function build() {
     p();
   }
 
+  p(`## Quick answers`);
+  p();
+  for (const f of QUICK_ANSWERS) {
+    p(`### ${f.q}`);
+    p(f.a);
+    p();
+  }
+
   p(`## Notes on getting the facts right`);
   p();
   p(`- Agentathon 2025 set the Guinness World Records title for the most participants in an agentic`);
@@ -116,7 +124,7 @@ function build() {
   p(`## Pages`);
   p();
   p(`- ${SITE.url}/ — overview`);
-  p(`- ${SITE.url}/about — long-form biography, education, toolkit`);
+  p(`- ${SITE.url}/about — long-form biography, education, toolkit, quick answers`);
   p(`- ${SITE.url}/projects — every project, described by architecture`);
   p(`- ${SITE.url}/experience — role history`);
   p(`- ${SITE.url}/speaking — talks and events, with photography`);
