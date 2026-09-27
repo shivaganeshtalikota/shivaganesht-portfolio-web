@@ -1,9 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useTransform, useVelocity } from "motion/react";
 import { CONTACT_TOPICS, SITE } from "@/data/site";
 import { field } from "@/lib/field";
+import { useTheme } from "next-themes";
+import { Refraction, canRefract, lensBackdrop } from "./Refraction";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -55,6 +57,13 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
   const reduce = useReducedMotion();
   const [slots, setSlots] = useState<Slot[]>([]);
   const [held, setHeld] = useState(false);
+  // the lens bends what's behind its rim (Chromium), sized to where it's going
+  const lensId = "lens-" + useId().replace(/[^a-z0-9]/gi, "");
+  const [refract, setRefract] = useState(false);
+  const [geo, setGeo] = useState({ w: 0, h: 0 });
+  useEffect(() => setRefract(canRefract()), []);
+  const { resolvedTheme } = useTheme();
+  const theme = resolvedTheme === "light" ? "light" : "dark";
 
   // the lens: where it is and how big, in the wrapper's coordinates
   const x = useMotionValue(0);
@@ -103,6 +112,7 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
 
   const moveTo = useCallback(
     (s: Slot, instant = false) => {
+      setGeo({ w: s.w, h: s.h });
       if (instant || !placed.current || reduce) {
         x.jump(s.x);
         y.jump(s.y);
@@ -212,20 +222,26 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
     wrap.current?.querySelector<HTMLElement>(`[data-key="${next}"]`)?.focus();
   };
 
-  const label = "whitespace-nowrap px-3.5 py-2 text-[13.5px]";
+  // tighter on phones, so the six topics sit in two rows down to 375px
+  const label = "whitespace-nowrap px-2 py-2 text-[13px] sm:px-3.5 sm:text-[13.5px]";
 
   return (
     <div
       role="radiogroup"
       aria-label="What's this about?"
       onKeyDown={onKey}
-      className="glass-surface glass-focus mt-4 rounded-[26px] p-1 backdrop-blur-xl backdrop-saturate-150"
+      // no backdrop blur on the bar: it would make the bar a "backdrop root",
+      // and the lens inside would only see the bar's half-transparent contents,
+      // letting the original words ghost through its refraction
+      className="glass-surface glass-focus mt-4 rounded-[26px] p-1"
     >
       <div ref={wrap} className="relative">
-        {/* the labels, with a hole where the lens sits */}
+        {/* the labels. Where the glass can refract (Chromium), the lens
+            transforms these very words; elsewhere it carries its own copy,
+            and the labels get a hole where it sits so nothing shows twice. */}
         <motion.div
           className="flex flex-wrap gap-y-1"
-          style={{
+          style={refract ? undefined : {
             maskImage: "linear-gradient(#000 0 0), linear-gradient(#000 0 0)",
             WebkitMaskImage: "linear-gradient(#000 0 0), linear-gradient(#000 0 0)",
             maskRepeat: "no-repeat",
@@ -258,28 +274,42 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
         </motion.div>
 
         {/* the lens */}
+        <Refraction id={lensId} width={geo.w} height={geo.h} theme={theme} scale={held ? -18 : -12} tint="accent" />
         <motion.div
           aria-hidden
           onPointerDown={onDown}
           onPointerMove={onMove}
           onPointerUp={onUp}
           onPointerCancel={onUp}
-          className="glass-lens absolute left-0 top-0 z-10 cursor-grab touch-none overflow-hidden rounded-full backdrop-blur-[2px] backdrop-saturate-200 active:cursor-grabbing"
-          style={{ x, y, width: w, height: h, scale: swell, scaleX: squashX, scaleY: squashY }}
+          data-held={held}
+          className="glass-lens absolute left-0 top-0 z-10 cursor-grab touch-none overflow-hidden rounded-full active:cursor-grabbing"
+          style={{
+            x,
+            y,
+            width: w,
+            height: h,
+            scale: swell,
+            scaleX: squashX,
+            scaleY: squashY,
+            backdropFilter: lensBackdrop(lensId, refract && geo.w > 0),
+            WebkitBackdropFilter: lensBackdrop(lensId, false),
+          }}
         >
-          {/* the words it covers, seen through it: exactly aligned at rest,
-              magnified with the lens while it's held */}
+          {/* without refraction: the words it covers, drawn inside it,
+              exactly aligned at rest, magnified with the lens while held */}
+          {!refract && (
           <motion.div className="pointer-events-none absolute left-0 top-0" style={{ x: innerX, y: innerY }}>
             {slots.map((s) => (
               <span
                 key={s.key}
-                className={`absolute flex items-center justify-center text-[var(--accent)] ${label}`}
+                className={`absolute flex items-center justify-center font-semibold text-[var(--accent)] ${label}`}
                 style={{ left: s.x, top: s.y, width: s.w, height: s.h }}
               >
                 {CONTACT_TOPICS.find((t) => t.key === s.key)?.label}
               </span>
             ))}
           </motion.div>
+          )}
         </motion.div>
       </div>
     </div>
@@ -352,7 +382,7 @@ export function ContactForm() {
   }
 
   return (
-    <div className="surface relative overflow-hidden p-7 md:p-9">
+    <div className="surface relative overflow-hidden p-5 sm:p-7 md:p-9">
       <AnimatePresence mode="wait" initial={false}>
         {state === "sent" ? (
           <motion.div

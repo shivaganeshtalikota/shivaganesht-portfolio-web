@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { animate, motion, useMotionValue, useReducedMotion, useTransform, useVelocity } from "motion/react";
 import { useTheme } from "next-themes";
+import { Refraction, canRefract, lensBackdrop } from "./Refraction";
 
 /* The light/dark switch, as Liquid Glass, after the reference video: a small
    glass track with the sun and the moon in it, and a clear lens, taller than
@@ -64,8 +65,14 @@ export function ThemeSwitch() {
   const innerX = useTransform(x, (v) => -v);
   const drag = useRef<{ id: number; grab: number; start: number; moved: boolean; at: number } | null>(null);
   const placed = useRef(false);
+  // the lens bends the track and icons behind its rim (Chromium)
+  const lensId = "knob-" + useId().replace(/[^a-z0-9]/gi, "");
+  const [refract, setRefract] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    setRefract(canRefract());
+  }, []);
 
   // follow the theme, wherever it was changed from (this switch, the terminal, the OS)
   useEffect(() => {
@@ -135,23 +142,39 @@ export function ThemeSwitch() {
       aria-checked={dark}
       aria-label={dark ? "Dark mode is on. Switch to light" : "Light mode is on. Switch to dark"}
       onClick={() => switchTo(dark ? "light" : "dark")}
-      className="glass-surface glass-focus relative shrink-0 rounded-full backdrop-blur-md backdrop-saturate-150 outline-none"
+      className="glass-surface glass-focus relative shrink-0 rounded-full outline-none"
       style={{ width: TRACK_W, height: TRACK_H }}
     >
       <Icons bright={false} />
+      <Refraction id={lensId} width={LENS} height={LENS} theme={dark ? "dark" : "light"} scale={held ? -16 : -11} tint="bright" />
       <motion.div
         onPointerDown={onDown}
         onPointerMove={onMove}
         onPointerUp={onUp}
         onPointerCancel={onUp}
         onClick={(e) => e.stopPropagation()}
-        className="glass-lens absolute z-10 cursor-grab touch-none overflow-hidden rounded-full backdrop-blur-[1.5px] active:cursor-grabbing"
-        style={{ left: 0, top: (TRACK_H - LENS) / 2, width: LENS, height: LENS, x, scale: swell, scaleX: squashX, scaleY: squashY }}
+        data-held={held}
+        className="glass-lens absolute z-10 cursor-grab touch-none overflow-hidden rounded-full active:cursor-grabbing"
+        style={{
+          left: 0,
+          top: (TRACK_H - LENS) / 2,
+          width: LENS,
+          height: LENS,
+          x,
+          scale: swell,
+          scaleX: squashX,
+          scaleY: squashY,
+          backdropFilter: lensBackdrop(lensId, refract),
+          WebkitBackdropFilter: lensBackdrop(lensId, false),
+        }}
       >
-        {/* the icons as seen through the glass: brighter, and aligned with the ones below */}
+        {/* without refraction, the icons as seen through the glass: brighter,
+            and aligned with the ones below (with it, the glass does this itself) */}
+        {!refract && (
         <motion.div className="pointer-events-none absolute" style={{ left: 0, top: (LENS - TRACK_H) / 2, x: innerX, width: TRACK_W, height: TRACK_H }}>
           <Icons bright />
         </motion.div>
+        )}
       </motion.div>
     </button>
   );

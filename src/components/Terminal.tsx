@@ -510,7 +510,7 @@ export function Terminal() {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 8, scale: 0.96, pointerEvents: "none" }}
               transition={{ duration: 0.45, ease: EASE }}
-              className="hidden rounded-full border border-[var(--rule)] bg-[var(--bg-raised)] px-3.5 py-2 text-[12.5px] text-[var(--ink-2)] shadow-[var(--shadow)] sm:block"
+              className="glass-panel backdrop-blur-2xl backdrop-saturate-150 relative hidden rounded-full px-3.5 py-2 text-[12.5px] text-[var(--ink-2)] sm:block"
             >
               psst — there&apos;s a terminal
             </motion.button>
@@ -544,7 +544,7 @@ export function Terminal() {
             exit={{ opacity: 0, y: 12, scale: 0.98, pointerEvents: "none" }}
             transition={{ duration: 0.34, ease: EASE }}
             onClick={() => inputRef.current?.focus()}
-            className="no-print fixed inset-x-3 z-[96] flex flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--rule-strong)] bg-[var(--bg-raised)] shadow-[var(--shadow-lg)] sm:inset-x-auto sm:right-7 sm:w-[420px] md:w-[460px]"
+            className="no-print fixed inset-x-3 z-[96] flex flex-col overflow-hidden rounded-[var(--radius-md)] glass-panel backdrop-blur-2xl backdrop-saturate-150 sm:inset-x-auto sm:right-7 sm:w-[420px] md:w-[460px]"
             style={{
               bottom: "calc(5.5rem + var(--safe-b))",
               height: "min(60vh, 480px)",

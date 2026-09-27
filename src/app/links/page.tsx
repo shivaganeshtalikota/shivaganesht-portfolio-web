@@ -29,7 +29,7 @@ function Row({ href, label, note, strong }: { href: string; label: string; note?
   const cls = `group flex items-center justify-between gap-4 rounded-[var(--radius-md)] border px-5 py-4 transition-all duration-300 hover:-translate-y-0.5 ${
     strong
       ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--bg)] hover:opacity-90"
-      : "surface hover:border-[var(--rule-strong)]"
+      : "glass-surface relative backdrop-blur-md backdrop-saturate-150"
   }`;
   const inner = (
     <>

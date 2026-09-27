@@ -91,7 +91,7 @@ export function Shortcuts() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="no-print mono-sm pointer-events-none fixed left-1/2 top-[calc(var(--nav-h)+var(--safe-t)+14px)] z-[70] -translate-x-1/2 rounded-full border border-[var(--rule-strong)] bg-[var(--bg-raised)] px-3 py-1 text-[11px] text-[var(--ink-2)] shadow-[var(--shadow)]"
+            className="no-print mono-sm pointer-events-none fixed left-1/2 top-[calc(var(--nav-h)+var(--safe-t)+14px)] z-[70] -translate-x-1/2 rounded-full glass-panel backdrop-blur-2xl backdrop-saturate-150 px-3 py-1 text-[11px] text-[var(--ink-2)] shadow-[var(--shadow)]"
           >
             g <span className="text-[var(--ink-3)]">then…</span>
           </motion.div>
@@ -116,7 +116,7 @@ export function Shortcuts() {
               animate={{ y: 0, scale: 1 }}
               exit={{ y: 8, scale: 0.98 }}
               transition={{ duration: 0.3, ease: EASE }}
-              className="relative max-h-[86vh] w-full max-w-[560px] overflow-y-auto rounded-[var(--radius-lg)] border border-[var(--rule-strong)] bg-[var(--bg-raised)] p-6 shadow-[var(--shadow-lg)] md:p-7"
+              className="relative max-h-[86vh] w-full max-w-[560px] overflow-y-auto rounded-[var(--radius-lg)] glass-panel backdrop-blur-2xl backdrop-saturate-150 p-6 md:p-7"
             >
               <div className="flex items-baseline justify-between gap-4">
                 <p className="font-display text-[28px] leading-none">Shortcuts</p>

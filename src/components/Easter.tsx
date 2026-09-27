@@ -321,7 +321,7 @@ export function Easter() {
               role="dialog"
               aria-modal="true"
               aria-label="Command palette"
-              className="relative w-full max-w-[540px] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--rule-strong)] bg-[var(--bg-raised)] shadow-[var(--shadow-lg)]"
+              className="glass-panel backdrop-blur-2xl backdrop-saturate-150 relative w-full max-w-[540px] overflow-hidden rounded-[var(--radius-lg)]"
               initial={{ y: -12, scale: 0.98 }}
               animate={{ y: 0, scale: 1 }}
               exit={{ y: -8, scale: 0.98 }}

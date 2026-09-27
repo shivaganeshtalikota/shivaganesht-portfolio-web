@@ -1,6 +1,6 @@
 ---
 name: liquid-glass
-description: Build Apple-style Liquid Glass UI on the web (React + motion + Tailwind, or plain CSS): frosted glass bars and pills with edge-lit rims, and a clear, draggable glass lens that shows what's under it, swells when held, squashes as it moves, and springs onto the nearest option. Use for segmented controls, tab bars, topic pickers, light/dark switches, search pills and round glass buttons.
+description: Build Apple-style Liquid Glass UI on the web (React + motion + Tailwind, or plain CSS): frosted glass bars, pills and floating panels with edge-lit rims, and a clear, draggable glass lens that really refracts what's under it (magnifies, bends at the rim, turns the text under it bolder and coloured), swells and warms when held, squashes as it moves, and springs onto the nearest option. Use for segmented controls, tab bars, topic pickers, light/dark switches, menus, command palettes, dialogs, search pills and round glass buttons.
 ---
 
 # Liquid Glass for the web
@@ -32,8 +32,10 @@ grey pill instead of glass.
    middle, a little brighter near the top (where it catches light), shaded just
    inside the bottom rim (a curved lens darkens at its edge), with a soft drop
    shadow.
-4. **What's under the lens is seen once, through it.** The label or icon under
-   the lens shows through the glass, tinted and brighter, never doubled.
+4. **What's under the lens is seen once, through it, and changed by it.** The
+   label or icon under the lens is the real one, bent by the glass: magnified,
+   bending at the rim where it's half under, heavier and coloured. Never a
+   second copy laid on top (it reads as "another element"). See section 3.
 5. **Liquid motion.** It squashes while it moves, overshoots slightly when it
    lands, swells when you press it (big enough to spill past its track), and
    can be grabbed and dragged.
@@ -50,8 +52,12 @@ grey pill instead of glass.
   --gs-edge-hi: rgba(255, 255, 255, 1);
   --gs-edge-lo: rgba(20, 19, 15, 0.07);
   --gs-drop: 0 10px 28px rgba(20, 19, 15, 0.1), 0 2px 6px rgba(20, 19, 15, 0.06);
-  --lens-top: rgba(255, 255, 255, 0.62);
-  --lens-mid: rgba(255, 255, 255, 0.2);
+  --gp-fill: rgba(255, 254, 251, 0.8);          /* floating panels */
+  --lens-top: rgba(255, 255, 255, 0.14);        /* clear: the refraction is the point */
+  --lens-mid: rgba(255, 255, 255, 0.02);
+  --lens-sheen: rgba(255, 255, 255, 0.85);
+  --lens-caustic: rgba(255, 255, 255, 0.6);
+  --lens-blend: soft-light;
   --lens-edge: rgba(255, 255, 255, 1);
   --lens-shade: rgba(20, 19, 15, 0.12);
   --lens-drop: 0 10px 24px rgba(20, 19, 15, 0.14), 0 2px 6px rgba(20, 19, 15, 0.08);
@@ -61,8 +67,12 @@ grey pill instead of glass.
   --gs-edge-hi: rgba(255, 255, 255, 0.42);
   --gs-edge-lo: rgba(255, 255, 255, 0.05);
   --gs-drop: 0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --gp-fill: rgba(24, 23, 19, 0.8);
   --lens-top: rgba(255, 255, 255, 0.09);
   --lens-mid: rgba(255, 255, 255, 0.015);
+  --lens-sheen: rgba(255, 255, 255, 0.5);
+  --lens-caustic: rgba(255, 255, 255, 0.26);
+  --lens-blend: screen;
   --lens-edge: rgba(255, 255, 255, 0.6);
   --lens-shade: rgba(0, 0, 0, 0.38);
   --lens-drop: 0 12px 28px rgba(0, 0, 0, 0.42), 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -98,9 +108,29 @@ Mirror the dark block inside `@media (prefers-color-scheme: dark) { :root:not([d
   background: linear-gradient(135deg, var(--gs-edge-hi), var(--gs-edge-lo) 30%, var(--gs-edge-lo) 70%, var(--gs-edge-hi));
 }
 
+/* floating panels (menus, palette, dialogs, terminal): the same glass, denser,
+   so text on it never fights what's behind. No position of its own, so fixed
+   panels stay fixed; static ones add "relative" for the rim. */
+.glass-panel {
+  background: var(--gp-fill);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), var(--shadow-lg);
+}
+.glass-panel::after { /* same masked ring as .glass-surface::after */ }
+/* on the element: class="glass-panel backdrop-blur-2xl backdrop-saturate-150" */
+
+/* the colour the lens takes on from inside while held; registered so it fades */
+@property --lens-warm {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: rgba(0, 0, 0, 0);
+}
+
 /* the clear lens that moves */
 .glass-lens {
-  background: radial-gradient(130% 100% at 50% -10%, var(--lens-top), var(--lens-mid) 58%, var(--lens-mid));
+  background:
+    radial-gradient(95% 85% at 50% 112%, var(--lens-warm), rgba(0, 0, 0, 0) 72%),
+    radial-gradient(130% 100% at 50% -10%, var(--lens-top), var(--lens-mid) 58%, var(--lens-mid));
+  transition: --lens-warm 0.35s ease;
   box-shadow:
     inset 0 -12px 18px -14px var(--lens-shade),      /* darker just inside the bottom rim */
     inset 0 10px 14px -14px rgba(255, 255, 255, 0.45), /* light caught along the top */
@@ -108,6 +138,32 @@ Mirror the dark block inside `@media (prefers-color-scheme: dark) { :root:not([d
 }
 .glass-lens::after {
   background: linear-gradient(150deg, var(--lens-edge), rgba(255, 255, 255, 0.05) 34%, rgba(255, 255, 255, 0.03) 66%, var(--lens-edge));
+}
+/* the lens' own light, BLENDED into what's behind rather than laid on top:
+   a sheen on the upper curve and a caustic along the bottom */
+.glass-lens::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 30% -15%, var(--lens-sheen), rgba(255, 255, 255, 0) 58%),
+    radial-gradient(90% 60% at 50% 125%, var(--lens-caustic), rgba(255, 255, 255, 0) 70%);
+  mix-blend-mode: var(--lens-blend);
+  opacity: 0.85;
+  transition: opacity 0.35s ease;
+}
+/* held: brighter light, the accent rising inside, a glow of it outside */
+.glass-lens[data-held="true"]::before { opacity: 1; }
+.glass-lens[data-held="true"] {
+  --lens-warm: var(--accent-wash);
+  box-shadow:
+    inset 0 -12px 18px -14px var(--lens-shade),
+    inset 0 10px 14px -14px rgba(255, 255, 255, 0.45),
+    var(--lens-drop),
+    0 0 28px var(--accent-wash);
 }
 
 /* keyboard focus: ring the whole control, not one word inside it */
@@ -132,7 +188,86 @@ rather than trusting the source.
 
 ---
 
-## 3. The lens technique: the word shows once
+## 3. Real refraction: an SVG filter as the lens' backdrop-filter
+
+This is what makes it *actual* glass rather than a pill with a copy of the word
+inside. Chromium accepts `backdrop-filter: url(#filter)`, and the filter's
+`SourceGraphic` is then **the live page behind the lens**. So the lens can bend,
+thicken and recolour the real text under it, wherever it's dragged, and the
+words half under its rim bend with it. (Safari and Firefox ignore SVG filters
+in `backdrop-filter`; they get section 3b.)
+
+The filter, in order:
+
+1. **`feImage` displacement map.** A generated SVG data-URL the lens' size plus
+   a pad on every side. Red ramps left to right across the lens, blue top to
+   bottom, both inside a slightly blurred rounded-rect mask; outside it the map
+   is neutral `rgb(128, 0, 128)`, so nothing moves. On a wide lens narrow the red
+   ramp (`kx = min(1, h / w)`, from `128·(1−kx)` to `128·(1+kx)−1`) so it
+   magnifies equally in x and y. The blur on the mask is what makes text at the
+   rim *bend* instead of being cut.
+2. **`feDisplacementMap`** with `scale` **negative** (magnifies; positive
+   shrinks). About −12 at rest, −18 held (the swell adds more on top), −11/−16
+   for a round switch knob. `xChannelSelector="R" yChannelSelector="B"`.
+3. **Optional smoothing:** on `devicePixelRatio < 1.5`, `feGaussianBlur` 0.45
+   after the displacement. Chrome samples displacement nearest-neighbour, and
+   the steps are visible on 1× screens. Skip it at 2×+.
+4. **The ink layer (colour + weight):** an `feColorMatrix` that makes every
+   pixel the target colour, with **alpha ramped from brightness**:
+   `A = (L − from) / (to − from)`, clamped by the filter. Then keep it only
+   inside the lens with an **inner mask** (`feImage` of a rounded rect inset
+   ~5px and blurred, `feComposite operator="in"`), and lay it **over** the bent
+   backdrop (`feComposite operator="over"`).
+   - The page's own brightness is outside the ramp, so the glass stays clear
+     and neutral. The text is past it, so it takes the colour.
+   - A **short** ramp counts the anti-aliased edge pixels of letters as ink,
+     so strokes read **bolder** without any morphology.
+   - The inner mask keeps whatever bends in from outside (the bar's bright
+     rim) from being coloured; the tint thins toward the edge like glass.
+
+```ts
+const LUMA = [0.2126, 0.7152, 0.0722];
+function inkMatrix(from: number, to: number, [r, g, b]: [number, number, number]) {
+  const k = 1 / (to - from); // to < from works too: dark text on a light page
+  return [0,0,0,0,r, 0,0,0,0,g, 0,0,0,0,b, LUMA[0]*k, LUMA[1]*k, LUMA[2]*k, 0, -from*k].join(" ");
+}
+// accent text: dark page inkMatrix(0.22, 0.5, accent), light page inkMatrix(0.86, 0.6, accent)
+// icons that light up: dark inkMatrix(0.2, 0.4, nearWhite), light inkMatrix(0.88, 0.68, nearBlack)
+```
+
+```tsx
+<svg aria-hidden width="0" height="0" style={{ position: "absolute" }}>
+  <filter id={id} x={-pad} y={-pad} width={W} height={H}
+    filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+    <feImage href={lensMap} x={-pad} y={-pad} width={W} height={H} preserveAspectRatio="none" result="map" />
+    <feDisplacementMap in="SourceGraphic" in2="map" scale={held ? -18 : -12}
+      xChannelSelector="R" yChannelSelector="B" result="raw" />
+    <feGaussianBlur in="raw" stdDeviation={dpr < 1.5 ? 0.45 : 0} result="bent" />
+    <feColorMatrix in="bent" type="matrix" values={inkMatrix(...)} result="ink" />
+    <feImage href={innerMask} x={-pad} y={-pad} width={W} height={H} preserveAspectRatio="none" result="inner" />
+    <feComposite in="ink" in2="inner" operator="in" result="inked" />
+    <feComposite in="inked" in2="bent" operator="over" />
+  </filter>
+</svg>
+// on the lens:
+style={{ backdropFilter: `url(#${id}) saturate(150%)`, WebkitBackdropFilter: "blur(10px) saturate(180%)" }}
+```
+
+Rules that matter:
+
+- **Units.** `filterUnits` and `primitiveUnits` = `userSpaceOnUse`, region and
+  `feImage` at `(-pad, -pad, w + 2·pad, h + 2·pad)`. Percentages broke the map.
+- **No blur with refraction.** Blur softens the very words you're bending.
+- **Nothing above the lens may have a backdrop-filter.** An ancestor with one
+  becomes a *backdrop root*: the lens then only sees that ancestor's
+  half-transparent contents, and the original words ghost through the bent
+  ones. Give the bar a fill but no backdrop blur.
+- **Re-generate the maps when the lens' size changes** (`useMemo` on rounded
+  w, h). The swell and squash are transforms, so the filter scales with them.
+- **Detect support** (Chromium brands via `navigator.userAgentData`, else a UA
+  test) *after mount*, so server and client render the same markup.
+
+### 3b. Fallback: the word shows once (Safari, Firefox)
 
 The naive approach (a translucent pill over the labels) shows the label twice
 the moment anything is scaled or offset, and with no blur the original label
@@ -161,6 +296,9 @@ is crisp behind a copy. The fix is two parts:
    `y: -lensY`), with `overflow: hidden` on the lens. At rest the copy sits
    precisely on the hidden original (test: 0px difference). The copy can be
    tinted (accent colour, brighter icon) to show "this one is on".
+
+Render the hole and the copy **only when refraction is off**; with it on, the
+labels layer is left whole and the filter does the work.
 
 Do **not** magnify the copy at rest. Siblings are then visibly different sizes
 and it looks broken. Magnification comes for free from scaling the whole lens
@@ -194,7 +332,10 @@ Motion values to keep: `x, y, w, h` (lens rect in the container's coordinates),
   overflow their slot and get clipped even when the bar has plenty of room.
 - **No horizontal scrolling, no edge fades.** On narrow screens let the options
   wrap (`flex-wrap`) onto two rows and move the lens in 2D. The track becomes a
-  rounded rectangle (`rounded-[26px]`), the lens stays a pill.
+  rounded rectangle (`rounded-[26px]`), the lens stays a pill. Measure the
+  label widths and size the padding so it's **two** rows down to 375px (six
+  topics: `px-2 text-[13px]` on phones, `sm:px-3.5 sm:text-[13.5px]`, and keep
+  the surrounding card's side padding at 20px there).
 - The track must not clip (`overflow: visible`), or the held lens can't spill out.
 - Measure slots with `offsetLeft/offsetTop/offsetWidth/offsetHeight` relative to
   a `position: relative` wrapper that also contains the lens, and re-measure on
@@ -311,8 +452,9 @@ export function LiquidSegmented<K extends string>({
   const mask = "linear-gradient(#000 0 0), linear-gradient(#000 0 0)";
 
   return (
+    // no backdrop blur on the bar when the lens refracts (see "backdrop root")
     <div role="radiogroup" aria-label={label} onKeyDown={onKey}
-      className="glass-surface glass-focus rounded-[26px] p-1 backdrop-blur-xl backdrop-saturate-150">
+      className="glass-surface glass-focus rounded-[26px] p-1">
       <div ref={wrap} className="relative">
         <motion.div className="flex flex-wrap gap-y-1" style={{
           maskImage: mask, WebkitMaskImage: mask, maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat",
@@ -418,6 +560,28 @@ glow gets cut off in a square.
 - **Focus ring on one word.** Hide the per-option outline; ring the whole
   control with `:has(:focus-visible)`.
 - **Reduced motion.** Jump instead of spring, and don't swell.
+- **Content vanished for reduced-motion users.** Swapping a `motion.div` for a
+  plain `div` (or `initial={reduce ? false : …}`) when motion is reduced makes
+  the server HTML (opacity 0) disagree with the client, and it stays hidden.
+  Render the same markup always and wrap the app in
+  `<MotionConfig reducedMotion="user">`.
+- **Text under the lens smeared together.** `feMorphology` dilate/erode with
+  radius 0.5 rounds to a whole pixel and fuses letters at 13px. Get weight from
+  the short ink ramp instead.
+- **The lens turned muddy brown.** A linear colour matrix that maps page
+  brightness to itself and text brightness to the accent also stretches every
+  small brightness difference in the background into colour. Use the
+  alpha-ramped ink layer over the untouched backdrop.
+- **Pink letter edges on light.** A ramp that ends at the text's own
+  brightness leaves anti-aliased edges half-tinted. End it well before
+  (0.6 for 0.35 text).
+- **An orange arc at the lens edge.** The bar's bright rim bent into the lens
+  and got inked. The inner mask stops it.
+- **Ghost text behind the bent text.** A backdrop-filter on an ancestor
+  (backdrop root). Remove it.
+- **Screenshots lie.** Headless captures often run before events or reveals
+  fire. Drive a real browser over the DevTools protocol and send real mouse
+  events (`Input.dispatchMouseEvent`) to press, drag and hold the lens.
 
 ## 9. How to check it (numbers, not screenshots)
 
@@ -435,7 +599,9 @@ getComputedStyle(lens).backdropFilter;           // not "none"
   .filter(b => b.scrollWidth > b.clientWidth);   // empty: no clipped labels
 ```
 
-Then press and hold (dispatch `pointerdown`): the lens should grow about 1.4×
-and extend a few pixels past the top and bottom of the bar; drag by `pointermove`
-steps and release, and the new option should be selected with the lens at [0, 0]
-again. Check both themes, a phone width (two rows), and keyboard arrows.
+Then press and hold (real mouse events): the lens should grow about 1.4×,
+extend past the bar, warm from inside, and the word under it should be larger,
+heavier and in the accent. Drag it halfway between two words: both should bend
+at its rim. Release, and the new option should be selected with the lens at
+[0, 0] again. Check both themes, 1× and 2× pixel density, a phone width (two
+rows, drag across rows), and keyboard arrows.

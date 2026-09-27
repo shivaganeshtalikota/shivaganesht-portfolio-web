@@ -3,14 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { introDelay } from "./Intro";
 import { HERO, SITE } from "@/data/site";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 export function Hero() {
-  const reduce = useReducedMotion();
   // on a first visit, hold the entrance until the intro lifts
   const [d] = useState(introDelay);
 
@@ -23,7 +22,7 @@ export function Hero() {
           <div className="lg:col-span-7">
             <motion.div
               className="flex items-center gap-3"
-              initial={reduce ? false : { opacity: 0 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: d, ease: EASE }}
             >
@@ -43,7 +42,7 @@ export function Hero() {
                 <span key={line} className="block overflow-hidden pb-[0.08em]">
                   <motion.span
                     className="block"
-                    initial={reduce ? false : { y: "110%" }}
+                    initial={{ y: "110%" }}
                     animate={{ y: "0%" }}
                     transition={{ duration: 1, delay: d + 0.08 + i * 0.08, ease: EASE }}
                   >
@@ -61,7 +60,7 @@ export function Hero() {
 
             <motion.p
               className="t-lede safe-text mt-8 max-w-[46ch]"
-              initial={reduce ? false : { opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: d + 0.42, ease: EASE }}
             >
@@ -70,7 +69,7 @@ export function Hero() {
 
             <motion.div
               className="mt-10 flex flex-wrap items-center gap-x-3 gap-y-3"
-              initial={reduce ? false : { opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: d + 0.52, ease: EASE }}
             >
@@ -98,7 +97,7 @@ export function Hero() {
           {/* portrait */}
           <motion.figure
             className="lg:col-span-5 lg:pt-3"
-            initial={reduce ? false : { opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, delay: d + 0.24, ease: EASE }}
           >
@@ -123,7 +122,7 @@ export function Hero() {
             always line up however the grid reflows. */}
         <motion.dl
           className="mt-14 grid grid-cols-2 gap-x-5 gap-y-8 md:mt-24 md:grid-cols-4 md:gap-x-8 md:gap-y-0"
-          initial={reduce ? false : { opacity: 0 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.9, delay: d + 0.65, ease: EASE }}
         >

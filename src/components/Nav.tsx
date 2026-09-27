@@ -149,7 +149,7 @@ function Dropdown({
             transition={{ duration: 0.26, ease: EASE }}
             className={`absolute top-full z-10 pt-2 ${align === "right" ? "right-0" : "-left-2"}`}
           >
-            <div className="w-[292px] overflow-hidden rounded-[var(--radius-md)] border border-[var(--rule-strong)] bg-[var(--bg-raised)] p-1.5 shadow-[var(--shadow-lg)]">
+            <div className="glass-panel backdrop-blur-2xl backdrop-saturate-150 relative w-[292px] overflow-hidden rounded-[var(--radius-md)] p-1.5">
               {children}
             </div>
           </motion.div>

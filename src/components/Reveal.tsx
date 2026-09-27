@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import type { ReactNode } from "react";
 
 /* Apple's product pages reveal content on scroll with a short, soft
@@ -21,10 +21,6 @@ export function Reveal({
   className?: string;
   once?: boolean;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) return <div className={className}>{children}</div>;
-
   return (
     <motion.div
       className={className}
@@ -49,10 +45,6 @@ export function Stagger({
   delay?: number;
   gap?: number;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) return <div className={className}>{children}</div>;
-
   return (
     <motion.div
       className={className}
@@ -78,10 +70,6 @@ export function StaggerItem({
   className?: string;
   y?: number;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) return <div className={className}>{children}</div>;
-
   return (
     <motion.div
       className={className}

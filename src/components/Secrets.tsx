@@ -85,7 +85,7 @@ export function Secrets() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6, transition: { duration: 0.2 } }}
               transition={{ duration: 0.35, ease: EASE }}
-              className="mono-sm rounded-[var(--radius-sm)] border border-[var(--rule-strong)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[11.5px] leading-snug text-[var(--ink)] shadow-[var(--shadow-lg)]"
+              className="glass-panel backdrop-blur-2xl backdrop-saturate-150 relative mono-sm rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[11.5px] leading-snug text-[var(--ink)]"
             >
               {t.text}
             </motion.div>
@@ -115,7 +115,7 @@ export function Secrets() {
               animate={{ y: 0, scale: 1 }}
               exit={{ y: 10, scale: 0.98 }}
               transition={{ duration: 0.32, ease: EASE }}
-              className="relative flex max-h-[82vh] w-full max-w-[520px] flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--rule-strong)] bg-[var(--bg-raised)] shadow-[var(--shadow-lg)]"
+              className="glass-panel backdrop-blur-2xl backdrop-saturate-150 relative flex max-h-[82vh] w-full max-w-[520px] flex-col overflow-hidden rounded-[var(--radius-lg)] shadow-[var(--shadow-lg)]"
             >
               <header className="flex items-center justify-between gap-4 border-b border-[var(--rule)] px-5 py-4">
                 <div>

@@ -53,11 +53,15 @@
 
   /* liquid glass: see the .glass-surface and .glass-lens notes below */
   --gs-fill: rgba(255, 255, 255, 0.5);
+  --gp-fill: rgba(255, 254, 251, 0.8);
   --gs-edge-hi: rgba(255, 255, 255, 1);
   --gs-edge-lo: rgba(20, 19, 15, 0.07);
   --gs-drop: 0 10px 28px rgba(20, 19, 15, 0.1), 0 2px 6px rgba(20, 19, 15, 0.06);
-  --lens-top: rgba(255, 255, 255, 0.62);
-  --lens-mid: rgba(255, 255, 255, 0.2);
+  --lens-top: rgba(255, 255, 255, 0.14);
+  --lens-mid: rgba(255, 255, 255, 0.02);
+  --lens-sheen: rgba(255, 255, 255, 0.85);
+  --lens-caustic: rgba(255, 255, 255, 0.6);
+  --lens-blend: soft-light;
   --lens-edge: rgba(255, 255, 255, 1);
   --lens-shade: rgba(20, 19, 15, 0.12);
   --lens-drop: 0 10px 24px rgba(20, 19, 15, 0.14), 0 2px 6px rgba(20, 19, 15, 0.08);
@@ -96,11 +100,15 @@
   --glass: rgba(12, 11, 10, 0.58);
   --glass-rule: rgba(242, 240, 236, 0.1);
   --gs-fill: rgba(255, 255, 255, 0.045);
+  --gp-fill: rgba(24, 23, 19, 0.8);
   --gs-edge-hi: rgba(255, 255, 255, 0.42);
   --gs-edge-lo: rgba(255, 255, 255, 0.05);
   --gs-drop: 0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
   --lens-top: rgba(255, 255, 255, 0.09);
   --lens-mid: rgba(255, 255, 255, 0.015);
+  --lens-sheen: rgba(255, 255, 255, 0.5);
+  --lens-caustic: rgba(255, 255, 255, 0.26);
+  --lens-blend: screen;
   --lens-edge: rgba(255, 255, 255, 0.6);
   --lens-shade: rgba(0, 0, 0, 0.38);
   --lens-drop: 0 12px 28px rgba(0, 0, 0, 0.42), 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -132,11 +140,15 @@
     --glass: rgba(12, 11, 10, 0.58);
     --glass-rule: rgba(242, 240, 236, 0.1);
     --gs-fill: rgba(255, 255, 255, 0.045);
+    --gp-fill: rgba(24, 23, 19, 0.8);
     --gs-edge-hi: rgba(255, 255, 255, 0.42);
     --gs-edge-lo: rgba(255, 255, 255, 0.05);
     --gs-drop: 0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
     --lens-top: rgba(255, 255, 255, 0.09);
     --lens-mid: rgba(255, 255, 255, 0.015);
+    --lens-sheen: rgba(255, 255, 255, 0.5);
+    --lens-caustic: rgba(255, 255, 255, 0.26);
+    --lens-blend: screen;
     --lens-edge: rgba(255, 255, 255, 0.6);
     --lens-shade: rgba(0, 0, 0, 0.38);
     --lens-drop: 0 12px 28px rgba(0, 0, 0, 0.42), 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -956,12 +968,47 @@ html[data-intro="run"] [data-logo-name] {
 .glass-surface::after {
   background: linear-gradient(135deg, var(--gs-edge-hi), var(--gs-edge-lo) 30%, var(--gs-edge-lo) 70%, var(--gs-edge-hi));
 }
+/* .glass-panel is the same glass made denser, for anything that floats
+   over the page and holds text (menus, the palette, dialogs, the terminal):
+   still frosted and edge-lit, but opaque enough that what's behind never
+   fights the words. It sets no position of its own, so a panel that is
+   fixed stays fixed; static ones add "relative" for the rim. */
+.glass-panel {
+  background: var(--gp-fill);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    var(--shadow-lg);
+}
+.glass-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  background: linear-gradient(135deg, var(--gs-edge-hi), var(--gs-edge-lo) 30%, var(--gs-edge-lo) 70%, var(--gs-edge-hi));
+}
+/* --lens-warm is registered so it can fade: the colour the bubble takes on
+   from inside while it's held. */
+@property --lens-warm {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: rgba(0, 0, 0, 0);
+}
 /* .glass-lens is the clear lens that moves: nearly see-through in the
    middle, a little brighter toward the top where it catches light, shaded
    just inside the rim at the bottom the way a curved lens darkens at its
    edge, and a thin edge-lit rim. No bands, no outline. */
 .glass-lens {
-  background: radial-gradient(130% 100% at 50% -10%, var(--lens-top), var(--lens-mid) 58%, var(--lens-mid));
+  background:
+    radial-gradient(95% 85% at 50% 112%, var(--lens-warm), rgba(0, 0, 0, 0) 72%),
+    radial-gradient(130% 100% at 50% -10%, var(--lens-top), var(--lens-mid) 58%, var(--lens-mid));
+  transition: --lens-warm 0.35s ease;
   box-shadow:
     inset 0 -12px 18px -14px var(--lens-shade),
     inset 0 10px 14px -14px rgba(255, 255, 255, 0.45),
@@ -969,6 +1016,37 @@ html[data-intro="run"] [data-logo-name] {
 }
 .glass-lens::after {
   background: linear-gradient(150deg, var(--lens-edge), rgba(255, 255, 255, 0.05) 34%, rgba(255, 255, 255, 0.03) 66%, var(--lens-edge));
+}
+/* The lens' own light, blended into what's behind it rather than laid on
+   top: a sheen where the light source catches the upper curve, and a softer
+   caustic along the bottom where light passes through and gathers. Screen
+   on dark, soft-light on light, so it brightens without washing out. */
+.glass-lens::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 30% -15%, var(--lens-sheen), rgba(255, 255, 255, 0) 58%),
+    radial-gradient(90% 60% at 50% 125%, var(--lens-caustic), rgba(255, 255, 255, 0) 70%);
+  mix-blend-mode: var(--lens-blend);
+  opacity: 0.85;
+  transition: opacity 0.35s ease;
+}
+/* Held, the bubble lights up and warms: brighter light, the accent rising
+   inside it from the bottom, and a glow of it around the outside. */
+.glass-lens[data-held="true"]::before {
+  opacity: 1;
+}
+.glass-lens[data-held="true"] {
+  --lens-warm: var(--accent-wash);
+  box-shadow:
+    inset 0 -12px 18px -14px var(--lens-shade),
+    inset 0 10px 14px -14px rgba(255, 255, 255, 0.45),
+    var(--lens-drop),
+    0 0 28px var(--accent-wash);
 }
 /* keyboard users still see where they are: a ring on the whole control */
 .glass-focus:has(:focus-visible) {
