@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
-import { AWARDS, EVENTS, PROJECTS, SERVICES, SITE, TALKS } from "@/data/site";
+import { AWARDS, EVENTS, LANGUAGES, PROJECTS, SERVICES, SITE, TALKS } from "@/data/site";
 import { Providers } from "@/components/Providers";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
@@ -164,7 +164,7 @@ const graph = {
         "EdTech",
         "Blockchain",
       ],
-      knowsLanguage: ["en", "te", "hi"],
+      knowsLanguage: LANGUAGES.map((l) => ({ "@type": "Language", name: l.name, alternateName: l.code })),
       seeks: { "@type": "Demand", name: SITE.availableLabel },
       hasOccupation: {
         "@type": "Occupation",

@@ -30,10 +30,56 @@ export function eggHyderabad() {
   unlock("hyderabad");
 }
 
+/* Hello in each of the four languages I speak. Each draws its greeting
+   in the field, in its own script; saying all four is its own secret. */
+const HELLOS = ["telugu", "hindi", "french", "english"] as const;
+type Hello = (typeof HELLOS)[number];
+
+function said(lang: Hello) {
+  if (typeof window === "undefined") return;
+  let heard: string[] = [];
+  try {
+    heard = JSON.parse(window.localStorage.getItem("sgt-hellos") || "[]");
+  } catch {
+    heard = [];
+  }
+  if (!heard.includes(lang)) heard.push(lang);
+  try {
+    window.localStorage.setItem("sgt-hellos", JSON.stringify(heard));
+  } catch {
+    /* private mode: it just won't remember */
+  }
+  if (HELLOS.every((l) => heard.includes(l))) {
+    window.setTimeout(() => {
+      toast("all four. Telugu, English, Hindi and French: that's every language I've got.", 5200);
+      unlock("polyglot");
+    }, 1800);
+  }
+}
+
 export function eggTelugu() {
   field({ type: "text", text: "నమస్కారం", hold: 5000 });
-  toast("namaskaram. that's hello, in Telugu.");
+  toast("namaskaram. hello in Telugu, my first language.");
   unlock("telugu");
+  said("telugu");
+}
+
+export function eggHindi() {
+  field({ type: "text", text: "नमस्ते", hold: 5000 });
+  toast("namaste. hello in Hindi, which I speak well enough to get by.");
+  said("hindi");
+}
+
+export function eggFrench() {
+  field({ type: "text", text: "Bonjour", hold: 5000 });
+  toast("bonjour. my French is somewhere in the middle, and still improving.");
+  said("french");
+}
+
+export function eggEnglish() {
+  field({ type: "text", text: "Hello", hold: 4200 });
+  toast("hello. you already speak this one.");
+  said("english");
 }
 
 export function eggRecord() {

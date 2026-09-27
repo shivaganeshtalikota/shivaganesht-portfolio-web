@@ -19,7 +19,8 @@ export type SecretId =
   | "music"
   | "shockwave"
   | "shortcuts"
-  | "lost";
+  | "lost"
+  | "polyglot";
 
 /* Hints are meant to be followed, not solved: each one says where to go
    and roughly what to do, without spoiling the exact word. */
@@ -34,13 +35,14 @@ export const SECRETS: { id: SecretId; label: string; hint: string }[] = [
   { id: "matrix", label: "Took the red pill", hint: "type the name of a 1999 film about a simulation, anywhere on the page" },
   { id: "chai", label: "Made chai", hint: "type the drink I run on (it isn't coffee), anywhere on the page" },
   { id: "hyderabad", label: "Typed where I'm from", hint: "type the city I live in, or its most famous dish" },
-  { id: "telugu", label: "Said hello in Telugu", hint: "type a hello: namaste works, and so does the Telugu one" },
+  { id: "telugu", label: "Said hello in Telugu", hint: "type a hello in Telugu: telugu, or namaskaram" },
   { id: "record", label: "Typed the record number", hint: "type how many people were at Agentathon 2025 (four digits)" },
   { id: "metcalfe", label: "Met Bob Metcalfe", hint: "type the surname of the man who invented Ethernet" },
   { id: "music", label: "Played the music", hint: "open the terminal and ask it to play something" },
   { id: "shockwave", label: "Sent a shockwave through the field", hint: "click any empty patch of background" },
   { id: "shortcuts", label: "Found the keyboard shortcuts", hint: "press ? (that's Shift and /)" },
   { id: "lost", label: "Got properly lost", hint: "go to a page that doesn't exist, like /nowhere" },
+  { id: "polyglot", label: "Said hello in all four of my languages", hint: "type hello, telugu, namaste and bonjour, anywhere on the page" },
 ];
 const KEY = "sgt-secrets";
 

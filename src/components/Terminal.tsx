@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { AWARDS, EXPERIENCE, PROJECTS, SITE, EVENTS, TALKS } from "@/data/site";
 import { SECRETS, foundSecrets, unlock } from "@/lib/secrets";
-import { eggChai, eggHyderabad, eggMatrix, eggMetcalfe, eggMusic, eggRecord, eggTelugu } from "@/lib/eggs";
+import { eggChai, eggEnglish, eggFrench, eggHindi, eggHyderabad, eggMatrix, eggMetcalfe, eggMusic, eggRecord, eggTelugu } from "@/lib/eggs";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -328,11 +328,25 @@ export function Terminal() {
         eggHyderabad();
         push([{ t: "accent", v: "home." }, { t: "out", v: "" }]);
         break;
-      case "namaste":
       case "namaskaram":
       case "telugu":
         eggTelugu();
-        push([{ t: "accent", v: "నమస్కారం" }, { t: "out", v: "" }]);
+        push([{ t: "accent", v: "నమస్కారం" }, { t: "dim", v: "Telugu. my first language." }, { t: "out", v: "" }]);
+        break;
+      case "namaste":
+      case "hindi":
+        eggHindi();
+        push([{ t: "accent", v: "नमस्ते" }, { t: "dim", v: "Hindi. good enough to get by." }, { t: "out", v: "" }]);
+        break;
+      case "bonjour":
+      case "french":
+        eggFrench();
+        push([{ t: "accent", v: "Bonjour" }, { t: "dim", v: "French. somewhere in the middle, and improving." }, { t: "out", v: "" }]);
+        break;
+      case "hello":
+      case "hi":
+        eggEnglish();
+        push([{ t: "accent", v: "Hello" }, { t: "out", v: "" }]);
         break;
       case "2089":
       case "guinness":

@@ -3,7 +3,7 @@ import { Crumbs, JsonLd } from "@/components/JsonLd";
 import Image from "next/image";
 import { PageHeader, Button, Tag } from "@/components/ui";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
-import { ABOUT_LONG, EDUCATION, QUICK_ANSWERS, SITE, SKILLS } from "@/data/site";
+import { ABOUT_LONG, EDUCATION, LANGUAGES, QUICK_ANSWERS, SITE, SKILLS } from "@/data/site";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/about" },
@@ -136,6 +136,23 @@ export default function AboutPage() {
                 </div>
               </StaggerItem>
             ))}
+            {/* the languages I speak, with how well (the card above is programming languages) */}
+            {/* a full row of its own, so the grid never ends on an empty cell */}
+            <StaggerItem className="h-full md:col-span-2 lg:col-span-3">
+              <div className="h-full bg-[var(--bg)] p-6">
+                <h3 className="label">Spoken languages</h3>
+                <ul className="mt-4 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+                  {LANGUAGES.map((l) => (
+                    <li key={l.code}>
+                      <span className="font-display block text-[22px] leading-tight">{l.name}</span>
+                      <span className="mono-sm mt-1 block text-[11px] text-[var(--ink-3)]">
+                        <span className="text-[var(--accent)]">{l.level}</span> · {l.note}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </StaggerItem>
           </Stagger>
         </div>
       </section>

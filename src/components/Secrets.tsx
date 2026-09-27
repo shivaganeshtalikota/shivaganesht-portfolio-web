@@ -11,7 +11,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 type Toast = { id: number; text: string; ms: number };
 
 /* The tracker stays hidden until the first secret is found. That first
-   "1 of 17" is the hook: people who find one go looking for the rest. */
+   "1 of 18" is the hook: people who find one go looking for the rest. */
 
 export function Secrets() {
   const [found, setFound] = useState<SecretId[]>([]);

@@ -345,6 +345,15 @@ export const EDUCATION = {
   ],
 };
 
+/* The languages I speak, and how well. One list for the About page, the
+   structured data and llms.txt. */
+export const LANGUAGES = [
+  { name: "Telugu", code: "te", level: "Native", note: "my first language" },
+  { name: "English", code: "en", level: "Advanced", note: "full professional" },
+  { name: "Hindi", code: "hi", level: "Conversational", note: "enough to get by" },
+  { name: "French", code: "fr", level: "Intermediate", note: "and improving" },
+] as const;
+
 export const SKILLS = [
   { group: "Languages", items: ["Python", "TypeScript", "JavaScript", "Java", "SQL", "Swift", "C", "Solidity"] },
   {

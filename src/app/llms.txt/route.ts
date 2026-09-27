@@ -1,4 +1,4 @@
-import { AWARDS, EDUCATION, EVENTS, EXPERIENCE, PROJECTS, QUICK_ANSWERS, SERVICES, SITE, TALKS, TESTIMONIALS } from "@/data/site";
+import { AWARDS, EDUCATION, EVENTS, EXPERIENCE, LANGUAGES, PROJECTS, QUICK_ANSWERS, SERVICES, SITE, TALKS, TESTIMONIALS } from "@/data/site";
 
 export const dynamic = "force-static";
 
@@ -30,6 +30,8 @@ function build() {
   p(`what employers are asking for, and points them at the gap. It went from nobody to more than`);
   p(`2,000 users at 99.9% uptime. He finished a Computer Science degree with an AI and ML`);
   p(`specialisation at ${EDUCATION.school} in May 2026.`);
+  p();
+  p(`Languages: ${LANGUAGES.map((l) => `${l.name} (${l.level.toLowerCase()})`).join(", ")}.`);
   p();
 
   p(`## Working with him`);

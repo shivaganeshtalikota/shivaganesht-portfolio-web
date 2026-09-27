@@ -5,8 +5,18 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { EXTRA_ROUTES, NAV, SITE } from "@/data/site";
-import { unlock } from "@/lib/secrets";
-import { eggChai, eggHyderabad, eggMatrix, eggMetcalfe, eggRecord, eggTelugu } from "@/lib/eggs";
+import { SECRETS, unlock } from "@/lib/secrets";
+import {
+  eggChai,
+  eggEnglish,
+  eggFrench,
+  eggHindi,
+  eggHyderabad,
+  eggMatrix,
+  eggMetcalfe,
+  eggRecord,
+  eggTelugu,
+} from "@/lib/eggs";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -64,7 +74,7 @@ export function Easter() {
 
   · the background is a hand-written WebGL particle field. no three.js.
   · press  ⌘K / Ctrl+K  for the command palette, or  ?  for shortcuts
-  · there are 17 secrets on this site. most of them are about me.
+  · there are ${SECRETS.length} secrets on this site. most of them are about me.
   · hiring, or want to build something?  ${SITE.email}
 `,
       s,
@@ -87,9 +97,14 @@ export function Easter() {
       chai: eggChai,
       hyderabad: eggHyderabad,
       biryani: eggHyderabad,
-      namaste: eggTelugu,
-      namaskaram: eggTelugu,
+      // hello in each of my four languages
       telugu: eggTelugu,
+      namaskaram: eggTelugu,
+      hindi: eggHindi,
+      namaste: eggHindi,
+      french: eggFrench,
+      bonjour: eggFrench,
+      hello: eggEnglish,
       "2089": eggRecord,
       metcalfe: eggMetcalfe,
       ethernet: eggMetcalfe,

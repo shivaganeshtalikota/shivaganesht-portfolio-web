@@ -12,7 +12,7 @@ import { unlock } from "@/lib/secrets";
    glance: a network on the home page, DNA on About, a laptop with code on
    Work, a staircase for Experience, a microphone for Speaking, a trophy for
    Recognition, a clock at the hour I was born for Now, a paper plane for Contact, a rocket for
-   Work with me. When you navigate, each particle travels from where it is
+   Work with me, and one at full burn for the links page. When you navigate, each particle travels from where it is
    to its place in the next shape, staggered so it feels organic.
 
    It also takes commands (src/lib/field.ts): form a word or an emoji,
@@ -35,7 +35,7 @@ type Shape =
   | "plane"
   | "rocket"
   | "mark"
-  | "links"
+  | "launch"
   | "scatter";
 
 const ROUTE_SHAPE: Record<string, Shape> = {
@@ -50,18 +50,18 @@ const ROUTE_SHAPE: Record<string, Shape> = {
   "/contact": "plane",
   "/work-with-me": "rocket",
   "/brand": "mark",
-  "/links": "links",
+  "/links": "launch",
 };
 
 // how far each shape reaches from its centre, so the sideways shift on
 // inner pages never pushes it off the edge of a narrow window
-const REACH: Partial<Record<Shape, number>> = { plane: 1.8, links: 1.6, rocket: 1.5, stairs: 1.45 };
+const REACH: Partial<Record<Shape, number>> = { plane: 1.8, launch: 1.3, rocket: 1.5, stairs: 1.45 };
 
 // a fixed lean towards the camera, so flat things are seen a little from above
 const LEAN: Partial<Record<Shape, number>> = { stairs: 0.22, plane: 0.42, laptop: 0.3, mic: 0.15, trophy: 0.12, rocket: 0.08 };
 
 // a fixed sideways tilt: the rocket takes off at an angle, the mic is held
-const TILT: Partial<Record<Shape, number>> = { rocket: -0.42, mic: 0.22, plane: 0.28 };
+const TILT: Partial<Record<Shape, number>> = { rocket: -0.42, launch: -0.3, mic: 0.22, plane: 0.28 };
 
 // Shapes that only read from the front sway around it instead of spinning
 // all the way round: base is the angle they face, amp how far they rock.
@@ -71,11 +71,14 @@ const SWAY: Partial<Record<Shape, { base: number; amp: number }>> = {
   plane: { base: -0.62, amp: 0.3 },
   stairs: { base: -0.25, amp: 0.3 },
   mark: { base: 0, amp: 0.45 },
-  links: { base: 0, amp: 0.55 },
 };
 
 // Some shapes are built big for detail and drawn a bit smaller
-const SIZE: Partial<Record<Shape, number>> = { plane: 0.74, stairs: 0.8, trophy: 0.86 };
+const SIZE: Partial<Record<Shape, number>> = { plane: 0.74, stairs: 0.8, trophy: 0.86, launch: 0.8 };
+
+// how far right a shape sits on wide screens, as a share of the half-width:
+// the links page has a centred column, so its rocket goes further out
+const SHIFT: Partial<Record<Shape, number>> = { launch: 0.62 };
 
 // How much of each shape is drawn in the accent: the trophy is mostly
 // vermilion, everything else keeps the usual sprinkle.
@@ -86,6 +89,8 @@ const ACCENT_SHARE: Partial<Record<Shape, number>> = { trophy: 0.72, mark: 0.08 
 const ACCENT_BOX: Partial<Record<Shape, [number, number, number, number]>> = {
   rocket: [-9, -9, 9, -0.62],
   mark: [0.42, -1.45, 1.2, -0.7],
+  // the flame, the inner plume and the sparks; the smoke below stays grey
+  launch: [-0.62, -1.22, 0.62, -0.02],
 };
 
 const CAPTION: Record<Shape, string> = {
@@ -99,7 +104,7 @@ const CAPTION: Record<Shape, string> = {
   plane: "background: a paper plane. that's your message, on its way to me",
   rocket: "background: a rocket. let's launch something together",
   mark: "background: the S from the logo, in particles",
-  links: "background: two nodes and the link between them. that's what this page is",
+  launch: "background: a rocket at full burn. every link here is a way to start something",
   scatter: "background: scattered, a bit like whatever link got you here",
 };
 
@@ -501,21 +506,89 @@ function buildRaw(shape: Shape, n: number): Float32Array {
       break;
     }
 
-    case "links": {
-      const g = Math.PI * (3 - Math.sqrt(5));
-      const each = Math.floor(n * 0.4);
-      for (let i = 0; i < n; i++) {
-        if (i < each * 2) {
-          const k = i % each;
-          const side = i < each ? -1 : 1;
-          const y = 1 - (k / (each - 1)) * 2;
-          const rr = Math.sqrt(Math.max(0, 1 - y * y));
-          set(i, side * 1.0 + Math.cos(g * k) * rr * 0.55, y * 0.55, Math.sin(g * k) * rr * 0.55);
-        } else {
-          const t = r();
-          set(i, -0.45 + t * 0.9, Math.sin(t * Math.PI) * 0.18 + (r() - 0.5) * 0.05, (r() - 0.5) * 0.05);
-        }
-      }
+    case "launch": {
+      // a rocket at full burn: slimmer than the Work with me one, with a long
+      // flickering flame, sparks thrown off it, exhaust billowing at the base
+      // and a few stars around the nose
+      const R0 = 0.26;
+      const fin = tri([R0, 0.4, 0], [R0, 0.08, 0], [0.56, -0.04, 0]);
+      const puffs: [number, number, number, number][] = [
+        [-0.95, -1.38, 0.1, 0.26], [-0.55, -1.44, -0.08, 0.32], [-0.18, -1.36, 0.12, 0.3], [0.2, -1.46, -0.1, 0.34],
+        [0.58, -1.38, 0.08, 0.3], [0.95, -1.44, -0.06, 0.25], [0, -1.28, 0, 0.24],
+      ];
+      compose(
+        [
+          // body, nose, porthole, fins, nozzle
+          { w: 15, at: (r) => { const a = r() * TAU; return [Math.cos(a) * R0, 0.08 + r() * 0.9, Math.sin(a) * R0]; } },
+          { w: 8, at: (r) => { const t = r(); const a = r() * TAU; const rr = R0 * Math.sqrt(1 - t * t); return [Math.cos(a) * rr, 0.98 + t * 0.5, Math.sin(a) * rr]; } },
+          { w: 3, at: (r) => { const a = r() * TAU; const rr = r() < 0.5 ? 0.09 : 0.06; return [Math.cos(a) * rr, 0.66 + Math.sin(a) * rr, R0 + 0.01]; } },
+          {
+            w: 8,
+            at: (r) => {
+              const phi = Math.floor(r() * 3) * (TAU / 3) + Math.PI / 2;
+              const p = fin(r);
+              return [Math.cos(phi) * p[0], p[1], Math.sin(phi) * p[0]];
+            },
+          },
+          { w: 3, at: (r) => { const t = r(); const a = r() * TAU; const rr = 0.15 + t * 0.07; return [Math.cos(a) * rr, 0.08 - t * 0.1, Math.sin(a) * rr]; } },
+          // the flame's hot core: long and dense, narrowing to a point
+          {
+            w: 27,
+            at: (r) => {
+              const t = Math.pow(r(), 0.8);
+              const a = r() * TAU;
+              const rr = (0.19 * (1 - t) + 0.015) * Math.sqrt(r());
+              return [Math.cos(a) * rr, -0.04 - t * 1.12, Math.sin(a) * rr];
+            },
+          },
+          // the outer plume: wider, flaring and ragged
+          {
+            w: 19,
+            at: (r) => {
+              const t = r();
+              const a = r() * TAU;
+              const rr = (0.14 + 0.3 * Math.sin(t * Math.PI * 0.85)) * (0.75 + r() * 0.35);
+              return [Math.cos(a) * rr, -0.06 - t * 1.1, Math.sin(a) * rr * 0.9];
+            },
+          },
+          // sparks and embers thrown off the flame
+          {
+            w: 9,
+            at: (r) => {
+              const t = r();
+              const side = r() < 0.5 ? -1 : 1;
+              return [side * (0.12 + r() * 0.48) * (0.3 + t), -0.15 - t * 1.02, (r() - 0.5) * 0.5];
+            },
+          },
+          // exhaust billowing out at the base
+          {
+            w: 12,
+            at: (r) => {
+              const [px, py, pz, pr] = puffs[Math.floor(r() * puffs.length)];
+              const u = r() * 2 - 1;
+              const a = r() * TAU;
+              const k = Math.cbrt(r()) * pr;
+              const q = Math.sqrt(1 - u * u);
+              return [px + q * Math.cos(a) * k, py + u * k * 0.7, pz + q * Math.sin(a) * k];
+            },
+          },
+          // stars around the nose
+          {
+            w: 5,
+            at: (r) => {
+              for (;;) {
+                const x = (r() * 2 - 1) * 1.55;
+                const y = 0.05 + r() * 1.5;
+                if (Math.hypot(x, y - 0.8) > 0.55) return [x, y, (r() - 0.5) * 0.8];
+              }
+            },
+          },
+        ],
+        n,
+        r,
+        out,
+        [0, 0.02, 0]
+      );
       break;
     }
 
@@ -603,7 +676,7 @@ function buildText(text: string, n: number, emoji: boolean, halfW: number): Floa
 
   const family = emoji
     ? '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'
-    : `${serifFamily().replace(/, Georgia, serif$/, "")},"Nirmala UI","Noto Sans Telugu","Telugu Sangam MN",Georgia,serif`;
+    : `${serifFamily().replace(/, Georgia, serif$/, "")},"Nirmala UI","Noto Sans Telugu","Telugu Sangam MN","Noto Sans Devanagari","Kohinoor Devanagari",Georgia,serif`;
   let size = emoji ? 220 : 190;
   ctx.font = `${size}px ${family}`;
   const w = ctx.measureText(text).width;
@@ -774,13 +847,15 @@ void main(){
 
   v_depth = mix(clamp((u_dist + 1.4 - clip.w) / 2.8, 0.0, 1.0), 0.8, u_matrix);
   v_seed = a_seed.y;
-  v_glow = glow + u_beat * 0.6;
+  // fire burns: flame particles glow, flickering, which brightens and enlarges them
+  float burn = fl * (0.35 + 0.25 * sin(u_time * 13.0 + a_seed.y * 50.0));
+  v_glow = glow + u_beat * 0.6 + burn;
   v_matrix = u_matrix;
   // computed here, not in the fragment shader: WebGL 1 refuses to link two
   // shaders that declare u_time at different precisions (highp vs mediump)
   v_pulse = 0.5 + 0.5 * sin(u_time * 1.7 + a_seed.y * 62.83);
   v_acc = max(step(u_accentCut, a_seed.y), inBox * e);
-  gl_PointSize = (1.4 + 3.2 * v_depth + glow * 3.0 + u_beat * 1.6) * u_dpr * u_size;
+  gl_PointSize = (1.4 + 3.2 * v_depth + glow * 3.0 + u_beat * 1.6 + burn * 2.4) * u_dpr * u_size;
 }
 `;
 
@@ -971,7 +1046,7 @@ export function Field3D() {
     let tiltZ = TILT[routeShape] ?? 0;
     let accentCut = 1 - (ACCENT_SHARE[routeShape] ?? 0.12);
     let accentBox: [number, number, number, number] = ACCENT_BOX[routeShape] ?? [0, 0, -1, -1];
-    let flame = routeShape === "rocket" ? 1 : 0;
+    let flame = routeShape === "rocket" || routeShape === "launch" ? 1 : 0;
     let textMask = 0;
     let light = false;
 
@@ -1188,12 +1263,12 @@ export function Field3D() {
       textMask += ((aspect > 1.15 ? 1 : 0) * (1 - faceOn) - textMask) * Math.min(1, dt * 2);
       const shape = current === "text" ? null : current;
       accentCut += ((shape ? 1 - (ACCENT_SHARE[shape] ?? 0.12) : 0.88) - accentCut) * Math.min(1, dt * 2);
-      flame += ((shape === "rocket" ? 1 : 0) - flame) * Math.min(1, dt * 2);
+      flame += ((shape === "rocket" || shape === "launch" ? 1 : 0) - flame) * Math.min(1, dt * 2);
 
       // shift the shape right on wide inner pages so it doesn't sit behind the
       // text column, but only as far as the window has room for
       const reach = current === "text" ? 0 : (REACH[current] ?? 1.45);
-      const wantShift = aspect > 1.15 && !home ? Math.max(0, Math.min(halfW() * 0.42, halfW() - reach * 1.08)) : 0;
+      const wantShift = aspect > 1.15 && !home ? Math.max(0, Math.min(halfW() * (shape ? (SHIFT[shape] ?? 0.42) : 0.42), halfW() - reach * 1.08)) : 0;
       shift = shift < 0 ? wantShift : shift + (wantShift - shift) * Math.min(1, dt * 2.5);
       const offX = shift * (1 - faceOn);
       // On wide inner pages the first card starts halfway down the screen and
