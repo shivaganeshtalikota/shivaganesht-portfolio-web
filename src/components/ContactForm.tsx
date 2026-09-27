@@ -1,11 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useTransform, useVelocity } from "motion/react";
 import { CONTACT_TOPICS, SITE } from "@/data/site";
 import { field } from "@/lib/field";
-import { useTheme } from "next-themes";
-import { Refraction, canRefract, lensBackdrop } from "./Refraction";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -40,54 +38,71 @@ const KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY || SITE.web3formsKey;
    A glass bar holds every option; a clear glass lens sits over the chosen
    one. On a phone the options wrap onto two rows and the lens moves between
    them too. The lens:
-   - shows the word under it once, through the glass: the row of labels has
-     a hole cut where the lens is, and the lens carries its own aligned copy;
-   - morphs straight to the size of whichever word it's moving to, and on the
-     way narrows and grows taller, the way a drop of liquid does in motion,
-     with a small overshoot when it arrives;
-   - can be held and dragged anywhere, by mouse or finger. Held, it swells
-     out past the edges of the bar and magnifies what's under it; let go and
-     it springs onto the nearest option.
+   - shows what's under it through the glass, as glass does: slightly
+     magnified about its centre, heavier and in the accent. The row of words
+     has a pill-shaped hole where the lens is, and the lens draws the same
+     words, aligned, so each word shows once. It's real text, not a filter,
+     so it stays sharp on any screen and costs nothing while it moves;
+   - morphs straight to the size of whichever word it's moving to, a little
+     narrower and taller while it travels, with a small overshoot on arrival;
+   - can be held and dragged, by mouse or finger. It follows the pointer
+     exactly, swells a few pixels (never far past the bar), magnifies more,
+     and warms; let go and it springs onto the nearest option.
    Arrow keys move the choice, as a radio group should. */
 
 type Slot = { key: TopicKey; x: number; y: number; w: number; h: number };
+
+// how far the lens swells when held, in px on each side
+const GROW_X = 5;
+const GROW_Y = 5;
+// magnification of what's seen through it
+const MAG_REST = 1.05;
+const MAG_HELD = 1.15;
+// how far past the options it can be dragged before it stops, in px
+const GIVE = 4;
+
+function pillPath(x: number, y: number, w: number, h: number) {
+  const r = Math.max(0, Math.min(w, h) / 2);
+  return (
+    `M${x + r} ${y}H${x + w - r}A${r} ${r} 0 0 1 ${x + w} ${y + r}V${y + h - r}` +
+    `A${r} ${r} 0 0 1 ${x + w - r} ${y + h}H${x + r}A${r} ${r} 0 0 1 ${x} ${y + h - r}` +
+    `V${y + r}A${r} ${r} 0 0 1 ${x + r} ${y}Z`
+  );
+}
 
 function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: TopicKey) => void }) {
   const wrap = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const [slots, setSlots] = useState<Slot[]>([]);
   const [held, setHeld] = useState(false);
-  // the lens bends what's behind its rim (Chromium), sized to where it's going
-  const lensId = "lens-" + useId().replace(/[^a-z0-9]/gi, "");
-  const [refract, setRefract] = useState(false);
-  const [geo, setGeo] = useState({ w: 0, h: 0 });
-  useEffect(() => setRefract(canRefract()), []);
-  const { resolvedTheme } = useTheme();
-  const theme = resolvedTheme === "light" ? "light" : "dark";
 
-  // the lens: where it is and how big, in the wrapper's coordinates
+  // the option the lens is on: position and size, in the wrapper's coordinates
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const w = useMotionValue(0);
   const h = useMotionValue(0);
-  const swell = useMotionValue(1);
+  const grow = useMotionValue(0); // 0 at rest, 1 held
+  const mag = useMotionValue(MAG_REST);
 
-  // in motion it narrows and grows taller, like the reference switch
+  // in motion it narrows and grows taller, like a drop
   const vx = useVelocity(x);
-  const squashX = useTransform(vx, [-2400, 0, 2400], [0.86, 1, 0.86]);
-  const squashY = useTransform(vx, [-2400, 0, 2400], [1.14, 1, 1.14]);
+  const stretch = useTransform(vx, (v) => Math.min(1, Math.abs(v) / 1800));
 
-  // the copy inside the lens stays on top of the words it covers
-  const innerX = useTransform(x, (v) => -v);
-  const innerY = useTransform(y, (v) => -v);
+  // the lens as drawn: the option's box, swollen and stretched about its centre
+  const lw = useTransform([w, grow, stretch], ([W, G, S]: number[]) => (W + 2 * GROW_X * G) * (1 - 0.07 * S));
+  const lh = useTransform([h, grow, stretch], ([H, G, S]: number[]) => (H + 2 * GROW_Y * G) * (1 + 0.08 * S));
+  const lx = useTransform([x, w, lw], ([X, W, LW]: number[]) => X + W / 2 - LW / 2);
+  const ly = useTransform([y, h, lh], ([Y, H, LH]: number[]) => Y + H / 2 - LH / 2);
 
-  // a hole in the labels where the lens is, so no word ever shows twice
-  const holeSize = useTransform([w, h, swell], ([W, H, S]: number[]) => `100% 100%, ${Math.max(0, W * S - 10)}px ${Math.max(0, H * S - 8)}px`);
-  const holePos = useTransform([x, y, w, h, swell], ([X, Y, W, H, S]: number[]) => {
-    const cx = X + W / 2;
-    const cy = Y + H / 2;
-    return `0 0, ${cx - (W * S - 10) / 2}px ${cy - (H * S - 8) / 2}px`;
-  });
+  // the words inside: aligned with the real ones, magnified about the lens' centre
+  const innerX = useTransform(lx, (v) => -v);
+  const innerY = useTransform(ly, (v) => -v);
+  const origin = useTransform([x, y, w, h], ([X, Y, W, H]: number[]) => `${X + W / 2}px ${Y + H / 2}px`);
+
+  // a pill-shaped hole in the row of words, exactly where the lens is
+  const hole = useTransform([lx, ly, lw, lh], ([X, Y, W, H]: number[]) =>
+    `path(evenodd, "M-400 -400H4000V4000H-400Z${pillPath(X, Y, W, H)}")`
+  );
 
   const valueRef = useRef(value);
   valueRef.current = value;
@@ -95,8 +110,15 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
   const drag = useRef<{ id: number; gx: number; gy: number; ax: number; ay: number } | null>(null);
 
   useEffect(() => {
-    animate(swell, held && !reduce ? 1.42 : 1, { type: "spring", stiffness: 420, damping: held ? 15 : 22 });
-  }, [held, reduce, swell]);
+    const spring = { type: "spring", stiffness: 520, damping: held ? 22 : 30 } as const;
+    if (reduce) {
+      grow.jump(0);
+      mag.jump(MAG_REST);
+      return;
+    }
+    animate(grow, held ? 1 : 0, spring);
+    animate(mag, held ? MAG_HELD : MAG_REST, spring);
+  }, [held, reduce, grow, mag]);
 
   const measure = useCallback((): Slot[] => {
     const el = wrap.current;
@@ -112,7 +134,6 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
 
   const moveTo = useCallback(
     (s: Slot, instant = false) => {
-      setGeo({ w: s.w, h: s.h });
       if (instant || !placed.current || reduce) {
         x.jump(s.x);
         y.jump(s.y);
@@ -122,7 +143,7 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
         return;
       }
       // one spring for position and size alike, so the lens is the new word's
-      // size the moment it arrives, with a small overshoot like the reference
+      // size the moment it arrives, with a small overshoot
       const spring = { type: "spring", stiffness: 420, damping: 30, mass: 0.9 } as const;
       animate(x, s.x, spring);
       animate(y, s.y, spring);
@@ -184,17 +205,16 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
     const el = wrap.current;
     if (!d || d.id !== e.pointerId || !el) return;
     const r = el.getBoundingClientRect();
-    let cx = e.clientX - r.left - d.gx;
-    let cy = e.clientY - r.top - d.gy;
-    // past the edges it resists, like glass pressed against its frame
-    const band = (v: number, lo: number, hi: number) => (v < lo ? lo - (lo - v) * 0.25 : v > hi ? hi + (v - hi) * 0.25 : v);
-    cx = band(cx, w.get() / 2, r.width - w.get() / 2);
-    cy = band(cy, h.get() / 2, r.height - h.get() / 2);
+    // past the options it gives a few pixels and stops, like glass against its frame
+    const stop = (v: number, lo: number, hi: number) =>
+      v < lo ? lo - GIVE * Math.tanh((lo - v) / (GIVE * 4)) : v > hi ? hi + GIVE * Math.tanh((v - hi) / (GIVE * 4)) : v;
+    const cx = stop(e.clientX - r.left - d.gx, w.get() / 2, r.width - w.get() / 2);
+    const cy = stop(e.clientY - r.top - d.gy, h.get() / 2, r.height - h.get() / 2);
     d.ax = cx;
     d.ay = cy;
-    const follow = { type: "spring", stiffness: 1300, damping: 60, mass: 0.45 } as const;
-    animate(x, cx - w.get() / 2, follow);
-    animate(y, cy - h.get() / 2, follow);
+    // right under the finger, no lag
+    x.set(cx - w.get() / 2);
+    y.set(cy - h.get() / 2);
   };
 
   const onUp = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -230,30 +250,11 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
       role="radiogroup"
       aria-label="What's this about?"
       onKeyDown={onKey}
-      // no backdrop blur on the bar: it would make the bar a "backdrop root",
-      // and the lens inside would only see the bar's half-transparent contents,
-      // letting the original words ghost through its refraction
       className="glass-surface glass-focus mt-4 rounded-[26px] p-1"
     >
       <div ref={wrap} className="relative">
-        {/* the labels. Where the glass can refract (Chromium), the lens
-            transforms these very words; elsewhere it carries its own copy,
-            and the labels get a hole where it sits so nothing shows twice. */}
-        <motion.div
-          className="flex flex-wrap gap-y-1"
-          style={refract ? undefined : {
-            maskImage: "linear-gradient(#000 0 0), linear-gradient(#000 0 0)",
-            WebkitMaskImage: "linear-gradient(#000 0 0), linear-gradient(#000 0 0)",
-            maskRepeat: "no-repeat",
-            WebkitMaskRepeat: "no-repeat",
-            maskComposite: "exclude",
-            WebkitMaskComposite: "xor",
-            maskSize: holeSize,
-            WebkitMaskSize: holeSize,
-            maskPosition: holePos,
-            WebkitMaskPosition: holePos,
-          }}
-        >
+        {/* the words, with a hole where the lens is */}
+        <motion.div className="flex flex-wrap gap-y-1" style={{ clipPath: hole, WebkitClipPath: hole }}>
           {CONTACT_TOPICS.map((t) => {
             const on = t.key === value;
             return (
@@ -274,7 +275,6 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
         </motion.div>
 
         {/* the lens */}
-        <Refraction id={lensId} width={geo.w} height={geo.h} theme={theme} scale={held ? -18 : -12} tint="accent" />
         <motion.div
           aria-hidden
           onPointerDown={onDown}
@@ -282,23 +282,14 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
           onPointerUp={onUp}
           onPointerCancel={onUp}
           data-held={held}
-          className="glass-lens absolute left-0 top-0 z-10 cursor-grab touch-none overflow-hidden rounded-full active:cursor-grabbing"
-          style={{
-            x,
-            y,
-            width: w,
-            height: h,
-            scale: swell,
-            scaleX: squashX,
-            scaleY: squashY,
-            backdropFilter: lensBackdrop(lensId, refract && geo.w > 0),
-            WebkitBackdropFilter: lensBackdrop(lensId, false),
-          }}
+          className="glass-lens absolute backdrop-blur-[3px] backdrop-saturate-150 left-0 top-0 z-10 cursor-grab touch-none overflow-hidden rounded-full active:cursor-grabbing"
+          style={{ x: lx, y: ly, width: lw, height: lh }}
         >
-          {/* without refraction: the words it covers, drawn inside it,
-              exactly aligned at rest, magnified with the lens while held */}
-          {!refract && (
-          <motion.div className="pointer-events-none absolute left-0 top-0" style={{ x: innerX, y: innerY }}>
+          {/* the same words, as seen through the glass */}
+          <motion.div
+            className="pointer-events-none absolute left-0 top-0 z-[2]"
+            style={{ x: innerX, y: innerY, scale: mag, transformOrigin: origin }}
+          >
             {slots.map((s) => (
               <span
                 key={s.key}
@@ -309,7 +300,6 @@ function TopicPicker({ value, onChange }: { value: TopicKey; onChange: (k: Topic
               </span>
             ))}
           </motion.div>
-          )}
         </motion.div>
       </div>
     </div>

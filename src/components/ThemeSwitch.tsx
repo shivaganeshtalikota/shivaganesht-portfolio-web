@@ -1,23 +1,27 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { animate, motion, useMotionValue, useReducedMotion, useTransform, useVelocity } from "motion/react";
 import { useTheme } from "next-themes";
-import { Refraction, canRefract, lensBackdrop } from "./Refraction";
+import { centreOf, switchTheme } from "@/lib/theme-switch";
 
-/* The light/dark switch, as Liquid Glass, after the reference video: a small
-   glass track with the sun and the moon in it, and a clear lens, taller than
-   the track, sitting over whichever one is on. The lens carries a bright,
-   aligned copy of the icon under it, so the icon glows through the glass.
-   Click to switch, or hold the lens and drag it across. On the way it narrows
-   and grows taller like a drop in motion, overshoots a touch, and the whole
-   page fades from one theme to the other as it travels. */
+/* The light/dark switch, as Liquid Glass: a small glass track with the sun
+   and the moon in it, and a clear round lens over whichever one is on. The
+   icon under the lens is seen through the glass: a little bigger and
+   brighter, drawn as real vector icons so it stays sharp. Click to switch,
+   or hold the lens and drag it across; it follows the finger exactly, swells
+   a few pixels, and on the way narrows and grows taller like a drop. The new
+   theme spreads out from the switch in a circle (see switchTheme). */
 
 const TRACK_W = 62;
 const TRACK_H = 30;
-const LENS = 36;
+const LENS = 34; // a touch taller than the track, as in the reference
+const GROW = 2; // px it swells on each side while held
+const GIVE = 3; // px it can be pulled past either end
 const LEFT = TRACK_H / 2 - LENS / 2; // centred over the sun
 const RIGHT = TRACK_W - TRACK_H / 2 - LENS / 2; // centred over the moon
+const MAG_REST = 1.12;
+const MAG_HELD = 1.26;
 
 function Sun({ className = "" }: { className?: string }) {
   return (
@@ -37,7 +41,7 @@ function Moon({ className = "" }: { className?: string }) {
 
 // the two icons, each centred on its end of the track
 function Icons({ bright }: { bright: boolean }) {
-  const cls = bright ? "text-[var(--ink)] drop-shadow-[0_0_6px_rgba(255,255,255,0.55)]" : "text-[var(--ink-4)]";
+  const cls = bright ? "text-[var(--ink)]" : "text-[var(--ink-4)]";
   return (
     <>
       <span className="absolute grid place-items-center" style={{ left: 0, top: 0, width: TRACK_H, height: TRACK_H }}>
@@ -56,23 +60,37 @@ export function ThemeSwitch() {
   const [mounted, setMounted] = useState(false);
   const [held, setHeld] = useState(false);
   const dark = mounted && resolvedTheme === "dark";
+  const self = useRef<HTMLButtonElement>(null);
 
-  const x = useMotionValue(LEFT);
-  const swell = useMotionValue(1);
+  const x = useMotionValue(LEFT); // the lens' left edge at rest size
+  const grow = useMotionValue(0);
+  const mag = useMotionValue(MAG_REST);
   const vx = useVelocity(x);
-  const squashX = useTransform(vx, [-900, 0, 900], [0.84, 1, 0.84]);
-  const squashY = useTransform(vx, [-900, 0, 900], [1.16, 1, 1.16]);
-  const innerX = useTransform(x, (v) => -v);
+  const stretch = useTransform(vx, (v) => Math.min(1, Math.abs(v) / 700));
+
+  // the lens as drawn: swollen and stretched about its centre
+  const lw = useTransform([grow, stretch], ([G, S]: number[]) => (LENS + 2 * GROW * G) * (1 - 0.1 * S));
+  const lh = useTransform([grow, stretch], ([G, S]: number[]) => (LENS + 2 * GROW * G) * (1 + 0.1 * S));
+  const lx = useTransform([x, lw], ([X, W]: number[]) => X + LENS / 2 - W / 2);
+  const ly = useTransform(lh, (H) => TRACK_H / 2 - H / 2);
+
+  // the icons inside: aligned with the real ones, magnified about the lens' centre
+  const innerX = useTransform(lx, (v) => -v);
+  const innerY = useTransform(ly, (v) => -v);
+  const origin = useTransform(x, (X) => `${X + LENS / 2}px ${TRACK_H / 2}px`);
+
+  // a round hole in the track's icons where the lens is, so none shows twice
+  const hole = useTransform([lx, ly, lw, lh], ([X, Y, W, H]: number[]) => {
+    const rx = W / 2;
+    const ry = H / 2;
+    const cy = Y + ry;
+    return `path(evenodd, "M-40 -40H200V100H-40Z M${X} ${cy}A${rx} ${ry} 0 1 0 ${X + W} ${cy}A${rx} ${ry} 0 1 0 ${X} ${cy}Z")`;
+  });
+
   const drag = useRef<{ id: number; grab: number; start: number; moved: boolean; at: number } | null>(null);
   const placed = useRef(false);
-  // the lens bends the track and icons behind its rim (Chromium)
-  const lensId = "knob-" + useId().replace(/[^a-z0-9]/gi, "");
-  const [refract, setRefract] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-    setRefract(canRefract());
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   // follow the theme, wherever it was changed from (this switch, the terminal, the OS)
   useEffect(() => {
@@ -83,23 +101,22 @@ export function ThemeSwitch() {
       placed.current = true;
       return;
     }
-    animate(x, to, { type: "spring", stiffness: 380, damping: 24, mass: 0.9 });
+    animate(x, to, { type: "spring", stiffness: 380, damping: 26, mass: 0.9 });
   }, [dark, mounted, reduce, x]);
 
   useEffect(() => {
-    animate(swell, held && !reduce ? 1.38 : 1, { type: "spring", stiffness: 420, damping: held ? 14 : 22 });
-  }, [held, reduce, swell]);
+    if (reduce) return;
+    const spring = { type: "spring", stiffness: 520, damping: held ? 22 : 30 } as const;
+    animate(grow, held ? 1 : 0, spring);
+    animate(mag, held ? MAG_HELD : MAG_REST, spring);
+  }, [held, reduce, grow, mag]);
 
   const switchTo = (next: "dark" | "light") => {
     if (next === (dark ? "dark" : "light")) {
-      animate(x, dark ? RIGHT : LEFT, { type: "spring", stiffness: 380, damping: 24 });
+      animate(x, dark ? RIGHT : LEFT, { type: "spring", stiffness: 380, damping: 26 });
       return;
     }
-    // fade the page across while the lens travels
-    const html = document.documentElement;
-    html.classList.add("theme-fade");
-    window.setTimeout(() => html.classList.remove("theme-fade"), 520);
-    setTheme(next);
+    switchTheme(next, setTheme, centreOf(self.current));
   };
 
   const onDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -119,11 +136,11 @@ export function ThemeSwitch() {
     if (!d || d.id !== e.pointerId) return;
     if (Math.abs(e.clientX - d.start) > 3) d.moved = true;
     let v = e.clientX - d.grab;
-    // past either end it resists
-    if (v < LEFT) v = LEFT - (LEFT - v) * 0.25;
-    if (v > RIGHT) v = RIGHT + (v - RIGHT) * 0.25;
+    // past either end it gives a few pixels and stops
+    if (v < LEFT) v = LEFT - GIVE * Math.tanh((LEFT - v) / (GIVE * 4));
+    if (v > RIGHT) v = RIGHT + GIVE * Math.tanh((v - RIGHT) / (GIVE * 4));
     d.at = v;
-    animate(x, v, { type: "spring", stiffness: 1300, damping: 60, mass: 0.45 });
+    x.set(v); // right under the finger
   };
   const onUp = (e: React.PointerEvent<HTMLDivElement>) => {
     const d = drag.current;
@@ -137,6 +154,7 @@ export function ThemeSwitch() {
 
   return (
     <button
+      ref={self}
       type="button"
       role="switch"
       aria-checked={dark}
@@ -145,8 +163,9 @@ export function ThemeSwitch() {
       className="glass-surface glass-focus relative shrink-0 rounded-full outline-none"
       style={{ width: TRACK_W, height: TRACK_H }}
     >
-      <Icons bright={false} />
-      <Refraction id={lensId} width={LENS} height={LENS} theme={dark ? "dark" : "light"} scale={held ? -16 : -11} tint="bright" />
+      <motion.span className="absolute inset-0" style={{ clipPath: hole, WebkitClipPath: hole }}>
+        <Icons bright={false} />
+      </motion.span>
       <motion.div
         onPointerDown={onDown}
         onPointerMove={onMove}
@@ -154,27 +173,16 @@ export function ThemeSwitch() {
         onPointerCancel={onUp}
         onClick={(e) => e.stopPropagation()}
         data-held={held}
-        className="glass-lens absolute z-10 cursor-grab touch-none overflow-hidden rounded-full active:cursor-grabbing"
-        style={{
-          left: 0,
-          top: (TRACK_H - LENS) / 2,
-          width: LENS,
-          height: LENS,
-          x,
-          scale: swell,
-          scaleX: squashX,
-          scaleY: squashY,
-          backdropFilter: lensBackdrop(lensId, refract),
-          WebkitBackdropFilter: lensBackdrop(lensId, false),
-        }}
+        className="glass-lens absolute left-0 top-0 z-10 cursor-grab touch-none overflow-hidden rounded-full backdrop-blur-[3px] backdrop-saturate-150 active:cursor-grabbing"
+        style={{ x: lx, y: ly, width: lw, height: lh }}
       >
-        {/* without refraction, the icons as seen through the glass: brighter,
-            and aligned with the ones below (with it, the glass does this itself) */}
-        {!refract && (
-        <motion.div className="pointer-events-none absolute" style={{ left: 0, top: (LENS - TRACK_H) / 2, x: innerX, width: TRACK_W, height: TRACK_H }}>
+        {/* the icons as seen through the glass: bigger, brighter, aligned */}
+        <motion.span
+          className="pointer-events-none absolute left-0 top-0 z-[2]"
+          style={{ x: innerX, y: innerY, scale: mag, transformOrigin: origin, width: TRACK_W, height: TRACK_H }}
+        >
           <Icons bright />
-        </motion.div>
-        )}
+        </motion.span>
       </motion.div>
     </button>
   );

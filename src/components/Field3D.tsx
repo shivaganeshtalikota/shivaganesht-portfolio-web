@@ -988,7 +988,9 @@ export function Field3D() {
     }
 
     const small = window.innerWidth < 768;
-    const N = small ? 900 : 1700;
+    // low-end devices (flagged in the page head): fewer particles, 1x pixels
+    const lite = document.documentElement.classList.contains("lite");
+    const N = lite ? (small ? 560 : 1000) : small ? 900 : 1700;
 
     // per-particle seeds
     const seeds = new Float32Array(N * 3);
@@ -1072,7 +1074,7 @@ export function Field3D() {
     const halfH = () => tanH * dist;
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 1.75);
+      dpr = lite ? 1 : Math.min(window.devicePixelRatio || 1, small ? 1.5 : 1.75);
       const w = window.innerWidth;
       const h = window.innerHeight || document.documentElement.clientHeight || 800;
       canvas.width = Math.max(1, Math.floor(w * dpr));

@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { EXTRA_ROUTES, NAV, SITE } from "@/data/site";
 import { SECRETS, unlock } from "@/lib/secrets";
+import { centreOf, switchTheme } from "@/lib/theme-switch";
 import {
   eggChai,
   eggEnglish,
@@ -92,7 +93,8 @@ export function Easter() {
       shiva: () => window.dispatchEvent(new Event("open-terminal")),
       sudo: () => window.dispatchEvent(new Event("open-terminal")),
       hire: () => window.dispatchEvent(new Event("open-palette")),
-      theme: () => setTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark"),
+      theme: () =>
+        switchTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark", setTheme, centreOf(document.querySelector('header [role="switch"]'))),
       matrix: eggMatrix,
       chai: eggChai,
       hyderabad: eggHyderabad,
@@ -269,8 +271,8 @@ export function Easter() {
         hint: "Theme",
         group: "Actions",
         run: () => {
-          setTheme(resolvedTheme === "dark" ? "light" : "dark");
           setOpen(false);
+          switchTheme(resolvedTheme === "dark" ? "light" : "dark", setTheme, centreOf(document.querySelector('header [role="switch"]')));
         },
       },
       { id: "gh", label: "GitHub", hint: "shivaganeshtalikota", group: "Elsewhere", run: ext("https://github.com/shivaganeshtalikota") },

@@ -259,7 +259,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             // theme before first paint, and whether this load gets the intro:
             // every time a page is opened, never for reduced motion (moving
             // between pages inside the site doesn't reload, so it doesn't replay)
-            __html: `(function(){var d=document.documentElement;try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){d.setAttribute('data-theme',t)}}catch(e){}try{var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;d.setAttribute('data-intro',rm?'done':'on')}catch(e){d.setAttribute('data-intro','done')}})();`,
+            __html: `(function(){var d=document.documentElement;try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){d.setAttribute('data-theme',t)}}catch(e){}try{var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;d.setAttribute('data-intro',rm?'done':'on')}catch(e){d.setAttribute('data-intro','done')}try{var n=navigator,c=n.connection;if((n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=2)||(c&&c.saveData)){d.classList.add('lite')}}catch(e){}})();`,
           }}
         />
         <JsonLd data={graph} />

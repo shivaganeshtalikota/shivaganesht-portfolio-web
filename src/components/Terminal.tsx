@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { AWARDS, EXPERIENCE, PROJECTS, SITE, EVENTS, TALKS } from "@/data/site";
 import { SECRETS, foundSecrets, unlock } from "@/lib/secrets";
+import { centreOf, switchTheme } from "@/lib/theme-switch";
 import { eggChai, eggEnglish, eggFrench, eggHindi, eggHyderabad, eggMatrix, eggMetcalfe, eggMusic, eggRecord, eggTelugu } from "@/lib/eggs";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -263,7 +264,7 @@ export function Terminal() {
       }
       case "theme": {
         const next = resolvedTheme === "dark" ? "light" : "dark";
-        setTheme(next);
+        switchTheme(next, setTheme, centreOf(document.querySelector('header [role="switch"]')));
         push([{ t: "accent", v: `→ ${next} mode` }, { t: "out", v: "" }]);
         break;
       }
